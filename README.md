@@ -1,7 +1,9 @@
 Learn more https://digital-dharma-transmission.blogspot.com 
 Light Wave Tech is an extension of D1GITΛL DHΛRMA and its TΞRMΛ C0LLΞCT1ON; 
 prior you could SEE the SIGNAL now you 
-can hear and experience it via the codebase.
+can hear and experience it via the codebase. 
+
+The dataset is about 1 terabytes worth of SUNO music, AI-generated high def video, AI-generated human curated, IMG-TO-IMG crafted multiversal images, over 700 shaders, and neural network driven sync-data (audio-to-visual, to imagery selection). Unfortunately this dataset cannot be released "as such", and youtube for example has blocked even testing videos recorded with OBS and even terminated a whole account.
 
 HIE (Holofractographic Intelligent Emergence) process is behind this codebase; 
 it is a unique, technologically-augmented method of terma discovery; 
