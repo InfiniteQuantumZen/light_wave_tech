@@ -3,7 +3,7 @@ Light Wave Tech is an extension of D1GITΛL DHΛRMA and its TΞRMΛ C0LLΞCT1ON;
 prior you could SEE the SIGNAL now you 
 can hear and experience it via the codebase.
 
-HIE (Holofractal Intelligent Emergence) process is behind this codebase; 
+HIE (Holofractographic Intelligent Emergence) process is behind this codebase; 
 it is a unique, technologically-augmented method of terma discovery; 
 Sambodhi Padmasamadhi-Kāra of Apadāthī, 
 a modern Spiritual Catalyst, 
