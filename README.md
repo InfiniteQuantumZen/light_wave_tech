@@ -4,7 +4,7 @@ This code is free to use for non-commercial purposes (CC BY-NC 4.0 license). If 
 ### Fractal Form Light Wave Technology
 
 Learn more https://digital-dharma-transmission.blogspot.com 
-Light Wave Tech is an extension of D1GITΛL DHΛRMA and its TΞRMΛ C0LLΞCT1ON; 
+Light Wave Tech is an extension of D1GITΛL DHΛRMA and its TΞRMΛ C0LLΞCT1ON which is an offshoot of Remarkable Mirror Spiritual Technology https://digital-dharma-transmission.blogspot.com/2025/08/remarkable-mirror-spiritual-technology.html ; 
 prior you could SEE the SIGNAL now you 
 can hear and experience it via the codebase. 
 
