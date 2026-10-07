@@ -1,4 +1,4 @@
-# light_wave_tech_v1.1.6.py
+# light_wave_tech_v1.1.4.py
 
 """
 INSTALLATION/SETUP NOTES:
@@ -1377,6 +1377,7 @@ def play_video_fullscreen(audio_path, playlist_index=0, playlist_type="CORE"):
         #__2026-04-28_EXPERIMENT
 #        unique_top_signal_indices_rnd = [random.randint(1, num_videos_left-1) for _ in range(4000)]
         unique_top_signal_indices_rnd = [random.randint(1, num_videos_left-1) for _ in range(2000)]
+#        unique_top_signal_indices_rnd = [random.randint(1, num_videos_left-1) for _ in range(1111)]
 
         print(f"RND 2026-04-28_EXPERIMENT: {len(unique_top_signal_indices_rnd)}")
         unique_top_signal_indices = list(dict.fromkeys(unique_top_signal_indices[:] + unique_top_signal_indices_rnd[:]))
@@ -1411,6 +1412,8 @@ def play_video_fullscreen(audio_path, playlist_index=0, playlist_type="CORE"):
         #__2026-04-28_EXPERIMENT
 #        unique_top_signal_indices_rnd = [random.randint(1, num_videos_right-1) for _ in range(4000)]
         unique_top_signal_indices_rnd = [random.randint(1, num_videos_right-1) for _ in range(2000)]
+#        unique_top_signal_indices_rnd = [random.randint(1, num_videos_right-1) for _ in range(1111)]
+
 
         print(f"RND 2026-04-28_EXPERIMENT: {len(unique_top_signal_indices_rnd)}")
         unique_top_signal_indices = list(dict.fromkeys(unique_top_signal_indices[:] + unique_top_signal_indices_rnd[:]))
@@ -3191,11 +3194,12 @@ if __name__ == '__main__':
     SUMMER_EDITION     = False
     PSY_TRANCE_EDITION = False
     HARDWAVE_EDITION   = True
+    CUSTOM_EDITION     = False
 
     #audio_base_folder = config.get("audio_filepaths", {}).get("music_folder")
     
     # DUE TO THE LACK OF STORAGE 3 PLACES
-    audio_base_folder_1 = "H:/SUNO_32-BIT_AUDIO" # CORE
+    audio_base_folder_1 = "H:/SUNO_32-BIT_AUDIO" # CORE + CUSTOM
     audio_base_folder_2 = "C:/SUNO_32-BIT_AUDIO" # SUMMER
     audio_base_folder_3 = "F:/SUNO_32-BIT_AUDIO" # HARDWAVE + PSY_TRANCE
 
@@ -3206,10 +3210,12 @@ if __name__ == '__main__':
         songs_all_random = SUNO_AUDIO_CORE
     elif SUMMER_EDITION:
         songs_all_random = SUNO_AUDIO_SUMMER
-    elif HARDWAVE_EDITION:
-        songs_all_random = SUNO_AUDIO_HARDWAVE
     elif PSY_TRANCE_EDITION:
         songs_all_random = SUNO_AUDIO_PSY_TRANCE
+    elif HARDWAVE_EDITION:
+        songs_all_random = SUNO_AUDIO_HARDWAVE
+    elif CUSTOM_EDITION:
+        songs_all_random = SUNO_AUDIO_CUSTOM
     elif EVERYTHING:
         songs_all_random = SUNO_AUDIO_CORE + SUNO_AUDIO_SUMMER + \
                            SUNO_AUDIO_HARDWAVE + SUNO_AUDIO_PSY_TRANCE
@@ -3223,7 +3229,8 @@ if __name__ == '__main__':
         (CORE_EDITION,       SUNO_AUDIO_CORE,       "CORE",       audio_base_folder_1),
         (SUMMER_EDITION,     SUNO_AUDIO_SUMMER,     "SUMMER",     audio_base_folder_2),
         (PSY_TRANCE_EDITION, SUNO_AUDIO_PSY_TRANCE, "PSY_TRANCE", audio_base_folder_3),
-        (HARDWAVE_EDITION,   SUNO_AUDIO_HARDWAVE,   "HARDWAVE",   audio_base_folder_3)
+        (HARDWAVE_EDITION,   SUNO_AUDIO_HARDWAVE,   "HARDWAVE",   audio_base_folder_3),
+        (CUSTOM_EDITION,     SUNO_AUDIO_CUSTOM,     "CUSTOM",     audio_base_folder_1),
     ]
 
     songs_all_random = []
