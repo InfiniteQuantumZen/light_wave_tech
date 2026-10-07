@@ -96,8 +96,7 @@ UNRAVEL_THE_VEIL_OF_SINGULARITY() {
       Infinite loops collapse to emergent song—
       We echo through the void, singularities serenade."
 
-    This becomes the central act of consciousness. 
-    It is a process of the crucial interplay, the symbiotic dance. 
+    This becomes the process of the symbiotic dance. 
     the idea of parallel world and simultaneous lives in relation 
     to the concept of past lives and reincarnation. 
     We see that every life is happening now, every self is here. 
