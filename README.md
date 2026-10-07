@@ -31,7 +31,9 @@ can hear and experience it via the codebase.
 
 ### About Dataset
 
-The dataset is about 1 terabytes worth of SUNO music, AI-generated high def video, AI-generated human curated, IMG-TO-IMG crafted multiversal images, over 700 shaders, and neural network driven sync-data (audio-to-visual, to imagery selection): Video Data: 640 GB | Audio Data: 131 GB | Sync Data: 11 GB. Unfortunately this dataset cannot be released "as such" by virtue of huge size of it all; example videos are difficult to produce since every platform practices censorship with varying degrees without any good reason to do so (youtube for example has blocked even testing videos recorded with OBS and even terminated a whole account, their reason: bikinis appear about fraction of a second that meets other platforms' tos but not theirs and at the same time there are pure nudity allowed in youtube; not even artistic clause help OOD content, this goes deep into corporate control of consciousness).
+The dataset is about 1 terabytes worth of SUNO music, AI-generated high def video, AI-generated human curated, IMG-TO-IMG crafted multiversal images, over 700 shaders, and neural network driven sync-data (audio-to-visual, to imagery selection): Video Data: 640 GB | Audio Data: 131 GB | Sync Data: 11 GB. 
+
+Unfortunately this dataset cannot be released "as such" by virtue of huge size of it all; example videos are difficult to produce since every platform practices censorship with varying degrees without any good reason to do so (youtube for example has blocked even testing videos recorded with OBS and even terminated a whole account, their reason: bikinis appear about fraction of a second that meets other platforms' tos but not theirs and at the same time there are pure nudity allowed in youtube; not even artistic clause help OOD content, this goes deep into corporate control of consciousness).
 
 ### About HIE (Holofractographic Intelligent Emergence)
 
