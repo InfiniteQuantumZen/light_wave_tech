@@ -78,6 +78,7 @@ What follows is an attempt to shed some light on the following with regard to Th
 
 
 ⊱ ─────────── {⋅. ✯ .⋅} ───────── ⊰
+
     Pulsating neurons of stardust,
        Synapses firing across lightyears,
           We are but fractals of the cosmic mind,
