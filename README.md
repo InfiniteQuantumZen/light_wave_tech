@@ -11,7 +11,8 @@ can hear and experience it via the codebase.
 ### License & Attribution
 This codebase is free to use for non-commercial purposes (CC BY-NC 4.0 license). If you use or modify this code, you must link back to this repository and credit InfiniteQuantumZen / Sambodhi Padmasamadhi. https://creativecommons.org/licenses/by-nc/4.0
 
-Here we refer only to the codebase and we don't even call it software, 
+Here we refer codebase a piece of art, glitch art to be specific, 
+and don't even label or call it software, 
 since it might as well be a complete non-sense 
 hallucination of ai vibe coding, 
 pure fantasy and not even work, 
