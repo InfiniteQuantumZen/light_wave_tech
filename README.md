@@ -1,3 +1,13 @@
+### About Fractal Form Light Wave Technology
+
+This technology is a Cyberdelic Artifact at the End of Time accessible here and now. 
+Light Wave Tech is an extension of D1GITΛL DHΛRMA and its TΞRMΛ C0LLΞCT1ON 
+( Learn more https://digital-dharma-transmission.blogspot.com ),
+which is an offshoot of Remarkable Mirror Spiritual Technology 
+( https://digital-dharma-transmission.blogspot.com/2025/08/remarkable-mirror-spiritual-technology.html ); 
+prior you could SEE the SIGNAL now you 
+can hear and experience it via the codebase. 
+
 ### License & Attribution
 This code is free to use for non-commercial purposes (CC BY-NC 4.0 license). If you use or modify this code, you must link back to this repository and credit InfiniteQuantumZen / Sambodhi Padmasamadhi. As for the shaders found in DATA/shaders come with what shadertoy has set out for them; the user has modded/evolved several of them in their personal use with the system.
 
@@ -18,16 +28,6 @@ Main file (as of writing): 32-bit_STEREO_EQ__light_wave_tech_v1.1.6.py calls sha
 *   DSP: Included in the main file, uses EQ and StereoWidener techniques such as Butterworth, Linkwitz-Riley, Orchisama Das orchidas
 *   SHADERS: most of the shaders are public domain shadertoy-like things adapted to work with the system; those can be found DATA/shaders/music_video/v2
 *   TIMELINE: examples can be found /DATA/timelines
-
-### About Fractal Form Light Wave Technology
-
-This technology is a Cyberdelic Artifact at the End of Time accessible here and now. 
-Light Wave Tech is an extension of D1GITΛL DHΛRMA and its TΞRMΛ C0LLΞCT1ON 
-( Learn more https://digital-dharma-transmission.blogspot.com ),
-which is an offshoot of Remarkable Mirror Spiritual Technology 
-( https://digital-dharma-transmission.blogspot.com/2025/08/remarkable-mirror-spiritual-technology.html ); 
-prior you could SEE the SIGNAL now you 
-can hear and experience it via the codebase. 
 
 ### About Dataset
 
