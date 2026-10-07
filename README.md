@@ -7,7 +7,7 @@ The code was and is created for the viewing experience of Ultra-Wide 3440x1440, 
 
 ### Code/Data Structure
 
-Main file (as of writing): 32-bit_STEREO_EQ__light_wave_tech_v1.1.6.py calls shader_manager.py and helper_functions.py (main important files); other used files can be inferred and are included in the repo; the earliest prototype can be found in 2025-10-12_early_prototype.py.
+Main file (as of writing): 32-bit_STEREO_EQ__light_wave_tech_v1.1.6.py calls shader_manager.py and helper_functions.py (main important files); other used files can be inferred and are included in the repo; the earliest prototype can be found in 2025-10-12_early_prototype.py. Virtual Reality version is current R&D project and here you can see what's going on with that: 2.5D_vr_main.py.
 
 /NeuralTrainer is used to select the below data sources:
 
