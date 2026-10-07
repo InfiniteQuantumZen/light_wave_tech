@@ -29,7 +29,7 @@ As for the shaders found in DATA/shaders come with what shadertoy
 has set out for them; the user has modded/evolved several of 
 them in their personal use with the system.
 
-As for the glitch this and stereowidener: you need to figure it out: 
+As for the glitch this (MIT License) and stereowidener (CC0 Public Domain): you need to figure them out on your own: 
 https://github.com/TotallyNotChase/glitch-this and
 https://github.com/orchidas/StereoWidener
 
