@@ -5,6 +5,10 @@ This code is free to use for non-commercial purposes (CC BY-NC 4.0 license). If 
 
 The code was and is created for the viewing experience of Ultra-Wide 3440x1440, which needs minimum of 2024 era multicore Zen architecture CPU and nvidia RTX 3060 12 GB GPU for it to run steady 40+ fps realtime (vsync is set to 48); dataset you need to curate yourself, since this part is very difficult to provide (1 Terabytes of data); video formats and their resolutions can be confifured in the codebase if one decides to bring their own data and test the system.
 
+### Code/Data Structure
+
+Main file (as of writing): 32-bit_STEREO_EQ__light_wave_tech_v1.1.6.py calls shader_manager.py and helper_functions.py (main important files); other used files can be inferred and are included in the repo; the earliest prototype can be found in 2025-10-12_early_prototype.py.
+
 /NeuralTrainer is used to select the below data sources:
 
 ∎ IMAGE: Tools used: Automatic1111: SDXL, ComfyUI: Krea2
