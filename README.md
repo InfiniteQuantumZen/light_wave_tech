@@ -21,7 +21,7 @@ Main file (as of writing): 32-bit_STEREO_EQ__light_wave_tech_v1.1.6.py calls sha
 
 ∎ DSP: Included in the main file, uses EQ and StereoWidener techniques such as Butterworth, Linkwitz-Riley, Orchisama Das orchidas
 
-∎ SHADERS: most of the shaders can be found DATA/shaders/music_video/v2
+∎ SHADERS: most of the shaders are public domain shadertoy-like things adapted to work with the system; those can be found DATA/shaders/music_video/v2
 
 ∎ TIMELINE: examples can be found /DATA/timelines
 
