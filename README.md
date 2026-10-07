@@ -13,7 +13,9 @@ The code was and is created for the viewing experience of Ultra-Wide 3440x1440, 
 
 ∎ MUSIC: Example songs used with the system can be found here: https://suno.com/@twinklinggigue0155
 
-∎ SYNC: Fractal form transform tools can be found /TOOLS/PfreqReact
+∎ SYNC: Fractal form transform tools (fourier) can be found /TOOLS/PfreqReact
+
+∎ DSP: Included in the main file, uses EQ and StereoWidener techniques such as Butterworth, Linkwitz-Riley. Orchisama Das
 
 ∎ SHADERS: most of the shaders can be found DATA/shaders/music_video/v2
 
