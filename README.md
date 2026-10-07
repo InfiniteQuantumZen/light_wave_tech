@@ -9,7 +9,7 @@ prior you could SEE the SIGNAL now you
 can hear and experience it via the codebase. 
 
 ### License & Attribution
-This code is free to use for non-commercial purposes (CC BY-NC 4.0 license). If you use or modify this code, you must link back to this repository and credit InfiniteQuantumZen / Sambodhi Padmasamadhi. As for the shaders found in DATA/shaders come with what shadertoy has set out for them; the user has modded/evolved several of them in their personal use with the system.
+This code is free to use for non-commercial purposes (CC BY-NC 4.0 license). If you use or modify this code, you must link back to this repository and credit InfiniteQuantumZen / Sambodhi Padmasamadhi. As for the shaders found in DATA/shaders come with what shadertoy has set out for them; the user has modded/evolved several of them in their personal use with the system. As for the glitch this and stereowidener: you need to figure it out: https://github.com/TotallyNotChase/glitch-this an https://github.com/orchidas/StereoWidener
 
 ### Hardware Requirements
 
