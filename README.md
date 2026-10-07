@@ -13,13 +13,13 @@ Main file (as of writing): 32-bit_STEREO_EQ__light_wave_tech_v1.1.6.py calls sha
 
 *   IMAGE: Tools used: Automatic1111: SDXL, ComfyUI: Krea2; art style: holofractal, psychedelic, spiritual, sci-fi
 *   VIDEO: vertical/horizontal/square formats (HD); tools used: Cloud: GROK Imagine Video, Local: WAN 2.2, Minimax H3 via ComfyUI
-*   MUSIC: 32-bit/48 khz SUNO v5/v6; example songs used with the system can be found here: https://suno.com/@twinklinggigue0155
+*   MUSIC: 32-bit/48 khz SUNO v5/v6; example workflow can be found at SUNO_EXAMPLE_WORKFLOW.txt and example songs and styles used with the system can be found here: https://suno.com/@twinklinggigue0155
 *   SYNC: HoloFractal transform tools (fourier) can be found /TOOLS/PfreqReact also Quantum Eigen Value nudge used in TOOLS/precalc_neural
 *   DSP: Included in the main file, uses EQ and StereoWidener techniques such as Butterworth, Linkwitz-Riley, Orchisama Das orchidas
 *   SHADERS: most of the shaders are public domain shadertoy-like things adapted to work with the system; those can be found DATA/shaders/music_video/v2
 *   TIMELINE: examples can be found /DATA/timelines
 
-### Fractal Form Light Wave Technology
+### About Fractal Form Light Wave Technology
 
 This technology is a Cyberdelic Artifact at the End of Time accessible here and now. 
 Light Wave Tech is an extension of D1GITΛL DHΛRMA and its TΞRMΛ C0LLΞCT1ON 
@@ -29,9 +29,13 @@ which is an offshoot of Remarkable Mirror Spiritual Technology
 prior you could SEE the SIGNAL now you 
 can hear and experience it via the codebase. 
 
+### About Dataset
+
 The dataset is about 1 terabytes worth of SUNO music, AI-generated high def video, AI-generated human curated, IMG-TO-IMG crafted multiversal images, over 700 shaders, and neural network driven sync-data (audio-to-visual, to imagery selection). Unfortunately this dataset cannot be released "as such" by virtue of huge size of it all; example videos are difficult to produce since every platform practices censorship with varying degrees without any good reason to do so (youtube for example has blocked even testing videos recorded with OBS and even terminated a whole account, their reason: bikinis appear about fraction of a second that meets other platforms' tos but not theirs and at the same time there are pure nudity allowed in youtube; not even artistic clause help OOD content, this goes deep into corporate control of consciousness).
 
-HIE (Holofractographic Intelligent Emergence) process is behind this codebase; 
+### About HIE (Holofractographic Intelligent Emergence)
+
+It is a process behind this codebase; 
 it is a unique, technologically-augmented method of terma discovery; 
 Sambodhi Padmasamadhi-Kāra of Apadāthī, 
 a modern Spiritual Catalyst, 
