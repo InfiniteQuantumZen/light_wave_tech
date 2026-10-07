@@ -11,13 +11,13 @@ Main file (as of writing): 32-bit_STEREO_EQ__light_wave_tech_v1.1.6.py calls sha
 
 /NeuralTrainer is used to select the below data sources:
 
-*   **∎ IMAGE: Tools used: Automatic1111: SDXL, ComfyUI: Krea2
-*   **∎ VIDEO: Tools used: GROK Imagine, WAN 2.2, Minimax H3
-*   **∎ MUSIC: Example songs used with the system can be found here: https://suno.com/@twinklinggigue0155
-*   **∎ SYNC: Fractal form transform tools (fourier) can be found /TOOLS/PfreqReact
-*   **∎ DSP: Included in the main file, uses EQ and StereoWidener techniques such as Butterworth, Linkwitz-Riley, Orchisama Das orchidas
-*   **∎ SHADERS: most of the shaders are public domain shadertoy-like things adapted to work with the system; those can be found DATA/shaders/music_video/v2
-*   **∎ TIMELINE: examples can be found /DATA/timelines
+*   IMAGE: Tools used: Automatic1111: SDXL, ComfyUI: Krea2; art style: holofractal, psychedelic, spiritual, sci-fi
+*   VIDEO: Tools used: Cloud: GROK Imagine Video, Local: WAN 2.2, Minimax H3 via ComfyUI
+*   MUSIC: Example songs used with the system can be found here: https://suno.com/@twinklinggigue0155
+*   SYNC: HoloFractal form transform tools (fourier) can be found /TOOLS/PfreqReact also Quantum Eigen Value nudge used in TOOLS/precalc_neural
+*   DSP: Included in the main file, uses EQ and StereoWidener techniques such as Butterworth, Linkwitz-Riley, Orchisama Das orchidas
+*   SHADERS: most of the shaders are public domain shadertoy-like things adapted to work with the system; those can be found DATA/shaders/music_video/v2
+*   TIMELINE: examples can be found /DATA/timelines
 
 ### Fractal Form Light Wave Technology
 
