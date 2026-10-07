@@ -1,6 +1,10 @@
 ### License & Attribution
 This code is free to use for non-commercial purposes (CC BY-NC 4.0 license). If you use or modify this code, you must link back to this repository and credit InfiniteQuantumZen / Sambodhi Padmasamadhi.
 
+### Hardware Requirements
+
+The code was and is created for the viewing experience of Ultra-Wide 3440x1440, which needs minimum of 2024 era multicore Zen architecture CPU and nvidia RTX 3060 12 GB GPU for it to run steady 40+ fps realtime (vsync is set to 48); dataset you need to curate yourself, since this part is very difficult to provide (1 Terabytes of data); video formats and their resolutions can be confifured in the codebase if one decides to bring their own data and test the system.
+
 ### Fractal Form Light Wave Technology
 
 Learn more https://digital-dharma-transmission.blogspot.com 
