@@ -7,17 +7,17 @@ The code was and is created for the viewing experience of Ultra-Wide 3440x1440, 
 
 /NeuralTrainer is used to select the below data sources:
 
-IMAGE: Tools used: Automatic1111: SDXL, ComfyUI: Krea2
+∎ IMAGE: Tools used: Automatic1111: SDXL, ComfyUI: Krea2
 
-VIDEO: Tools used: GROK Imagine, WAN 2.2, Minimax H3
+∎ VIDEO: Tools used: GROK Imagine, WAN 2.2, Minimax H3
 
-MUSIC: Example songs used with the system can be found here: https://suno.com/@twinklinggigue0155
+∎ MUSIC: Example songs used with the system can be found here: https://suno.com/@twinklinggigue0155
 
-SYNC: Fractal form transform tools can be found /TOOLS/PfreqReact
+∎ SYNC: Fractal form transform tools can be found /TOOLS/PfreqReact
 
-SHADERS: most of the shaders can be found DATA/shaders/music_video/v2
+∎ SHADERS: most of the shaders can be found DATA/shaders/music_video/v2
 
-TIMELINE: examples can be found /DATA/timelines
+∎ TIMELINE: examples can be found /DATA/timelines
 
 ### Fractal Form Light Wave Technology
 
