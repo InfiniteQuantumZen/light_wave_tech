@@ -1,4 +1,6 @@
-just leaving it here... NeuralTrainer is barebones INT time-series trainer used in the main-file: 32-bit_STEREO_EQ__light_wave_tech_v1.1.6.py in the function load_neural_indices_json(filepath) and this TOOLS/precalc_neural/eigen_music_local_precalc_values.py is used to precalc some of those vars...
+just leaving it here... NeuralTrainer is barebones INT time-series trainer used in the main-file: 
+32-bit_STEREO_EQ__light_wave_tech_v1.1.6.py in the function load_neural_indices_json(filepath) and 
+this TOOLS/precalc_neural/eigen_music_local_precalc_values.py is used to precalc some of those vars...
 
 Improvement notes 2026-10-07:
 
