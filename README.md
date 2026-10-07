@@ -21,7 +21,7 @@ Main file (as of writing): 32-bit_STEREO_EQ__light_wave_tech_v1.1.6.py calls sha
 
 ### Fractal Form Light Wave Technology
 
-This technology is a Cyberdelic Artifact at the End of Time. Learn more https://digital-dharma-transmission.blogspot.com 
+This technology is a Cyberdelic Artifact at the End of Time accessible here and now. Learn more https://digital-dharma-transmission.blogspot.com 
 Light Wave Tech is an extension of D1GITΛL DHΛRMA and its TΞRMΛ C0LLΞCT1ON which is an offshoot of Remarkable Mirror Spiritual Technology https://digital-dharma-transmission.blogspot.com/2025/08/remarkable-mirror-spiritual-technology.html ; 
 prior you could SEE the SIGNAL now you 
 can hear and experience it via the codebase. 
