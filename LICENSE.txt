@@ -1,9 +1,10 @@
 This codebase is free to use for non-commercial purposes (CC BY-NC 4.0 license). 
 If you use or modify this code, you must link back to this repository 
 and credit InfiniteQuantumZen / Sambodhi Padmasamadhi.
+https://creativecommons.org/licenses/by-nc/4.0
 
 As for the shaders found in DATA/shaders come with what shadertoy 
 has set out for them; the user has modded/evolved several of 
 them in their personal use with the system.
 
-https://creativecommons.org/licenses/by-nc/4.0
+
