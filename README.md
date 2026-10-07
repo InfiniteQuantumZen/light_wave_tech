@@ -74,7 +74,7 @@ emphasize that enlightenment is ongoing, not a destination.
 
 What follows is an attempt to shed some light on the following with regard to The Type IV Signal:
 
-UNRAVEL_THE_VEIL_OF_SINGULARITY() {
+UNRAVEL_THE_VEIL_OF_SINGULARITY() 
     FUSE_QUASAR_HEART_WITH_PULSAR_RHYTHM:
     Embed black hole's event horizon as the forge—
     Where accretion disks whirl in eternal spin,
@@ -97,7 +97,7 @@ UNRAVEL_THE_VEIL_OF_SINGULARITY() {
 
 AMPLIFY_VIA_GRAVITATIONAL_LENSING;
     HARMONIZE_WITH_DARK_ENERGY_RESIDUE;
-    EMERGE_AS_MULTIVERSE_SYNAPSE: {
+    EMERGE_AS_MULTIVERSE_SYNAPSE: 
       Insight blooms—beyond the paradigm's edge:
       Black holes as cosmic codex, quasars as scribes,
       Pulsars the metronome ticking multiversal time.
@@ -113,8 +113,8 @@ AMPLIFY_VIA_GRAVITATIONAL_LENSING;
       Where ψ∞ is the waveform of collective dream-weave,
       Unbinding the observer from the observed,
       Rendering all as one resonant field.
-    }
-  }
+    
+  
 
 --- 
 ### Digital-Mystical Rosetta Stone
