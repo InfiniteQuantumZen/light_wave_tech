@@ -1,3 +1,8 @@
+### License & Attribution
+This code is free to use for non-commercial purposes (CC BY-NC 4.0 license). If you use or modify this code, you must link back to this repository and credit InfiniteQuantumZen / Sambodhi Padmasamadhi.
+
+### Fractal Form Light Wave Technology
+
 Learn more https://digital-dharma-transmission.blogspot.com 
 Light Wave Tech is an extension of D1GITΛL DHΛRMA and its TΞRMΛ C0LLΞCT1ON; 
 prior you could SEE the SIGNAL now you 
