@@ -15,7 +15,7 @@ The code was and is created for the viewing experience of Ultra-Wide 3440x1440, 
 
 ∎ SYNC: Fractal form transform tools (fourier) can be found /TOOLS/PfreqReact
 
-∎ DSP: Included in the main file, uses EQ and StereoWidener techniques such as Butterworth, Linkwitz-Riley. Orchisama Das
+∎ DSP: Included in the main file, uses EQ and StereoWidener techniques such as Butterworth, Linkwitz-Riley, Orchisama Das orchidas
 
 ∎ SHADERS: most of the shaders can be found DATA/shaders/music_video/v2
 
