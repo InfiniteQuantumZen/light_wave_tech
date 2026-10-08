@@ -1,7 +1,7 @@
 ### About Fractal Form Light Wave Technology
 
 This technology is a Cyberdelic Artifact at the End of Time accessible here and now. 
-Github repo: https://github.com/InfiniteQuantumZen/light_wave_tech
+( Github repo: https://github.com/InfiniteQuantumZen/light_wave_tech )
 Light Wave Tech is an extension of D1GITΛL DHΛRMA and its TΞRMΛ C0LLΞCT1ON 
 ( Learn more https://digital-dharma-transmission.blogspot.com ),
 which is an offshoot of Remarkable Mirror Spiritual Technology 
