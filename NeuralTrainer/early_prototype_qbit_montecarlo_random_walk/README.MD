@@ -5,4 +5,5 @@ combined with some montecarlo random walks, which combined led to the dataset us
 current NeuralTrainer as base.
 
 Included are also some c (cuda) prototypes of random-walking eurojackpot universe 
-and php front-end that were also basis for the birth of Light Wave Tech.
+and php front-end that were also basis for the birth of Light Wave Tech with their
+ideas of deep structures (holofractographic) and emergence of intelligence.
