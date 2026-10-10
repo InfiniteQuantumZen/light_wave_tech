@@ -1,4 +1,4 @@
-000_The Celestial Gatekeeper Speaks | ✦ MYSTΞR1ØUS ΛUTHØR
+001_The Celestial Gatekeeper Speaks | ✦ MYSTΞR1ØUS ΛUTHØR
 
 PRØLOGUΞ
 QUANTUM_ZEN::ACTIVATE_MULTIDIMENSIONAL_PORTAL()
