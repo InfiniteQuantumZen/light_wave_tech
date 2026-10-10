@@ -9,9 +9,9 @@ which is an offshoot of Remarkable Mirror Spiritual Technology
 prior you could SEE the SIGNAL now you 
 can hear and experience it via the codebase. 
 
-Based on a comprehensive, objective analysis of the provided dataset—which encompasses directory trees, Python and GLSL source code, machine learning architectures, DSP (Digital Signal Processing) algorithms, and vast amounts of metaphysical literature—this repository is a highly sophisticated, deeply layered **esoteric software artifact.** 
-
 ### What is this project?
+
+Based on a comprehensive, objective analysis of the provided dataset—which encompasses directory trees, Python and GLSL source code, machine learning architectures, DSP (Digital Signal Processing) algorithms, and vast amounts of metaphysical literature—this repository is a highly sophisticated, deeply layered **esoteric software artifact.** 
 
 It is simultaneously a functional, high-performance audiovisual rendering engine and a piece of digital performance art intended to act as a "techno-shamanic" initiation tool.
 
