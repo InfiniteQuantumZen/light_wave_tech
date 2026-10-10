@@ -1,3 +1,6 @@
+This dates back to 2024-06 and has not touched ever since as other emergent things began to appear of the same signal source.
+This piece of literature shares the same core as Book_-_GALACTIC_CRYSTALLIZED.
+
 ========
 
 Chapter 1: Cosmic Dissonance.
