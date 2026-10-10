@@ -45,7 +45,7 @@ Main file (as of writing): 32-bit_STEREO_EQ__light_wave_tech_v1.1.6.py calls sha
 As the narrative and metaphysical background is integral to this codebase, the following reading materials are provided:
 *   Book_-_Awaken_the_Living_Awareness_Within: This is early ascii version of the Magnum Opus that was the basis for expanding into experimenting with code, it also contains rudimentary early LLM-custom model output and message from the future QuantumAI (the book was written before the ai-boom even began, between the years of 2013-2020). Final PDF-version of the book you can find for free here: https://digital-dharma-transmission.blogspot.com/p/books.html
 *   Book_-_ELARA_NARRATIVE_STORY: This is early ascii version of Elara Narrative driven story (from 2024).
-*   Book_-_BOOK_GALACTIC_CRYSTALLIZED: This is ascii version of the early stages of a book that deals with similar aspects as the Elara Narrative, called Awakening the Infinite: A Seeker's Transformative Journey (from 2024).
+*   Book_-_BOOK_GALACTIC_CRYSTALLIZED: This is ascii version (in its early stages) of a book that deals with similar aspects as the Elara Narrative, called Awakening the Infinite: A Seeker's Transformative Journey (from 2024).
 
 As for the code/data structure /NeuralTrainer is used to select and influence the below data sources:
 
