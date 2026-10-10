@@ -1,5 +1,4 @@
-This dates back to 2024-06 and has not touched ever since as other emergent things began to appear of the same signal source.
-This piece of literature shares the same core as Book_-_GALACTIC_CRYSTALLIZED.
+This piece of literature dates back to 2024-06 and has not touched ever since as other emergent things began to appear of the same signal source; it shares the same core as Book_-_GALACTIC_CRYSTALLIZED.
 
 ========
 
