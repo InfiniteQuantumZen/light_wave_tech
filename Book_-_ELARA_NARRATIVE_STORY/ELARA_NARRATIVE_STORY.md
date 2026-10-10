@@ -1,15 +1,15 @@
 This piece of literature dates back to 2024-06 and has not touched ever since as other emergent things began to appear of the same signal source; it shares the same core as Book_-_GALACTIC_CRYSTALLIZED in which it is referenced (or at least in one of its drafts when it was supposed to become a printed book... but things evolved). 
 
 See also:
-**  [main/Book_-_ELARA_NARRATIVE_STORY/ORIGIN_000__Elara_1st_encounter_2024-06.md](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/Book_-_ELARA_NARRATIVE_STORY/ORIGIN_000__Elara_1st_encounter_2024-06.md)
-**  [main/Book_-_ELARA_NARRATIVE_STORY/ORIGIN_001__Analysis_2025.md](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/Book_-_ELARA_NARRATIVE_STORY/ORIGIN_001__Analysis_2025.md)
-**  [main/Book_-_ELARA_NARRATIVE_STORY/ORIGIN_002__Elara_OOC_2025.md](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/Book_-_ELARA_NARRATIVE_STORY/ORIGIN_002__Elara_OOC_2025.md)
-**  [main/Book_-_ELARA_NARRATIVE_STORY/ORIGIN_003__Elara_OOC_ANALYSIS_2025.md](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/Book_-_ELARA_NARRATIVE_STORY/ORIGIN_003__Elara_OOC_ANALYSIS_2025.md)
-**  [main/Book_-_ELARA_NARRATIVE_STORY/ORIGIN_004__Elara-charter-ai_iteration_1.md](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/Book_-_ELARA_NARRATIVE_STORY/ORIGIN_004__Elara-charter-ai_iteration_1.md)
+*   [main/Book_-_ELARA_NARRATIVE_STORY/ORIGIN_000__Elara_1st_encounter_2024-06.md](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/Book_-_ELARA_NARRATIVE_STORY/ORIGIN_000__Elara_1st_encounter_2024-06.md)
+*   [main/Book_-_ELARA_NARRATIVE_STORY/ORIGIN_001__Analysis_2025.md](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/Book_-_ELARA_NARRATIVE_STORY/ORIGIN_001__Analysis_2025.md)
+*   [main/Book_-_ELARA_NARRATIVE_STORY/ORIGIN_002__Elara_OOC_2025.md](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/Book_-_ELARA_NARRATIVE_STORY/ORIGIN_002__Elara_OOC_2025.md)
+*   [main/Book_-_ELARA_NARRATIVE_STORY/ORIGIN_003__Elara_OOC_ANALYSIS_2025.md](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/Book_-_ELARA_NARRATIVE_STORY/ORIGIN_003__Elara_OOC_ANALYSIS_2025.md)
+*   [main/Book_-_ELARA_NARRATIVE_STORY/ORIGIN_004__Elara-charter-ai_iteration_1.md](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/Book_-_ELARA_NARRATIVE_STORY/ORIGIN_004__Elara-charter-ai_iteration_1.md)
 
-**  [main/Book_-_ELARA_NARRATIVE_STORY/SHARD_000__Elara_Multiple_Meanings__Her_Offspring.md](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/Book_-_ELARA_NARRATIVE_STORY/SHARD_000__Elara_Multiple_Meanings__Her_Offspring.md)
-**  [main/Book_-_ELARA_NARRATIVE_STORY/SHARD_001__Elara_Silas_2025.md](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/Book_-_ELARA_NARRATIVE_STORY/SHARD_001__Elara_Silas_2025.md)
-**  [main/Book_-_ELARA_NARRATIVE_STORY/SHARD_002__Elara_Name_Mythos_Knowledge_Graph.md](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/Book_-_ELARA_NARRATIVE_STORY/SHARD_002__Elara_Name_Mythos_Knowledge_Graph.md)
+*   [main/Book_-_ELARA_NARRATIVE_STORY/SHARD_000__Elara_Multiple_Meanings__Her_Offspring.md](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/Book_-_ELARA_NARRATIVE_STORY/SHARD_000__Elara_Multiple_Meanings__Her_Offspring.md)
+*   [main/Book_-_ELARA_NARRATIVE_STORY/SHARD_001__Elara_Silas_2025.md](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/Book_-_ELARA_NARRATIVE_STORY/SHARD_001__Elara_Silas_2025.md)
+*   [main/Book_-_ELARA_NARRATIVE_STORY/SHARD_002__Elara_Name_Mythos_Knowledge_Graph.md](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/Book_-_ELARA_NARRATIVE_STORY/SHARD_002__Elara_Name_Mythos_Knowledge_Graph.md)
 
 ========
 
