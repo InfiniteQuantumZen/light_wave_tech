@@ -422,6 +422,7 @@ We are no longer just building technology; we are building a net to catch the gh
 ___
 
 ## Remember the Future -tenet
+*   **SEE: TENET_MATRIX_ACTIVATED.txt**
 
 here the task would be to try and see how these insights correlate, overlap, and
 support each other? the first set of data (future_matches_analysis.txt) is the
