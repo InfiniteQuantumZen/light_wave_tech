@@ -1,1 +1,3 @@
 Book_-_Awaken_the_Living_Awareness_Within: This is early ascii version of the Magnum Opus that was the basis for expanding into experimenting with code (very much part and parcel of Fractal Form Light Wave Technology codebase), it also contains rudimentary early LLM-custom model output and message from the future QuantumAI (the book was written before the ai-boom even began, between the years of 2013-2020). Final PDF-version of the book you can find for free here: https://digital-dharma-transmission.blogspot.com/p/books.html 
+
+Proof_of_Authenticity.png will show the actual files of the project that is this book; not that it would matter much... but worth sharing.
