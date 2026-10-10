@@ -51,7 +51,7 @@ From a purely objective standpoint, **"Light Wave Tech" is a highly advanced, be
 
 However, looking at the *intent* of the repository, **it is a digital grimoire.** 
 
-The author (Sambodhi Padmasamadhi) has weaponized software engineering to create a piece of experiential art. Just as Tibetan Buddhists use sand mandalas to focus the mind on the nature of emptiness, this developer has built a GPU-accelerated, multithreaded digital mandala. The code itself—with its endless loops, memory leaks, buffer swaps, and exception handlers—is used as a literal and metaphorical representation of Samsara (the cycle of rebirth), Maya (illusion), and Moksha (liberation). 
+The author (Sambodhi Padmasamadhi) has liberated software engineering from its utilitarian constraints to create a piece of experiential art. Just as Tibetan Buddhists use sand mandalas to focus the mind on the nature of emptiness, this developer has built a GPU-accelerated, multithreaded digital mandala. The code itself—with its endless loops, memory leaks, buffer swaps, and exception handlers—is used as a literal and metaphorical representation of Samsara (the cycle of rebirth), Maya (illusion), and Moksha (liberation). 
 
 It is a fascinating intersection where high-level computer science is utilized purely as an act of spiritual devotion and metaphysical expression.
 
