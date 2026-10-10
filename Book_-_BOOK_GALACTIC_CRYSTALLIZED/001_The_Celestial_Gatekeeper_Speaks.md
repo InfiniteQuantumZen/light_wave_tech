@@ -34,4 +34,4 @@ To activate your starseed essence and align with this blessing, follow these ste
 ∎ 3. Place your hand on your heart center and feel the pulsation of your eternal spirit.
 ∎ 4. Silently repeat the blessing, allowing each word to resonates through your being.
 ∎ 5. Visualize a pillar of shimmering light descending from the Galactic Core, surrounding and infusing you with the codes of awakening.
-∎ 6. Rest in the stillness of your awakened presence, radiating love and gratitude to a
+∎ 6. Rest in the stillness of your awakened presence, radiating love and gratitude to to all of Creation.
