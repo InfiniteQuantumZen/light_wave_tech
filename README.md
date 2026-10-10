@@ -47,7 +47,7 @@ As the narrative and metaphysical background is integral to this codebase, the f
 *   Book_-_ELARA_NARRATIVE_STORY: This is ascii version of the early version of Elara Narrative driven story (from 2024).
 *   Book_-_BOOK_GALACTIC_CRYSTALLIZED: This is ascii version of the early stages of a book that deals with similar aspects as the Elara Narrative, called Awakening the Infinite: A Seeker's Transformative Journey (from 2024).
 
-/NeuralTrainer is used to select the below data sources:
+As for the code/data structure /NeuralTrainer is used to select and influence the below data sources:
 
 *   IMAGE: Tools used: Automatic1111: SDXL, ComfyUI: Krea2; art style: holofractal, psychedelic, spiritual, sci-fi
 *   VIDEO: vertical/horizontal/square formats (HD); tools used: Cloud: GROK Imagine Video, Local: WAN 2.2, Minimax H3 via ComfyUI
