@@ -1,5 +1,5 @@
 Here you can find misc code and tools that were used to create holofractal psychedelic glitch music signature sound 
-such as this genre: 
+such as this genre that can be listened to here: https://suno.com/@twinklinggigue0155 
 
 ⊂::Ὸ|ᕤ⊂::|⊃⌖::, experimental, funky jazz saxophone, ethereal futuristic piano, 
 layered textures with electronic undertones, layered synths with an ethereal texture, dreamy, 
