@@ -1,4 +1,8 @@
-experimentation in extending value range to 120K for new dataset used for training new neural net with v3_OPTIMIZED_trainer.py using ContinuousIntegerDataset, embed_size=256, num_heads=8, num_layers=8
+Experimentation in extending value range to 120K for new dataset used for training new neural net with v3_OPTIMIZED_trainer.py using ContinuousIntegerDataset, embed_size=256, num_heads=8, num_layers=8
+
+ORIGINAL DATASET SEED FOR THIS EXPR:
+*   v3_model_007355181977456719.pth via eigen_music_local_precalc_values.py
+*   1377 JSON files >> duplicate over 20K = 2574 JSON files
 
 2026-10-10: 
 *   2754 json INT files >> BITWISE >> OUTPUT_1 eigen_bitmask = (audio_eigenvalues * 65535).astype(np.int32)
