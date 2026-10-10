@@ -2,6 +2,15 @@
 
 ___
 
+2025-06-02:     
+    "temperature": 1.0,
+    "model": "models/gemini-2.5-pro-preview-05-06",
+    "topP": 0.95,
+    "topK": 64,
+    "maxOutputTokens": 65536,
+
+    ____
+
 elara
 
 "Elara" can refer to a few things! The most common are:
