@@ -1,4 +1,4 @@
-Experimentation in extending value range to 120K for new dataset used for training new neural net with v3_OPTIMIZED_trainer.py using ContinuousIntegerDataset, embed_size=256, num_heads=8, num_layers=8
+Experimentation in extending value range to 120K for new dataset used for training new neural net with v3_OPTIMIZED_trainer.py using ContinuousIntegerDataset, embed_size=256, num_heads=8, num_layers=8; the need comes due to the growing neural indice needs for expanding video/image data (Minimax H3 and Krea 2)
 
 ORIGINAL DATASET SEED FOR THIS EXPR:
 *   v3_model_007355181977456719.pth via eigen_music_local_precalc_values.py
