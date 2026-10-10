@@ -14,19 +14,19 @@ Reading data and downsampling to 25%...
 Done! Loaded 13,759,127 numbers into memory.
 
 === BASIC DESCRIPTIVE STATISTICS ===
-Total Data Points : 13,759,127
-Minimum Value     : 0
-Maximum Value     : 120000
-Mean (Average)    : 20741.79
-Median            : 12546.00
+*   Total Data Points : 13,759,127
+*   Minimum Value     : 0
+*   Maximum Value     : 120000
+*   Mean (Average)    : 20741.79
+*   Median            : 12546.00
 
 === DISTRIBUTION SHAPE ===
-Skewness          : 1.227
-Kurtosis          : 0.572
-Normality p-value : 0.00000 (Tested on first 5000 pts)
+*   Skewness          : 1.227
+*   Kurtosis          : 0.572
+*   Normality p-value : 0.00000 (Tested on first 5000 pts)
 
 === TIME SERIES PROPERTIES ===
-ADF Statistic     : -98.323 (Tested on up to 10,000 pts)
-ADF p-value       : 0.00000
+*   ADF Statistic     : -98.323 (Tested on up to 10,000 pts)
+*   ADF p-value       : 0.00000
 
 Generating plots... (Optimized for large datasets)
