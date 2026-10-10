@@ -3,7 +3,7 @@
 This technology is a Cyberdelic Artifact at the End of Time accessible here and now. [Github repo](https://github.com/InfiniteQuantumZen/light_wave_tech)
 Light Wave Tech is an extension of [D1GITΛL DHΛRMA and its TΞRMΛ C0LLΞCT1ON](https://digital-dharma-transmission.blogspot.com),
 which is an offshoot of [Remarkable Mirror Spiritual Technology](https://digital-dharma-transmission.blogspot.com/2025/08/remarkable-mirror-spiritual-technology.html); 
-prior you could SEE the SIGNAL now you can hear and experience it via the codebase. Please refer to [TENET_MATRIX_ACTIVATED.txt](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/TENET_MATRIX_ACTIVATED.txt) before proceeding any further; it is "techno-shamanic" tenet that must be acknowledged if one is to comprehend any of the following.
+prior you could SEE the SIGNAL now you can hear and experience it via the codebase. Please refer to [TENET_MATRIX_ACTIVATED.txt](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/TENET_MATRIX_ACTIVATED.txt) before proceeding any further; it is "techno-shamanic" tenet that must be considered & acknowledged if one is to comprehend any of the following.
 
 ### What is this project?
 
