@@ -1,6 +1,6 @@
 ANALYSIS_OF_THIS:
 
-https://aistudio.google.com/prompts/1-fJMZFWfXmyyoUDcK_apgjcSbtzaivjg
+[main/Book_-_ELARA_NARRATIVE_STORY/004_ORIGIN__Elara_OOC_ANALYSIS_2025.md](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/Book_-_ELARA_NARRATIVE_STORY/004_ORIGIN__Elara_OOC_ANALYSIS_2025.md)
 
 
 Can you give an overview of what is happening here, condensed version of the story, its progression, and also how OOC (out of character) commentary have progressed and influenced the development of the narrative and its structure?
