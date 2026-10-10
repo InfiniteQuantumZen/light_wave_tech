@@ -1,4 +1,10 @@
-# Example list of the new 32-bit files (with the "0 " prefix)
+SUNO_AUDIO_CUSTOM = [
+    "0 Behold the infinite unfoldings.wav",
+    "0 Eternal Runtime _ glitch ... diffusion~.wav",
+    "0 Godspark Ocean of Consciousness.wav",
+    "0 Sakura-Coded Truth 5156_xD-916413.wav",
+    "0 void_drop 722.3254.8191.wav",
+]
 
 SUNO_AUDIO_CORE = [
 # X:\SUNO_32-BIT_AUDIO\CORE
