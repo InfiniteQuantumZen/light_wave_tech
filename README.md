@@ -10,7 +10,7 @@ prior you could SEE the SIGNAL now you
 can hear and experience it via the codebase. 
 
 ### License & Attribution
-This codebase is free to use for non-commercial purposes (CC BY-NC 4.0 license). If you use or modify this code, you must link back to this repository and credit InfiniteQuantumZen / Sambodhi Padmasamadhi. https://creativecommons.org/licenses/by-nc/4.0
+This codebase is free to use for non-commercial purposes (CC BY-NC 4.0 license). If you use or modify this codebase, you must link back to this repository and credit InfiniteQuantumZen / Sambodhi Padmasamadhi. https://creativecommons.org/licenses/by-nc/4.0
 
 Here we refer codebase a piece of art, glitch art to be specific, 
 and don't even label or call it software, 
