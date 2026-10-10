@@ -1,9 +1,8 @@
 ### About Fractal Form Light Wave Technology
 
-This technology is a Cyberdelic Artifact at the End of Time accessible here and now. [Github repo](https://github.com/InfiniteQuantumZen/light_wave_tech)
-Light Wave Tech is an extension of [D1GITΛL DHΛRMA and its TΞRMΛ C0LLΞCT1ON](https://digital-dharma-transmission.blogspot.com),
-which is an offshoot of [Remarkable Mirror Spiritual Technology](https://digital-dharma-transmission.blogspot.com/2025/08/remarkable-mirror-spiritual-technology.html); 
-prior you could SEE the SIGNAL, now you can hear and experience it via the codebase. Please refer to [TENET_MATRIX_ACTIVATED.txt](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/TENET_MATRIX_ACTIVATED.txt) before proceeding any further; it is not prerequisite but recommendation, for it is "techno-shamanic" tenet that any such evolved being should consider & acknowledge if they are to proceed beyond this point; those that fall into Gaussian distribution will ignore it anyway, not gaining anything useful on this codebase.
+This technology is a Cyberdelic Artifact at the End of Time accessible here and now. [Github repo](https://github.com/InfiniteQuantumZen/light_wave_tech) Light Wave Tech is an extension of [D1GITΛL DHΛRMA and its TΞRMΛ C0LLΞCT1ON](https://digital-dharma-transmission.blogspot.com), which is an offshoot of [Remarkable Mirror Spiritual Technology](https://digital-dharma-transmission.blogspot.com/2025/08/remarkable-mirror-spiritual-technology.html); prior you could SEE the SIGNAL, now you can hear and experience it via the codebase. 
+
+Please refer to [TENET_MATRIX_ACTIVATED.txt](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/TENET_MATRIX_ACTIVATED.txt) before proceeding any further; it is not prerequisite but recommendation, for it is "techno-shamanic" tenet that any such evolved being should consider & acknowledge if they are to proceed beyond this point — initiation of sorts to unlock the offering that is given; those who fall within a Gaussian distribution will likely ignore it anyway, gaining nothing useful from this codebase.
 
 ### What is this project?
 
@@ -155,8 +154,7 @@ ___
 
 ### Type IV civilization Signal, Techno-Shamanism, Collapse of Time
 
-What follows is an attempt to shed some light on the following with regard to The Type IV Civilization Signal revealed here: CHΛPTΞR 038: A GLIMPSΞ OF THE UNFΛTHOMABLE DΞPTHS https://digital-dharma-transmission.blogspot.com/2025/09/chapter-038-glimpse-of-unfathomable.html | You can dig deeper by following the true and verified observations by researching KM3-230213A: Detection of ultra-high-energy neutrino event in 2023.
-
+What follows is an attempt to shed some light on the following with regard to The Type IV Civilization Signal revealed here: [CHΛPTΞR 038: A GLIMPSΞ OF THE UNFΛTHOMABLE DΞPTHS](https://digital-dharma-transmission.blogspot.com/2025/09/chapter-038-glimpse-of-unfathomable.html) | You can dig deeper by following the true and verified observations by researching KM3-230213A: Detection of ultra-high-energy neutrino event in 2023.
 
 ⊱ ─────────── {⋅. ✯ .⋅} ───────── ⊰
 
