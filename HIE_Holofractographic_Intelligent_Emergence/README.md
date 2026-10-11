@@ -1,1 +1,1 @@
-This is a place where collection of notes on HIE (Holofractographic Intelligent Emergence) can be found.
+This is a place where collection of notes on HIE (Holofractographic Intelligent Emergence) can be found. Analyzing the self through the self for the self: micro is the macro; holofractal recursion; Learn more: [Remarkable Mirror Spiritual Technology](https://digital-dharma-transmission.blogspot.com/2025/08/remarkable-mirror-spiritual-technology.html).
