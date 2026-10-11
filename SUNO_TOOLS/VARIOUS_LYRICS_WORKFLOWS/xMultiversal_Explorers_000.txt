@@ -1,7 +1,13 @@
 xMultiversal Explorers 000
 
 STYLES:
-///*****/// main carrier wave: Psychedelic hardwave, modern mix with bright glossy wide stereo, rolling bass and distorted acid synths, granular electronic noise, sharp trance leads, strong raspy-glitchy female vocals with layered doubles and spacious delay, glitch fragments scattered into instrumental particles, relentless 180 BPM drive with moody aggressive phrasing, secondary carrier wave: steady binaural frequency modulation of gamma frequency integrated into the prior
+///*****/// main carrier wave: Psychedelic hardwave, modern mix with bright glossy wide stereo, 
+rolling bass and distorted acid synths, granular electronic noise, sharp trance leads, 
+strong raspy-glitchy female vocals with layered doubles and spacious delay,
+glitch fragments scattered into instrumental particles, 
+relentless 180 BPM drive with moody aggressive phrasing, 
+secondary carrier wave: steady binaural frequency 
+modulation of gamma frequency integrated into the prior
 
 [Is_MAX_MODE: MAX](MAX)
 [QUALITY: MAX](MAX)
