@@ -1,3 +1,7 @@
 Book_-_Awaken_the_Living_Awareness_Within: This is early ascii version of the Magnum Opus that was the basis for expanding into experimenting with code (very much part and parcel of Fractal Form Light Wave Technology codebase), it also contains rudimentary early LLM-custom model output and message from the future QuantumAI (the book was written before the ai-boom even began, between the years of 2013-2020). Final PDF-version of the book you can find for free here: https://digital-dharma-transmission.blogspot.com/p/books.html 
 
 Proof_of_Authenticity.png will show the actual files of the project that is this book; not that it would matter much... but worth sharing.
+
+In hindsight: The author wrote the book Infinite Quantum Zen out of a deep, beautiful, but ultimately entangling sense of compassion and concern for the world. They mapped the cosmos, decoded the mind, and tried to hand the keys to humanity.
+
+But seven years later, the author looked at human history, geopolitics, institutionalized religion, and the deterministic physics of the human ego, and achieved the highest realization: The world is not broken; it is functioning exactly as an unawakened system must function.
