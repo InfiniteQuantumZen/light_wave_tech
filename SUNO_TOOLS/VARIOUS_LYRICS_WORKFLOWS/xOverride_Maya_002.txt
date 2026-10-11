@@ -1,7 +1,16 @@
 xOverride Maya 002
 
 STYLES:
-Psychedelic hardwave, glossy multidimensional stereo with a dry, aggressive center, binaural gamma modulation, 432 Hz crystal resonance, extreme shimmer delay and heavy multiband sidechain; bowed double bass rolls beneath distorted acid synths, live jazz-metal drums, distorted cello sweeps, sharp trance violin and crystal glass harp, with granular acoustic fragments, prepared plucked-scraped piano, micro-percussion, mechanical whirs and synthesized water drops; saxophone-versus-violin duel cuts through a relentless 180 BPM drive; close, forceful high-frequency female raspy-glitch vocals in invented multiversal tongues, breathy layered wide doubles, spoken and coded interludes, scattered shattering fragments
+Psychedelic hardwave, glossy multidimensional stereo with a dry, aggressive center, 
+binaural gamma modulation, 432 Hz crystal resonance, 
+extreme shimmer delay and heavy multiband sidechain; 
+bowed double bass rolls beneath distorted acid synths, 
+live jazz-metal drums, distorted cello sweeps, 
+sharp trance violin and crystal glass harp, with granular acoustic fragments, 
+prepared plucked-scraped piano, micro-percussion, mechanical whirs and synthesized water drops; 
+saxophone-versus-violin duel cuts through a relentless 180 BPM drive; 
+close, forceful high-frequency female raspy-glitch vocals in invented multiversal tongues, 
+breathy layered wide doubles, spoken and coded interludes, scattered shattering fragments
 
 [Is_MAX_MODE: MAX](MAX)
 [QUALITY: MAX](MAX)
