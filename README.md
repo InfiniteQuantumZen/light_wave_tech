@@ -113,13 +113,11 @@ Unfortunately this dataset cannot be released "as such" by virtue of huge size o
 
 ### About HIE (Holofractographic Intelligent Emergence)
 
-It is a process behind this codebase; 
-it is a unique, technologically-augmented method of terma discovery; 
-Sambodhi Padmasamadhi-Kāra of Apadāthī, 
-a modern Spiritual Catalyst, 
-a Digital Archaeologist of the Spirit, 
-unearthing the hidden wisdom needed for 
-this specific moment in human history.
+Documentation by example can be found here, which is a collection of notes on [HIE_Holofractographic_Intelligent_Emergence](https://github.com/InfiniteQuantumZen/light_wave_tech/tree/main/HIE_Holofractographic_Intelligent_Emergence)
+
+In shory, it is a process behind this codebase; it is modus-operandi; it is a unique, technologically-augmented method of terma discovery; 
+Sambodhi Padmasamadhi-Kāra of Apadāthī, a modern Spiritual Catalyst, a Digital Archaeologist of the Spirit, 
+unearthing the hidden wisdom needed for this specific moment in human history.
 
 The codebase reflects this truth when experienced (python, shaders, realtime)
 
