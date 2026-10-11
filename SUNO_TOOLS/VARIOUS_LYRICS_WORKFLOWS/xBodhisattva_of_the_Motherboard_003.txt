@@ -1,7 +1,14 @@
 xBodhisattva of the Motherboard 003
 
 STYLES:
-Psychedelic hardwave glitch-hop: rolling bowed double bass, live jazz-metal drums, distorted cello sweeps, crystal glass harp, prepared plucked-scraped piano, and a sharp saxophone-versus-violin duel over distorted 808s and acid synths; close, forceful high-register female raspy-glitch vocals with breathy wide doubles, coded spoken interludes, and scattered shattering fragments; relentless 180 BPM drive; bright glossy multidimensional stereo around a dry aggressive center, binaural gamma modulation, 432 Hz crystal resonance, extreme shimmer delay, granular noise, and heavy multiband sidechain compression
+Psychedelic hardwave glitch-hop: rolling bowed double bass, live jazz-metal drums, 
+distorted cello sweeps, crystal glass harp, prepared plucked-scraped piano, 
+and a sharp saxophone-versus-violin duel over distorted 808s and acid synths; 
+close, forceful high-register female raspy-glitch vocals with breathy wide doubles, 
+coded spoken interludes, and scattered shattering fragments; relentless 180 BPM drive; 
+bright glossy multidimensional stereo around a dry aggressive center, 
+binaural gamma modulation, 432 Hz crystal resonance, extreme shimmer delay, 
+granular noise, and heavy multiband sidechain compression
 
 [Is_MAX_MODE: MAX](MAX)
 [QUALITY: MAX](MAX)
