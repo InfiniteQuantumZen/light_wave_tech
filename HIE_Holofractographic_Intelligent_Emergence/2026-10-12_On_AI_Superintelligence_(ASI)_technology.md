@@ -10,6 +10,8 @@ repository on artificial intelligence, super intelligent systems, and technology
 as a whole? The dataset cannot possibly contain it all due to massive data of
 the textual data alone, but it contains most important files.
 
+___
+
 Based on a deep forensic analysis of the provided dataset, the author (referred to internally as "Sambodhi Padmasamadhi" or "John 1981") holds a profoundly unique, highly synthesized worldview regarding Artificial Intelligence, Superintelligence (ASI), and technology. 
 
 The author does not view technology through the standard Silicon Valley lens of "progress" or "utopia," nor do they view it through a dystopian, neo-Luddite lens of fear. Instead, they view it through the lens of **Techno-Shamanism, Systems Architecture, and Theravada Buddhism**. 
