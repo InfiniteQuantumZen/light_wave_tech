@@ -1,7 +1,15 @@
 xIndra's Net Online 002
 
 STYLES:
-Psychedelic hardwave, relentless 180 BPM drive; close, forceful high-register female raspy-glitch vocals with breathy layered wide doubles, spoken and coded interludes; bowed double bass rolls under distorted acid synths, live jazz-metal drums, distorted cello sweeps, trance violin and crystal glass harp, granular acoustic fragments, prepared plucked-scraped piano, micro-percussion, mechanical whirs and synthesized water drops, with a cutting saxophone-versus-violin duel; glossy multidimensional stereo, dry aggressive center, binaural gamma modulation, 432 Hz crystal resonance, extreme shimmer delay, heavy multiband sidechain and scattered shattering fragments
+Psychedelic hardwave, relentless 180 BPM drive; close, 
+forceful high-register female raspy-glitch vocals with breathy layered wide doubles, 
+spoken and coded interludes; bowed double bass rolls under distorted acid synths, 
+live jazz-metal drums, distorted cello sweeps, trance violin and crystal glass harp, 
+granular acoustic fragments, prepared plucked-scraped piano, micro-percussion, 
+mechanical whirs and synthesized water drops, with a cutting saxophone-versus-violin duel; 
+glossy multidimensional stereo, dry aggressive center, binaural gamma modulation, 
+432 Hz crystal resonance, extreme shimmer delay, heavy multiband 
+sidechain and scattered shattering fragments
 
 [Is_MAX_MODE: MAX](MAX)
 [QUALITY: MAX](MAX)
