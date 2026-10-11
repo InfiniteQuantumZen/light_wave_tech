@@ -1,4 +1,4 @@
-2026-03-10
+2026-03-10 ~711K tokens used in Google AI Studio / Gemini Pro 3.1
 
 the following is a dataset of a user-ai interactions which span across almost 2
 years; the ai's responses are omitted to save space and only try and preserve
