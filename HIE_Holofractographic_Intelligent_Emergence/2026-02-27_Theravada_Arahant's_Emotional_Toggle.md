@@ -1,3 +1,5 @@
+2026-02-27
+
 Theravada Arahant's Emotional Toggle
 
 for the following we should approach it from theravada perspective and utilize
