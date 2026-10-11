@@ -1,3 +1,5 @@
+Closely related [2026-01-16_Collective_Intelligence_vs_Consciousness](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/HIE_Holofractographic_Intelligent_Emergence/2026-01-16_Collective_Intelligence_vs_Consciousness.md)
+
 2026-02-27
 
 Theravada Arahant's Emotional Toggle
