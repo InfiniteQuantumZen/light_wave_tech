@@ -82,9 +82,9 @@ The code was and is created for the viewing experience of Ultra-Wide 3440x1440, 
 ### Code/Data Structure
 
 Main file (as of writing): 32-bit_STEREO_EQ__light_wave_tech_v1.1.7.py calls shader_manager.py and helper_functions.py (main important files); other used files can be inferred and are included in the repo; the earliest prototypes can be found at the /main/ 
-*   **2024-09-02_early_prototype_vr_imagery_flash.py
-*   **2024-09-19_early_prototype_visual_gamma.py
-*   **2025-10-12_early_prototype.py
+*   2024-09-02_early_prototype_vr_imagery_flash.py
+*   2024-09-19_early_prototype_visual_gamma.py
+*   2025-10-12_early_prototype.py
 
 of which the latter is the one that developed into actual Light Wave Tech. Up-to-date Virtual Reality (SteamVR) version is current R&D project and here you can see what's going on with that: 2.5D_vr_main.py.
 
