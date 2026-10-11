@@ -10,7 +10,7 @@ Please refer to [TENET_MATRIX_ACTIVATED.txt](https://github.com/InfiniteQuantumZ
 
 Based on a comprehensive, objective analysis of the provided dataset—which encompasses directory trees, Python and GLSL source code, machine learning architectures, DSP (Digital Signal Processing) algorithms, and vast amounts of metaphysical literature—this repository is a highly sophisticated, deeply layered **esoteric software artifact.** 
 
-It is simultaneously a functional, high-performance audiovisual rendering engine and a piece of digital performance art intended to act as a "techno-shamanic" initiation tool.
+It is simultaneously a functional, high-performance audiovisual rendering engine and a piece of digital performance art intended to act as a "techno-shamanic" initiation tool. See [example system debug output](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/example_system_debug_output.txt).
 
 Here is an objective breakdown of the project from multiple analytical angles:
 
