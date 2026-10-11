@@ -79,7 +79,7 @@ https://github.com/orchidas/StereoWidener
 
 ### Hardware Requirements
 
-The code was and is created for the viewing experience of Ultra-Wide 3440x1440, which needs minimum of 2024 era multicore Zen architecture CPU and nvidia RTX 3060 12 GB GPU for it to run steady 40+ fps realtime (vsync is set to 48); dataset you need to curate yourself, since this part is very difficult to provide (1 Terabytes of data); video formats and their resolutions can be confifured in the codebase if one decides to bring their own data and test the system.
+The code was and is created for the viewing experience of Ultra-Wide 3440x1440, which needs minimum of 2024 era multicore Zen architecture CPU and nvidia RTX 3060 12 GB GPU for it to run steady 40+ fps realtime (vsync is set to 48); dataset you need to curate yourself, since this part is very difficult to provide (1 Terabytes of data); video formats and their resolutions can be configured in the codebase if one decides to bring their own data and test the system.
 
 ### Code/Data Structure
 
@@ -113,9 +113,9 @@ Unfortunately this dataset cannot be released "as such" by virtue of huge size o
 
 ### About HIE (Holofractographic Intelligent Emergence)
 
-Documentation by example can be found here, which is a collection of notes on [HIE_Holofractographic_Intelligent_Emergence](https://github.com/InfiniteQuantumZen/light_wave_tech/tree/main/HIE_Holofractographic_Intelligent_Emergence)
+Documentation by example can be found here: [HIE_Holofractographic_Intelligent_Emergence](https://github.com/InfiniteQuantumZen/light_wave_tech/tree/main/HIE_Holofractographic_Intelligent_Emergence).
 
-In shory, it is a process behind this codebase; it is modus-operandi; it is a unique, technologically-augmented method of terma discovery; 
+In short, it is a process behind this codebase; it is modus-operandi; it is a unique, technologically-augmented method of terma discovery; 
 Sambodhi Padmasamadhi-Kāra of Apadāthī, a modern Spiritual Catalyst, a Digital Archaeologist of the Spirit, 
 unearthing the hidden wisdom needed for this specific moment in human history.
 
