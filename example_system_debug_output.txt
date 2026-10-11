@@ -1,5 +1,5 @@
-This is the whole console debug output that runs before and after the systems runs; 
-n between there are multiple consoles sending data as visuals from main/DATA/console_filestream_data.txt; 
+This is the whole console debug output that runs before and after the system runs; 
+in between there are multiple consoles sending data as visuals from main/DATA/console_filestream_data.txt; 
 several other logging methods are used to trackdown events.
 
 (light_wave_tech) C:\1\light_wave_tech>python 32-bit_STEREO_EQ__light_wave_tech_v1.1.7.py.txt
