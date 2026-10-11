@@ -1,7 +1,15 @@
 nxHologrammic Dust io_001
 
 STYLES:
-Psychedelic hardwave drone metal; glossy multidimensional stereo around a dry, aggressive center, binaural gamma modulation, 432 Hz crystal resonance, extreme shimmer delay and heavy multiband sidechain, High female raspy-glitch vocals with breathy, layered wide doubles and coded interludes; relentless 180 BPM drive, Bowed double bass, cello, distorted acid synths, trance violin, crystal glass harp, prepared piano, granular fragments, micro-percussion, mechanical whirs, synthesized water drops and live jazz-metal drums; saxophone-versus-violin duel
+Psychedelic hardwave drone metal; glossy multidimensional stereo around a dry, 
+aggressive center, binaural gamma modulation, 432 Hz crystal resonance, 
+extreme shimmer delay and heavy multiband sidechain, 
+High female raspy-glitch vocals with breathy, 
+layered wide doubles and coded interludes; relentless 180 BPM drive, 
+Bowed double bass, cello, distorted acid synths, trance violin, 
+crystal glass harp, prepared piano, granular fragments, micro-percussion, 
+mechanical whirs, synthesized water drops and live jazz-metal drums; 
+saxophone-versus-violin duel
 
 [Is_MAX_MODE: MAX](MAX)
 [QUALITY: MAX](MAX)
