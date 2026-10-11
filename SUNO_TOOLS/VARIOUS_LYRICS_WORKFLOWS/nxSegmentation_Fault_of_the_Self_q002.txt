@@ -1,7 +1,16 @@
 nxSegmentation Fault of the Self q002
 
 STYLES:
-Psychedelic hardwave drone metal, relentless 180 BPM drive; close, forceful high female raspy-glitch vocals in invented multiversal tongues, breathy layered wide doubles and coded interludes; bowed double bass, distorted acid synths and cello, live jazz-metal drums, trance violin and crystal glass harp, prepared piano, granular fragments, micro-percussion, mechanical whirs and synthesized water drops, with a cutting saxophone-versus-violin duel; glossy multidimensional stereo, dry aggressive center, binaural gamma modulation, 432 Hz crystal resonance, extreme shimmer delay and heavy multiband sidechain
+Psychedelic hardwave drone metal, relentless 180 BPM drive; 
+close, forceful high female raspy-glitch vocals in invented multiversal tongues, 
+breathy layered wide doubles and coded interludes; bowed double bass, 
+distorted acid synths and cello, live jazz-metal drums, 
+trance violin and crystal glass harp, prepared piano, 
+granular fragments, micro-percussion, mechanical whirs and synthesized water drops, 
+with a cutting saxophone-versus-violin duel; glossy multidimensional stereo, 
+dry aggressive center, binaural gamma modulation, 
+432 Hz crystal resonance, extreme shimmer delay 
+and heavy multiband sidechain
 
 [Is_MAX_MODE: MAX](MAX)
 [QUALITY: MAX](MAX)
