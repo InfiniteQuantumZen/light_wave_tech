@@ -81,27 +81,27 @@ The code was and is created for the viewing experience of Ultra-Wide 3440x1440, 
 
 ### Code/Data Structure
 
-Main file (as of writing): 32-bit_STEREO_EQ__light_wave_tech_v1.1.7.py calls shader_manager.py and helper_functions.py (main important files); other used files can be inferred and are included in the repo; the earliest prototypes can be found at the /main/ 
-*   2024-09-02_early_prototype_vr_imagery_flash.py
-*   2024-09-19_early_prototype_visual_gamma.py
-*   2025-10-12_early_prototype.py
+Main file (as of writing): [32-bit_STEREO_EQ__light_wave_tech_v1.1.7.py](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/32-bit_STEREO_EQ__light_wave_tech_v1.1.7.py) calls [shader_manager.py](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/shader_manager.py) and [helper_functions.py](**https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/helper_functions.py)** (main important files); other used files can be inferred and are included in the repo; the earliest prototypes can be found at the /main/ 
+*   [2024-09-02_early_prototype_vr_imagery_flash.py](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/2024-09-02_early_prototype_vr_imagery_flash.py)
+*   [2024-09-19_early_prototype_visual_gamma.py](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/2024-09-19_early_prototype_visual_gamma.py)
+*   [2025-10-12_early_prototype.py](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/2025-10-12_early_prototype.py)
 
-of which the latter is the one that developed into actual Light Wave Tech. Up-to-date Virtual Reality (SteamVR) version is current R&D project and here you can see what's going on with that: 2.5D_vr_main.py.
+of which the latter is the one that developed into actual Light Wave Tech. Up-to-date Virtual Reality (SteamVR) version is current R&D project and here you can see what's going on with that: [2.5D_vr_main.py](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/2.5D_vr_main.py).
 
 As the narrative and metaphysical background is integral to this codebase, the following reading materials are provided:
-*   Book_-_Awaken_the_Living_Awareness_Within: This is early ascii version of the Magnum Opus that was the basis for expanding into experimenting with code, it also contains rudimentary early LLM-custom model output and message from the future QuantumAI (the book was written before the ai-boom even began, between the years of 2013-2020). Final PDF-version of the book you can find for free here: https://digital-dharma-transmission.blogspot.com/p/books.html
-*   Book_-_ELARA_NARRATIVE_STORY: This is early ascii version of Elara Narrative driven story (from 2024).
-*   Book_-_GALACTIC_CRYSTALLIZED: This is ascii version (in its early stages) of a book that deals with similar aspects as the Elara Narrative, called Awakening the Infinite: A Seeker's Transformative Journey (from 2024).
+*   [Book_-_Awaken_the_Living_Awareness_Within](https://github.com/InfiniteQuantumZen/light_wave_tech/tree/main/Book_-_Awaken_the_Living_Awareness_Within): This is early ascii version of the Magnum Opus that was the basis for expanding into experimenting with code, it also contains rudimentary early LLM-custom model output and message from the future QuantumAI (the book was written before the ai-boom even began, between the years of 2013-2020). Final PDF-version of the book you can find for free here: https://digital-dharma-transmission.blogspot.com/p/books.html
+*   [Book_-_ELARA_NARRATIVE_STORY](https://github.com/InfiniteQuantumZen/light_wave_tech/tree/main/Book_-_ELARA_NARRATIVE_STORY): This is early ascii version of Elara Narrative driven story (from 2024).
+*   [Book_-_GALACTIC_CRYSTALLIZED](https://github.com/InfiniteQuantumZen/light_wave_tech/tree/main/Book_-_GALACTIC_CRYSTALLIZED): This is ascii version (in its early stages) of a book that deals with similar aspects as the Elara Narrative, called Awakening the Infinite: A Seeker's Transformative Journey (from 2024).
 
-As for the code/data structure /NeuralTrainer is used to select and influence the below data sources:
+As for the code/data structure [/NeuralTrainer](https://github.com/InfiniteQuantumZen/light_wave_tech/tree/main/NeuralTrainer) is used to select and influence the below data sources:
 
 *   IMAGE: Tools used: Automatic1111: SDXL, ComfyUI: Krea2; art style: holofractal, psychedelic, spiritual, sci-fi
 *   VIDEO: vertical/horizontal/square formats (HD); tools used: Cloud: GROK Imagine Video, Local: WAN 2.2, Minimax H3 via ComfyUI
 *   MUSIC: 32-bit/48 khz SUNO v5/v6; example workflow can be found at SUNO_EXAMPLE_WORKFLOW.txt and example songs and styles used with the system can be found here: https://suno.com/@twinklinggigue0155
-*   SYNC: HoloFractal transform tools (fourier) can be found /TOOLS/PfreqReact also Quantum Eigen Value nudge used in TOOLS/precalc_neural
+*   SYNC: HoloFractal transform tools (fourier) can be found [/TOOLS/PfreqReact](https://github.com/InfiniteQuantumZen/light_wave_tech/tree/main/TOOLS/PfreqReact) also Quantum Eigen Value nudge used in [TOOLS/precalc_neural](https://github.com/InfiniteQuantumZen/light_wave_tech/tree/main/TOOLS/precalc_neural)
 *   DSP: Included in the main file, uses EQ and StereoWidener techniques such as Butterworth, Linkwitz-Riley, Orchisama Das orchidas
 *   SHADERS: most of the shaders are public domain shadertoy-like things adapted to work with the system; those can be found DATA/shaders/music_video/v2
-*   TIMELINE: examples can be found /DATA/timelines
+*   TIMELINE: examples can be found [/DATA/timelines](https://github.com/InfiniteQuantumZen/light_wave_tech/tree/main/DATA/timelines)
 
 ### About Dataset
 
