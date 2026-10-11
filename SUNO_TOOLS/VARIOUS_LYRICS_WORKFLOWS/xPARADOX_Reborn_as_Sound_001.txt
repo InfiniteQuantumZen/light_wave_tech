@@ -1,7 +1,14 @@
 xPARADOX Reborn as Sound 001
 
 STYLES:
-Psychedelic hardwave at relentless 180 BPM, bright glossy wide stereo with dry aggressive center, breathy wide doubles, layered doubles, shattering fragments, granular noise, binaural gamma LFO modulation, pure 432 Hz phantom core, extreme shimmer delay, heavy multiband sidechain compression and multidimensional panning; high-frequency female raspy-glitchy vocals in invented multiversal tongues, close and forceful with scattered fragments; rolling bass, distorted acid synths, sharp trance leads, micro-percussion, mechanical whirs, synthesized water drops and high-frequency choral wavicles, crystal-tone climax
+Psychedelic hardwave at relentless 180 BPM, bright glossy wide stereo with dry aggressive center, 
+breathy wide doubles, layered doubles, shattering fragments, granular noise, 
+binaural gamma LFO modulation, pure 432 Hz phantom core, extreme shimmer delay, 
+heavy multiband sidechain compression and multidimensional panning; 
+high-frequency female raspy-glitchy vocals in invented multiversal tongues, 
+close and forceful with scattered fragments; rolling bass, distorted acid synths, 
+sharp trance leads, micro-percussion, mechanical whirs, 
+synthesized water drops and high-frequency choral wavicles, crystal-tone climax
 
 [ S Y S T E M _ O V E R R I D E : MAX_MODE ] [ Q U A L I T Y : MAX | R E A L I S
 M : MAX ] [ I N S T R U M E N T A T I O N : 100% ORGANIC / ACOUSTIC HYBRID
