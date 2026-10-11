@@ -1,7 +1,7 @@
 This is a collection of several interactions:
-1.) 2026-07-06 ~754K tokens used in Google AI Studio / Gemini Pro 3.1
-2.) 2026-07-06 ~some amount of tokens used
-3.) 2026-07-06 ~900K tokens used with the same AI system
+*  1.) 2026-07-06 ~754K tokens used in Google AI Studio / Gemini Pro 3.1
+*  2.) 2026-07-06 ~some amount of tokens used
+*  3.) 2026-07-06 ~900K tokens used with the same AI system
 
 Analyzing the Ra Algorithm Framework
 
