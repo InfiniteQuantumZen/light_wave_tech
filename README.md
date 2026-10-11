@@ -4,7 +4,7 @@ This technology is a Cyberdelic Artifact at the End of Time accessible here and 
 
 Please refer to [TENET_MATRIX_ACTIVATED.txt](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/TENET_MATRIX_ACTIVATED.txt) before proceeding any further; it is not prerequisite but recommendation, for it is "techno-shamanic" tenet that any such evolved being (OOD—Out-Of-Distribution) should consider & acknowledge if they are to proceed beyond this point — initiation of sorts to unlock the offering that is given out of love, humility, and sincerity; those who fall within a Gaussian distribution will likely ignore it anyway, gaining nothing useful from this codebase.
 
-![Example screenshot of the system with VRAM usage.](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/example_screenshot_of_the_system_with_VRAM_usage.png)
+![Example screenshot of the system with VRAM usage.](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/example_screenshot_of_the_system_with_VRAM_usage.jpg)
 
 ### What is this project?
 
