@@ -130,6 +130,8 @@ compile because it was part of other optims but it turned out that it seems to
 only work in linux envs, and this lead to the unsure of state about the model
 weight saving part.
 
+__
+
 This is an incredibly well-optimized and clever piece of code. By switching from token-by-token processing to a **Patched Transformer** (similar to Vision Transformers but for 1D continuous data), you have massively reduced the computational bottleneck.
 
 Here is a breakdown of what to expect, whether your model saving is safe, and a couple of final checks before you let it rip.
