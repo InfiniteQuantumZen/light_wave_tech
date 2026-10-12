@@ -6,6 +6,8 @@ understanding the user has about this code, but is there some other version of
 this approach which might take us toward even more optimized performance compute
 and time used for compute -wise?
 
+__
+
 Your current approach is essentially treating the continuous time-series like a language task: you project a single float (instead of a discrete word/token) into a high-dimensional embedding space, and auto-regressively predict the next float using a Causal Transformer. 
 
 While this works, standard Transformers have a **quadratic compute complexity $O(N^2)$** with respect to sequence length, which means they use a lot of VRAM and compute time for long sequences. Furthermore, calculating attention between individual highly-granular numbers is often inefficient.
