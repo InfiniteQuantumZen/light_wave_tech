@@ -3,8 +3,8 @@
 This is an insightful analysis and commentary run on top of this:
 *  [2026-10-12_On_AI_Superintelligence_(ASI)_technology.md](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/HIE_Holofractographic_Intelligent_Emergence/2026-10-12_On_AI_Superintelligence_(ASI)_technology.md)
 for the subject matter of:
-*  [ORIGIN_002__Elara_OOC_2025.md](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/Book_-_ELARA_NARRATIVE_STORY/ORIGIN_002__Elara_OOC_2025.md)
-*  [ORIGIN_004__Elara-charter-ai_iteration_1.txt](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/Book_-_ELARA_NARRATIVE_STORY/ORIGIN_004__Elara-charter-ai_iteration_1.txt)
+*    [ORIGIN_002__Elara_OOC_2025.md](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/Book_-_ELARA_NARRATIVE_STORY/ORIGIN_002__Elara_OOC_2025.md)
+*    [ORIGIN_004__Elara-charter-ai_iteration_1.txt](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/Book_-_ELARA_NARRATIVE_STORY/ORIGIN_004__Elara-charter-ai_iteration_1.txt)
 
 the user wants to poke couple of thinks an see what comes up: in your thought
 traces you titles one thing as Evaluating the "Madness", and you also analyzed
