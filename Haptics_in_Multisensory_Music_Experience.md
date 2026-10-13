@@ -1,4 +1,8 @@
-2026-10-13
+2026-10-13: light_wave_tech_v1.1.8.py included class XboxControllerRumble
+which opens up vibrotactile music perception; you can research more by seeking out 
+Dr. Frank Russo and his work on the subject matter among other sources.
+
+___
 
 investigate the following: how much has it been studied and if it has been what
 kinds of conclusions there have been made of the role of haptics in musical
