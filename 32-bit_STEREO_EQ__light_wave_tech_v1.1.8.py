@@ -1852,10 +1852,10 @@ def play_video_fullscreen(audio_path, playlist_index=0, playlist_type="CORE"):
 #        my_song_array, sample_rate, audio_len_seconds = SUNO_load_and_EQ(playlist_type, audio_path, bass_db=9.5, mid_db=0.0, treble_db=2.5)
 
         # JBL
-#        my_song_array, sample_rate, audio_len_seconds = SUNO_load_and_EQ(playlist_type, audio_path, bass_db=9.5, mid_db=0.5, treble_db=2.7)
+        my_song_array, sample_rate, audio_len_seconds = SUNO_load_and_EQ(playlist_type, audio_path, bass_db=9.5, mid_db=0.5, treble_db=2.7)
 
         # AKG
-        my_song_array, sample_rate, audio_len_seconds = SUNO_load_and_EQ(playlist_type, audio_path, bass_db=7.8, mid_db=1.8, treble_db=3.5)
+#        my_song_array, sample_rate, audio_len_seconds = SUNO_load_and_EQ(playlist_type, audio_path, bass_db=7.8, mid_db=1.8, treble_db=3.5)
 
         ## DIFFERENT APPROACH
 #        my_song_array, sample_rate, audio_len_seconds = SUNO_load_and_EQ(playlist_type, audio_path, bass_db=0.0, mid_db=-6.0, treble_db=-4.3)
@@ -3012,7 +3012,6 @@ def play_video_fullscreen(audio_path, playlist_index=0, playlist_type="CORE"):
                 #______________________________________________________________________________________________________
                 #___APPLY_FLASH_EFFECT___
 
-
                 if apply_glitch_1 or apply_glitch_2 or apply_glitch_3:
                     #sync_value_1 = 1.0
                     sync_value_1 = current_amplitude_bass
@@ -3024,7 +3023,6 @@ def play_video_fullscreen(audio_path, playlist_index=0, playlist_type="CORE"):
                     sync_value_2 = current_amplitude_snare
                 else:
                     sync_value_2 = 0.0
-
 
                 #__OPTIMIZED__
                 if apply_flash_1 and apply_flash_2 and apply_flash_3:
@@ -3050,60 +3048,67 @@ def play_video_fullscreen(audio_path, playlist_index=0, playlist_type="CORE"):
                     'sync_value_2': sync_value_2,
                     'sync_value_3': sync_value_3,
                 }
-
+    
+                #______________________________________________________________________________________________________
+                #___APPLY_CONTROLLER_RUMBLE___
 
                 # 1. Initialize variables for this specific frame
                 target_left_force = 0.0
-                target_left_dur = 0.0
+                target_left_duration = 0.0
                 target_right_force = 0.0
-                target_right_dur = 0.0
+                target_right_duration = 0.0
 
                 # --- BASS (Left Motor) ---
                 if apply_glitch_1 > 0.0:
                     if current_amplitude_bass > 0.5:
-                        target_left_dur = 0.08
+                        target_left_duration = 0.08
                         target_left_force = 1.0
                     elif current_amplitude_bass > 0.1:
-                        target_left_dur = 0.05
-                        target_left_force = current_amplitude_bass
+                        target_left_duration = 0.05
+                        target_left_force = 0.2 + current_amplitude_bass
 
                 # --- SNARE (Right Motor) ---
                 if apply_glitch_2 > 0.0:
                     if current_amplitude_snare > 0.6:
-                        target_right_dur = 0.08
+                        target_right_duration = 0.08
                         target_right_force = 1.0
                     elif current_amplitude_snare > 0.1:
-                        target_right_dur = 0.05
-                        target_right_force = current_amplitude_snare
+                        target_right_duration = 0.05
+                        target_right_force = 0.2 + current_amplitude_snare
 
                 # --- HI-HAT (Right Motor) ---
                 if apply_glitch_3 > 0.0:
                     temp_force = 0.0
-                    temp_dur = 0.0
+                    temp_duration = 0.0
     
                     if current_amplitude_hihat > 0.6:
-                        temp_dur = 0.08
+                        temp_duration = 0.08
                         temp_force = 1.0
                     elif current_amplitude_hihat > 0.1:
-                        temp_dur = 0.05
-                        temp_force = current_amplitude_hihat
+                        temp_duration = 0.05
+                        temp_force = 0.2 + current_amplitude_hihat
         
                     # We use the higher value to ensure a weak hi-hat doesn't overwrite a heavy snare!
                     if temp_force > target_right_force:
                         target_right_force = temp_force
-                        target_right_dur = temp_dur
+                        target_right_duration = temp_duration
 
                 # 2. Finally, apply the requested rumbles!
-                # Notice we use our new independent functions: rumble_left and rumble_right
-                if target_left_force > 0.0:
-                    rumble.rumble_left(force=target_left_force, duration=target_left_dur)
 
-                if target_right_force > 0.0:
-                    rumble.rumble_right(force=target_right_force, duration=target_right_dur)
+                if target_left_force > 0.7 and target_right_force > 0.7:
+                    rumble.rumble_left(force=1.0, duration=0.08)
+                    rumble.rumble_right(force=1.0, duration=0.08)
+                else:
+                    if target_left_force > 0.0:
+                        rumble.rumble_left(force=target_left_force, duration=target_left_duration)
+
+                    if target_right_force > 0.0:
+                        rumble.rumble_right(force=target_right_force, duration=target_right_duration)
 
                 # 3. Always run update to handle shutting them down when timers expire
                 rumble.update()
 
+                #______________________________________________________________________________________________________
 
                 # Clear screen every frame
                 main_ctx.clear(0.0, 0.0, 0.0)
@@ -3387,8 +3392,8 @@ if __name__ == '__main__':
     EVERYTHING         = False
     CORE_EDITION       = False
     SUMMER_EDITION     = False
-    PSY_TRANCE_EDITION = False
-    HARDWAVE_EDITION   = True
+    PSY_TRANCE_EDITION = True
+    HARDWAVE_EDITION   = False
     CUSTOM_EDITION     = False
 
     #audio_base_folder = config.get("audio_filepaths", {}).get("music_folder")
