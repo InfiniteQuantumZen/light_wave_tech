@@ -2,6 +2,67 @@
 which opens up vibrotactile music perception; you can research more by seeking out 
 Dr. Frank Russo and his work on the subject matter among other sources.
 
+Before presenting the inquiry notes the following calibration in the code seems
+to work quite nicely:
+
+                #___APPLY_CONTROLLER_RUMBLE___
+
+                # 1. Initialize variables for this specific frame
+                target_left_force = 0.0
+                target_left_duration = 0.0
+                target_right_force = 0.0
+                target_right_duration = 0.0
+
+                # --- BASS (Left Motor) ---
+                if apply_glitch_1 > 0.0:
+                    if current_amplitude_bass > 0.5:
+                        target_left_duration = 0.08
+                        target_left_force = 1.0
+                    elif current_amplitude_bass > 0.1:
+                        target_left_duration = 0.05
+                        target_left_force = 0.2 + current_amplitude_bass
+
+                # --- SNARE (Right Motor) ---
+                if apply_glitch_2 > 0.0:
+                    if current_amplitude_snare > 0.6:
+                        target_right_duration = 0.08
+                        target_right_force = 1.0
+                    elif current_amplitude_snare > 0.1:
+                        target_right_duration = 0.05
+                        target_right_force = 0.2 + current_amplitude_snare
+
+                # --- HI-HAT (Right Motor) ---
+                if apply_glitch_3 > 0.0:
+                    temp_force = 0.0
+                    temp_duration = 0.0
+    
+                    if current_amplitude_hihat > 0.6:
+                        temp_duration = 0.08
+                        temp_force = 1.0
+                    elif current_amplitude_hihat > 0.1:
+                        temp_duration = 0.05
+                        temp_force = 0.2 + current_amplitude_hihat
+        
+                    # We use the higher value to ensure a weak hi-hat doesn't overwrite a heavy snare!
+                    if temp_force > target_right_force:
+                        target_right_force = temp_force
+                        target_right_duration = temp_duration
+
+                # 2. Finally, apply the requested rumbles!
+
+                if target_left_force > 0.7 and target_right_force > 0.7:
+                    rumble.rumble_left(force=1.0, duration=0.08)
+                    rumble.rumble_right(force=1.0, duration=0.08)
+                else:
+                    if target_left_force > 0.0:
+                        rumble.rumble_left(force=target_left_force, duration=target_left_duration)
+
+                    if target_right_force > 0.0:
+                        rumble.rumble_right(force=target_right_force, duration=target_right_duration)
+
+                # 3. Always run update to handle shutting them down when timers expire
+                rumble.update()
+
 ___
 
 investigate the following: how much has it been studied and if it has been what
