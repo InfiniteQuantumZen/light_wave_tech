@@ -9,6 +9,14 @@ How the dataset and the signal came to be and evolves:
 *  6.) TBD: Even bigger model evolved from the #5 with intended settings batch_size=1024, patch_size=16, seq_length=4096, embed_size=1024, num_heads=8, num_layers=8 and with ~200 MB text-file of integers.
 *  7.) TBD: If interest continues, maybe State Space Models (Mamba)
 
+2026-10-13: prior running the LOCAL_v5_OPTIMIZED_trainer, the dataset will go through the following treatment:
+*  Reading 20K Json files each containing 5000 INT values = ~100K INTS
+*  Looping through all of them, applying fibonacci harmonic interval 
+*  fingerprinting of TOP indices signal, splitting back to 5000 INT JSONS
+*  for further imprinting by SUNO hihat amplitude (this time after bass is already done)
+
+___
+
 In the /early_prototype_qbit_montecarlo_random_walk you can find files that are 
 a selection of legacy prototypes that were experimentations of QBITS from Quantum fluctuations 
 (the user had over 5 million stored from their experimentations from 2014-2017) from Quantum computing - 
