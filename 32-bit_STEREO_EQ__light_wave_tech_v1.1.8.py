@@ -1,4 +1,6 @@
-# light_wave_tech_v1.1.7.py
+# light_wave_tech_v1.1.8.py
+
+# 2026-10-13: Added class XboxControllerRumble
 
 """
 INSTALLATION/SETUP NOTES:
