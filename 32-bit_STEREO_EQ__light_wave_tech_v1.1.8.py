@@ -1,6 +1,12 @@
 # light_wave_tech_v1.1.8.py
 
-# 2026-10-13: Added class XboxControllerRumble
+# 2026-10-13: 
+# Added class XboxControllerRumble which opens up vibrotactile music perception
+# see Haptics_in_Multisensory_Music_Experience_(vibrotactile).md
+#
+# Added ROG_Theta_71_SUNO_load_and_EQ 
+# data passed onward like so: sd.play(my_song_array, samplerate=sample_rate, mapping=[1, 2, 3, 4, 5, 6, 7, 8])
+# 
 
 """
 INSTALLATION/SETUP NOTES:
@@ -125,6 +131,122 @@ def create_lowpass_filter(cutoff, fs, order=4):
 from stereo_widener.velvet import *
 from stereo_widener.allpass import *
 from stereo_widener.widener import *
+
+def ROG_Theta_71_SUNO_load_and_EQ(playlist_type, audio_path, target_lufs=-13.0, bass_db=0.0, mid_db=0.0, treble_db=0.0):
+    # 1. Read the audio
+    data, fs = sf.read(audio_path)
+    if data.ndim == 1:
+        data = np.expand_dims(data, axis=1)
+        
+    # 2. Measure the current LUFS
+    meter = pyln.Meter(fs)
+    current_loudness = meter.integrated_loudness(data)
+
+    # This finds the volume variance and normalizes it.
+    delta_db = target_lufs - current_loudness
+
+    # Adjust your predefined EQ values with the delta
+    adjusted_bass_db = bass_db + delta_db
+    adjusted_mid_db = mid_db + delta_db
+    adjusted_treble_db = treble_db + delta_db
+
+    print(f"Original LUFS: {current_loudness:.2f} | Delta applied: {delta_db:+.2f} dB")
+    print(f"New EQ -> Bass: {adjusted_bass_db:.2f}, Mid: {adjusted_mid_db:.2f}, Treble: {adjusted_treble_db:.2f}")
+
+    log_file = "LOG_LUFs.txt"
+    with open(log_file, "a", encoding="utf-8") as f:
+        f.write(f"Original: {current_loudness:.2f} LUFS | Delta: {delta_db:+.2f} dB | {audio_path}\n")
+
+    # 2. Design crossover filters (2nd order Butterworth)
+    bass_freq = 250.0    # Adjust to target your specific bass threshold
+    treble_freq = 4000.0 # Adjust for high-end sparkle
+    
+    sos_bass = butter(2, bass_freq, btype='low', fs=fs, output='sos')
+    sos_mid = butter(2, [bass_freq, treble_freq], btype='bandpass', fs=fs, output='sos')
+    sos_treble = butter(2, treble_freq, btype='high', fs=fs, output='sos')
+    
+    print("Applying EQ filtering...")
+    # 3. Apply zero-phase filtering (axis=0 keeps stereo channels intact)
+    # sosfiltfilt applies the filter forward and backward, creating a 4th-order Linkwitz-Riley response
+    bass_sig = sosfiltfilt(sos_bass, data, axis=0)
+    mid_sig = sosfiltfilt(sos_mid, data, axis=0)
+    treble_sig = sosfiltfilt(sos_treble, data, axis=0)
+
+    # 4. Convert dB adjustments to linear gain multipliers
+    gain_bass   = 10 ** (bass_db / 20)
+    gain_mid    = 10 ** (mid_db / 20)
+    gain_treble = 10 ** (treble_db / 20)
+
+    eq_data = (bass_sig * gain_bass) + (mid_sig * gain_mid) + (treble_sig * gain_treble)
+
+    if 1: #playlist_type == "CORE" or playlist_type == "SUMMER":
+        decorr_type = DecorrelationType.ALLPASS
+        #beta_init = 0.50 # >> V5 | V6: 0.07-0.10 IF NEED BE
+        beta_init = 0.15
+        stereo_widener = StereoWidenerBroadband(treble_sig, fs, decorr_type, beta_init)
+        treble_sig = stereo_widener.process()
+ 
+        # NOT_SURE_IF_THIS_BRINGS_ANYTHING_EXTRA_SINCE_EQ_ALREADY
+        #stereo_widener = StereoWidenerBroadband(mid_sig, fs, decorr_type, beta_init)
+        #mid_sig = stereo_widener.process()
+    
+    # 5. Mix the adjusted bands back together
+    eq_data_stereo_widener = (bass_sig * gain_bass) + (mid_sig * gain_mid) + (treble_sig * gain_treble)
+    
+    # 6. Prevent clipping (BUG FIX: Check and scale BOTH arrays)
+    # We target 0.99 (-0.1 dBFS) to safely prevent intersample peaking
+    target_max = 0.99 
+    
+    max_val_standard = np.max(np.abs(eq_data))
+    max_val_widened = np.max(np.abs(eq_data_stereo_widener))
+    global_max = max(max_val_standard, max_val_widened) # Find highest peak across everything
+
+    if global_max > target_max:
+        scale_factor = target_max / global_max
+        # Apply the reduction to both sets of audio!
+        eq_data = eq_data * scale_factor
+        eq_data_stereo_widener = eq_data_stereo_widener * scale_factor
+        
+        reduction_db = 20 * np.log10(scale_factor)
+        print(f"Auto-normalized to prevent clipping (reduced by {abs(reduction_db):.2f} dB)")
+        with open("LOG_AUTO_NORMALs.txt", "a", encoding="utf-8") as f:
+            f.write(f"Reduced by {abs(reduction_db):.2f} dB (Peak was {global_max:.2f}): {audio_path}\n")
+
+    
+    # 3. Build the 8-channel array
+    # sounddevice expects float32 arrays natively, which is great!
+    padded_audio = np.zeros((eq_data.shape[0], 8), dtype=np.float32)
+  
+    left  = eq_data[:, 0]
+    right = eq_data[:, 1]
+    mono = (left + right) * 0.5
+
+    left_surround  = eq_data_stereo_widener[:, 0]
+    right_surround = eq_data_stereo_widener[:, 1]
+
+    # Generate the filter coefficients for 120Hz at whatever the sample rate is (e.g., 48000)
+    mono_for_sub = (left + right) * 0.5
+    b, a = create_lowpass_filter(cutoff=140.0, fs=fs, order=4)
+
+    # Apply the filter mathematically to the mono signal
+    lfe_filtered = lfilter(b, a, mono_for_sub)
+    
+    # Map to 7.1 Standard Windows Layout
+    padded_audio[:, 0] = left   	# Front Left
+    padded_audio[:, 1] = right  	# Front Right
+
+    padded_audio[:, 2] = mono   	# Center
+    padded_audio[:, 3] = lfe_filtered   # Subwoofer (LFE)
+
+    padded_audio[:, 4] = left_surround 	# Rear Left
+    padded_audio[:, 5] = right_surround	# Rear Right
+
+    padded_audio[:, 6] = left   	# Side Left
+    padded_audio[:, 7] = right  	# Side Right
+    
+    # Return the array, the sample rate, and the length of the audio in seconds
+    audio_length_seconds = len(padded_audio) / fs
+    return padded_audio, fs, audio_length_seconds
 
 def SUNO_load_and_EQ(playlist_type, audio_path, target_lufs=-13.0, bass_db=0.0, mid_db=0.0, treble_db=0.0):
     # 1. Read the 32-bit WAV as a 32-bit float array
