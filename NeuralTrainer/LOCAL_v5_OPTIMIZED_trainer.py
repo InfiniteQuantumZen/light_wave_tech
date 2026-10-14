@@ -1,3 +1,5 @@
+# ONLY DIFFERENCE BETWEEN THIS AND RUNPOD IS THIS model = torch.compile(model) AND THE COMMENTS
+
 # torch.load thing issue: https://aistudio.google.com/prompts/1zrRuUEOFWdsDBkQP4T2R8AAIYc8md8b1
 
 # conda create -n llm-trainer python=3.9.12
