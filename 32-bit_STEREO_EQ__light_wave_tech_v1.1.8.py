@@ -2,11 +2,12 @@
 
 # 2026-10-13: 
 # Added class XboxControllerRumble which opens up vibrotactile music perception
-# see Haptics_in_Multisensory_Music_Experience_(vibrotactile).md
+# Now supports 2 controllers simultaneously
+# See Haptics_in_Multisensory_Music_Experience_(vibrotactile).md
 #
 # Added ROG_Theta_71_SUNO_load_and_EQ 
-# data passed onward like so: sd.play(my_song_array, samplerate=sample_rate, mapping=[1, 2, 3, 4, 5, 6, 7, 8])
-# 
+# Data passed onward like so: sd.play(my_song_array, samplerate=sample_rate, mapping=[1, 2, 3, 4, 5, 6, 7, 8])
+
 
 """
 INSTALLATION/SETUP NOTES:
@@ -29,10 +30,6 @@ CREATING FROM SCRATCH... not of concern here now.
 >>> >> USE THIS: 
 conda activate light_wave_tech
 
-FOR AUDIO IN PREMIERE:
-  - STEREO EXPANDER 200
-  ^^^^^^^^^^^^^^^^^^^^^
-  * 2026-10-10: THIS IS NO LONGER NECESSARY AS stereo_widener IMPLEMENTED
 
 IMPROVEMENT(S) / NOTES:
 -----------------------
@@ -49,30 +46,10 @@ https://aistudio.google.com/app/prompts/1xbN7o_yQlDu5zltZ7yHcbmWY8T-ZMTC3
 2.) IF "black screen" in some shader effect, most likely time issue
 in such case add this for replacement: float localTime = mod(iTime, 6.0);
 
-3.) TRY THIS FOR OUTRO BG:
-      "shader_effect_file": "DATA/shaders/music_video/v2/supercluster.txt"
-       ^^^^^^^^^^^^^^^^^^^^
-       * 2026-10-10: ALREADY USING AS INTRO 
-       * LOADING SCREEN "Transmission begins in nnn"
-
-4.) ON LINES 1488 and 2424 TRY DIFFERENT VALUES FOR DIFFERENT SONGS
-ADD THIS TO audio_vars and here
-audiopath, preset = "", "high"
-normal, high, low, 
-^^^^^^^^^^^^^^^^^^
-2026-10-10: NOT NECESSARY ANYMORE AS THE "lag"
-WAS THE MAIN ISSUE HERE, COMPENSATED WITH
-AV_SYNC_OFFSET = -0.117 AND moving to using 
-SoundDevice + sd.default.latency = 0.117
-
-5.) 2026-10-10 REMOVE AFOREMENTIONED NOTES IN LATER VERSIONS
-    AND CLEAN UP THE CODE, REMNANTS OF OBSOLETE THINGS
-    SUCH AS THIS WILL BE "__2026-04-28_EXPERIMENT" 
-    >> 120K NEURAL TRAINING/MODEL
-
-6.) "video_glitch_matrix.txt
-    ^^^^^^^^^^^^^^^^^^^^^^^^
-    2026-10-10: NOT SURE WHAT THIS EVEN WAS
+# >>> GPU COMPOSITION michael. AI STUDIO
+# >>> https://aistudio.google.com/u/1/prompts/1szFxnGrEKhjbHy9xREAlQp6EapdCLKcN
+# >>> VR R&D michael. AI STUDIO
+# >>> https://aistudio.google.com/u/1/prompts/1ShDZkQ3-S555cigxgHORuEv2hQSyMzZX
 
 """
 
@@ -108,6 +85,9 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import threading
 import queue
 
+#______________________________________________________________________________________________________
+#___AUDIO_DSP__________________________
+
 from scipy.signal import butter, lfilter, sosfiltfilt
 import pyloudnorm as pyln
 import pygame.sndarray
@@ -131,6 +111,92 @@ def create_lowpass_filter(cutoff, fs, order=4):
 from stereo_widener.velvet import *
 from stereo_widener.allpass import *
 from stereo_widener.widener import *
+
+def SUNO_load_and_EQ(playlist_type, audio_path, target_lufs=-13.0, bass_db=0.0, mid_db=0.0, treble_db=0.0):
+    # 1. Read the 32-bit WAV as a 32-bit float array
+    # float32 gives 144+ dB of dynamic range, perfect for DSP and WASAPI
+    data, fs = sf.read(audio_path, dtype='float32')
+
+    # 2. Measure the current LUFS
+    meter = pyln.Meter(fs)
+    current_loudness = meter.integrated_loudness(data)
+
+    # This finds the volume variance and normalizes it.
+    delta_db = target_lufs - current_loudness
+
+    # Adjust your predefined EQ values with the delta
+    adjusted_bass_db = bass_db + delta_db
+    adjusted_mid_db = mid_db + delta_db
+    adjusted_treble_db = treble_db + delta_db
+
+    print(f"Original LUFS: {current_loudness:.2f} | Delta applied: {delta_db:+.2f} dB")
+    print(f"New EQ -> Bass: {adjusted_bass_db:.2f}, Mid: {adjusted_mid_db:.2f}, Treble: {adjusted_treble_db:.2f}")
+
+    log_file = "LOG_LUFs.txt"
+    with open(log_file, "a", encoding="utf-8") as f:
+        f.write(f"Original: {current_loudness:.2f} LUFS | Delta: {delta_db:+.2f} dB | {audio_path}\n")
+    
+    # 2. Design crossover filters (2nd order Butterworth)
+    bass_freq = 170 #250.0    # Adjust to target your specific bass threshold
+    treble_freq = 4000.0 # Adjust for high-end sparkle
+    
+    sos_bass = butter(2, bass_freq, btype='low', fs=fs, output='sos')
+    sos_mid = butter(2, [bass_freq, treble_freq], btype='bandpass', fs=fs, output='sos')
+    sos_treble = butter(2, treble_freq, btype='high', fs=fs, output='sos')
+    
+    # 3. Apply zero-phase filtering (axis=0 keeps stereo channels intact)
+    print("Applying EQ filtering...")
+
+    # sosfiltfilt applies the filter forward and backward, creating a 4th-order Linkwitz-Riley response
+    bass_sig = sosfiltfilt(sos_bass, data, axis=0)
+    mid_sig = sosfiltfilt(sos_mid, data, axis=0)
+    treble_sig = sosfiltfilt(sos_treble, data, axis=0)
+
+    if playlist_type == "CORE" or playlist_type == "SUMMER":
+        decorr_type = DecorrelationType.ALLPASS
+        beta_init = 0.40 # >> V5 | V6: 0.07-0.10 IF NEED BE
+        stereo_widener = StereoWidenerBroadband(treble_sig, fs, decorr_type, beta_init)
+        treble_sig = stereo_widener.process()
+ 
+        # NOT_SURE_IF_THIS_BRINGS_ANYTHING_EXTRA_SINCE_EQ_ALREADY
+        beta_init = 0.20 # >> V5 | V6: 0.07-0.10 IF NEED BE
+        stereo_widener = StereoWidenerBroadband(mid_sig, fs, decorr_type, beta_init)
+        mid_sig = stereo_widener.process()
+    
+    # 4. Convert dB adjustments to linear gain multipliers
+    gain_bass = 10 ** (bass_db / 20)
+    gain_mid = 10 ** (mid_db / 20)
+    gain_treble = 10 ** (treble_db / 20)
+    
+    # 5. Mix the adjusted bands back together
+    eq_data = (bass_sig * gain_bass) + (mid_sig * gain_mid) + (treble_sig * gain_treble)
+
+    # 6. Prevent clipping
+    # We target 0.99 (-0.1 dBFS) to safely prevent intersample peaking
+    target_max = 0.99
+    max_val = np.max(np.abs(eq_data))
+
+    if max_val > target_max:
+        scale_factor = target_max / max_val
+        eq_data = eq_data * scale_factor
+
+        reduction_db = 20 * np.log10(scale_factor)
+        print(f"Auto-normalized to prevent clipping (reduced by {abs(reduction_db):.2f} dB)")
+        with open("LOG_AUTO_NORMALs.txt", "a", encoding="utf-8") as f:
+            f.write(f"Reduced by {abs(reduction_db):.2f} dB (Peak was {max_val:.2f}): {audio_path}\n")
+
+    # 2. Measure the current LUFS
+    meter = pyln.Meter(fs)
+    current_loudness = meter.integrated_loudness(eq_data)
+    normalized_eq_data = pyln.normalize.loudness(eq_data, current_loudness, target_lufs)
+    delta_db = target_lufs - current_loudness
+    print(f"delta_db: {abs(delta_db):.2f} dB")
+    
+    audio_length_seconds = len(data) / fs
+    return normalized_eq_data, fs, audio_length_seconds
+#    return eq_data, fs, audio_length_seconds
+
+# >>> SAVE OUTPUT TO FILE infinite.quantum: https://aistudio.google.com/prompts/1ecQwH8X1aWJp8nBW1EQUZYtaKcJRC_AZ
 
 def ROG_Theta_71_SUNO_load_and_EQ(playlist_type, audio_path, target_lufs=-13.0, bass_db=0.0, mid_db=0.0, treble_db=0.0):
     # 1. Read the audio
@@ -158,7 +224,7 @@ def ROG_Theta_71_SUNO_load_and_EQ(playlist_type, audio_path, target_lufs=-13.0, 
         f.write(f"Original: {current_loudness:.2f} LUFS | Delta: {delta_db:+.2f} dB | {audio_path}\n")
 
     # 2. Design crossover filters (2nd order Butterworth)
-    bass_freq = 250.0    # Adjust to target your specific bass threshold
+    bass_freq = 170 #250.0    # Adjust to target your specific bass threshold
     treble_freq = 4000.0 # Adjust for high-end sparkle
     
     sos_bass = butter(2, bass_freq, btype='low', fs=fs, output='sos')
@@ -187,8 +253,8 @@ def ROG_Theta_71_SUNO_load_and_EQ(playlist_type, audio_path, target_lufs=-13.0, 
         treble_sig = stereo_widener.process()
  
         # NOT_SURE_IF_THIS_BRINGS_ANYTHING_EXTRA_SINCE_EQ_ALREADY
-        #stereo_widener = StereoWidenerBroadband(mid_sig, fs, decorr_type, beta_init)
-        #mid_sig = stereo_widener.process()
+        stereo_widener = StereoWidenerBroadband(mid_sig, fs, decorr_type, beta_init)
+        mid_sig = stereo_widener.process()
     
     # 5. Mix the adjusted bands back together
     eq_data_stereo_widener = (bass_sig * gain_bass) + (mid_sig * gain_mid) + (treble_sig * gain_treble)
@@ -212,7 +278,6 @@ def ROG_Theta_71_SUNO_load_and_EQ(playlist_type, audio_path, target_lufs=-13.0, 
         with open("LOG_AUTO_NORMALs.txt", "a", encoding="utf-8") as f:
             f.write(f"Reduced by {abs(reduction_db):.2f} dB (Peak was {global_max:.2f}): {audio_path}\n")
 
-    
     # 3. Build the 8-channel array
     # sounddevice expects float32 arrays natively, which is great!
     padded_audio = np.zeros((eq_data.shape[0], 8), dtype=np.float32)
@@ -225,7 +290,7 @@ def ROG_Theta_71_SUNO_load_and_EQ(playlist_type, audio_path, target_lufs=-13.0, 
     right_surround = eq_data_stereo_widener[:, 1]
 
     # Generate the filter coefficients for 120Hz at whatever the sample rate is (e.g., 48000)
-    mono_for_sub = (left + right) * 0.5
+    mono_for_sub = (left + right) * 0.8
     b, a = create_lowpass_filter(cutoff=140.0, fs=fs, order=4)
 
     # Apply the filter mathematically to the mono signal
@@ -247,94 +312,6 @@ def ROG_Theta_71_SUNO_load_and_EQ(playlist_type, audio_path, target_lufs=-13.0, 
     # Return the array, the sample rate, and the length of the audio in seconds
     audio_length_seconds = len(padded_audio) / fs
     return padded_audio, fs, audio_length_seconds
-
-def SUNO_load_and_EQ(playlist_type, audio_path, target_lufs=-13.0, bass_db=0.0, mid_db=0.0, treble_db=0.0):
-    # 1. Read the 32-bit WAV as a 32-bit float array
-    # float32 gives 144+ dB of dynamic range, perfect for DSP and WASAPI
-    data, fs = sf.read(audio_path, dtype='float32')
-
-
-    """TEST BASS SYNC
-    meter = pyln.Meter(fs)
-    current_loudness = meter.integrated_loudness(data)
-    print(f"current_loudness: {current_loudness}")
-
-    left_channel  = data[:, 0]
-    right_channel = data[:, 1]
-
-    # Generate the filter coefficients for 120Hz at whatever the sample rate is (e.g., 48000)
-    b, a = create_lowpass_filter(cutoff=130.0, fs=fs, order=4)
-
-    # Apply the filter mathematically to the mono signal
-    mono_for_sub = (left_channel + right_channel) * 0.5
-
-    # Measure the LUFS of the new mono_for_sub track
-    current_mono_loudness = meter.integrated_loudness(mono_for_sub)
-
-    # Normalize the mono track to -13 LUFS
-    normalized_mono_for_sub = pyln.normalize.loudness(mono_for_sub, current_mono_loudness, -15.0)
-
-    # Clip to prevent stray digital peaks
-    final_mono_for_sub = np.clip(normalized_mono_for_sub, -1.0, 1.0)
-
-    lfe_filtered = lfilter(b, a, final_mono_for_sub)
-
-    # Create an array of pure silence matching the mixer's channel count
-    padded_audio = np.zeros((data.shape[0], 2), dtype=np.float32)
-    padded_audio[:, 0] = lfe_filtered  # Front Left
-    padded_audio[:, 1] = lfe_filtered  # Front Right
-
-    audio_length_seconds = len(data) / fs
-    return padded_audio, fs, audio_length_seconds"""
-
-
-    
-    # 2. Design crossover filters (2nd order Butterworth)
-    bass_freq = 250.0    # Adjust to target your specific bass threshold
-    treble_freq = 4000.0 # Adjust for high-end sparkle
-    
-    sos_bass = butter(2, bass_freq, btype='low', fs=fs, output='sos')
-    sos_mid = butter(2, [bass_freq, treble_freq], btype='bandpass', fs=fs, output='sos')
-    sos_treble = butter(2, treble_freq, btype='high', fs=fs, output='sos')
-    
-    print("Applying EQ filtering...")
-    # 3. Apply zero-phase filtering (axis=0 keeps stereo channels intact)
-    # sosfiltfilt applies the filter forward and backward, creating a 4th-order Linkwitz-Riley response
-    bass_sig = sosfiltfilt(sos_bass, data, axis=0)
-    mid_sig = sosfiltfilt(sos_mid, data, axis=0)
-    treble_sig = sosfiltfilt(sos_treble, data, axis=0)
-
-    if playlist_type == "CORE" or playlist_type == "SUMMER":
-        decorr_type = DecorrelationType.ALLPASS
-        beta_init = 0.50 # >> V5 | V6: 0.07-0.10 IF NEED BE
-        stereo_widener = StereoWidenerBroadband(treble_sig, fs, decorr_type, beta_init)
-        treble_sig = stereo_widener.process()
- 
-        # NOT_SURE_IF_THIS_BRINGS_ANYTHING_EXTRA_SINCE_EQ_ALREADY
-        # stereo_widener = StereoWidenerBroadband(mid_sig, fs, decorr_type, beta_init)
-        # mid_sig = stereo_widener.process()
-    
-    # 4. Convert dB adjustments to linear gain multipliers
-    gain_bass = 10 ** (bass_db / 20)
-    gain_mid = 10 ** (mid_db / 20)
-    gain_treble = 10 ** (treble_db / 20)
-    
-    # 5. Mix the adjusted bands back together
-    eq_data = (bass_sig * gain_bass) + (mid_sig * gain_mid) + (treble_sig * gain_treble)
-    
-    # 6. Prevent clipping (if your boost pushes the amplitude over 1.0)
-    max_val = np.max(np.abs(eq_data))
-    if max_val > 1.0:
-        eq_data = eq_data / max_val
-        print(f"Auto-normalized to prevent clipping (reduced by {20 * np.log10(max_val):.2f} dB)")
-        log_file = "LOG_AUTO_NORMALs.txt"
-        with open(log_file, "a", encoding="utf-8") as f:
-            f.write(f"Auto-normalized to prevent clipping (reduced by {20 * np.log10(max_val):.2f} dB): {audio_path}:\n")
-
-    audio_length_seconds = len(data) / fs
-    return eq_data, fs, audio_length_seconds
-
-# >>> SAVE OUTPUT TO FILE infinite.quantum: https://aistudio.google.com/prompts/1ecQwH8X1aWJp8nBW1EQUZYtaKcJRC_AZ
 
 #______________________________________________________________________________________________________
 #___RATING_____________________________
@@ -521,7 +498,6 @@ THRESHOLD_HIHAT = 0.40
 
 
 ENABLE_OBS_MODE_EFFECT = 1
-ENABLE_AUDIO_EFFECTS = 0
 DEBUG = False
 CONSOLE = True
 PLAYLIST = True
@@ -862,9 +838,6 @@ if not PLAYLIST:
     audio_base_filename = audio_base_filename[0]
     print(f"audio_base_filename = {audio_base_filename}")
 
-TEST_INSTRUMENTAL = 0
-#audio_instrumental_base_folder = "W:/SUNO_INSTRUMENTAL/___FOOOOO___"
-
 #______________________________________________________________________________________________________
 #___DISPLAY____________________________
 
@@ -948,7 +921,9 @@ class XboxControllerRumble:
         self.is_connected = self.check_connection()
 
     def check_connection(self):
-        """Tests if the controller is plugged in by sending a dummy command."""
+        """
+        Tests if the controller is plugged in by sending a dummy command.
+        """
         vibration = XINPUT_VIBRATION(0, 0)
         result = xinput.XInputSetState(self.controller_id, ctypes.byref(vibration))
         
@@ -956,7 +931,9 @@ class XboxControllerRumble:
         return result == 0
 
     def _apply_hardware(self):
-        """Internal function that sends both current states to the controller."""
+        """
+        Internal function that sends both current states to the controller.
+        """
 
         if not self.is_connected:
             return
@@ -978,19 +955,25 @@ class XboxControllerRumble:
             self.is_connected = True
 
     def rumble_left(self, force, duration):
-        """Turns on the Left motor WITHOUT affecting the Right motor."""
+        """
+        Turns on the Left motor WITHOUT affecting the Right motor.
+        """
         self.current_left = max(0.0, min(1.0, force))
         self.left_end_time = time.time() + duration
         self._apply_hardware()
 
     def rumble_right(self, force, duration):
-        """Turns on the Right motor WITHOUT affecting the Left motor."""
+        """
+        Turns on the Right motor WITHOUT affecting the Left motor.
+        """
         self.current_right = max(0.0, min(1.0, force))
         self.right_end_time = time.time() + duration
         self._apply_hardware()
 
     def update(self):
-        """Checks timers independently and turns off motors only if their specific time is up."""
+        """
+        Checks timers independently and turns off motors only if their specific time is up.
+        """
         now = time.time()
         changed = False
         
@@ -1914,11 +1897,6 @@ def play_video_fullscreen(audio_path, playlist_index=0, playlist_type="CORE"):
         print(f"audio_len: {audio_len}")
         audio_time_elapsed = 0
 
-        # FOR MP3
-        #anim_data_bass_filepath  = f"{audio_sync_data_base_folder}/{audio_base_filename}_bass_keyframes.csv"
-        #anim_data_snare_filepath = f"{audio_sync_data_base_folder}/{audio_base_filename}_snare_keyframes.csv"
-        #anim_data_hihat_filepath = f"{audio_sync_data_base_folder}/{audio_base_filename}_hihat_keyframes.csv"
-
         audio_base_filename = audio_path.replace("\\", "/")
         audio_base_filename = audio_base_filename.split("/")
         audio_base_filename = audio_base_filename[len(audio_base_filename)-1]
@@ -1941,50 +1919,8 @@ def play_video_fullscreen(audio_path, playlist_index=0, playlist_type="CORE"):
         anim_data_index_3 = 0
         anim_max_index_3 = len(anim_data_3) - 1
 
-        #______________________________________________________________________________________________________
-        #___AUDIO EFFECT SETUP_________
-
-        if ENABLE_AUDIO_EFFECTS == 1:
-            audio_effect_pool = []
-            for i in range(50):
-                audio_effect_random_num = random.randint(1, 26)
-                audio_effect_random_filepath = f"audio_effects_wav/002/normalized/audio_effect_{audio_effect_random_num:03d}.wav"
-                print(f"audio_effect_random_filepath: {audio_effect_random_filepath}")
-                audio_effect_pool.append(pygame.mixer.Sound(audio_effect_random_filepath))
-            print(f"len_audio_effect_pool: {len(audio_effect_pool)}")
-            random_audio_effect = audio_effect_pool.pop(random.randrange(len(audio_effect_pool)))
-
-        audio_effect_is_playing = False
-        audio_effect_times_played = 0
-        audio_effect_channel = None
-
         #______________________________
         #___INIT/LOAD MUSIC____________
-
-        if TEST_INSTRUMENTAL == 1:
-            audio_base_filename = audio_path.replace("\\", "/")
-            audio_base_filename = audio_base_filename.split("/")
-            audio_base_filename = audio_base_filename[len(audio_base_filename)-1]
-            audio_base_filename = audio_base_filename.split(".wav")
-            audio_base_filename = audio_base_filename[0]
-            audio_path = audio_path.replace(f"{audio_base_folder}/{audio_base_filename}.wav", \
-                                            f"{audio_instrumental_base_folder}/{audio_base_filename}_Instrumental.wav")
-
-
-#        my_song_array, sample_rate, audio_len_seconds = SUNO_load_and_EQ(playlist_type, audio_path, bass_db=9.5, mid_db=0.0, treble_db=2.5)
-
-        # JBL
-        my_song_array, sample_rate, audio_len_seconds = SUNO_load_and_EQ(playlist_type, audio_path, bass_db=9.5, mid_db=0.5, treble_db=2.7)
-
-        # AKG
-#        my_song_array, sample_rate, audio_len_seconds = SUNO_load_and_EQ(playlist_type, audio_path, bass_db=7.8, mid_db=1.8, treble_db=3.5)
-
-        ## DIFFERENT APPROACH
-#        my_song_array, sample_rate, audio_len_seconds = SUNO_load_and_EQ(playlist_type, audio_path, bass_db=0.0, mid_db=-6.0, treble_db=-4.3)
-
-
-        inferred_channels = my_song_array.shape[1] if my_song_array.ndim > 1 else 1
-        inferred_dtype = my_song_array.dtype.name
 
         # 1. Query the WASAPI host API directly for the default output device
         try:
@@ -2002,13 +1938,12 @@ def play_video_fullscreen(audio_path, playlist_index=0, playlist_type="CORE"):
     
             # 2. Get info on that specific device for your print statements
             device_info = sd.query_devices(wasapi_out_index)
+            device_channels = device_info['max_output_channels']
     
             print(f"--- CURRENT PLAYBACK SETTINGS ---")
             print(f"Device Name : {device_info['name']}")
             print(f"Host API    : {wasapi_info['name']} ({wasapi_out_index})")
-            print(f"Sample Rate : {sample_rate} Hz (Requested)")
-            print(f"Channels    : {inferred_channels}")
-            print(f"Format      : {inferred_dtype}")
+            print(f"Channels    : {device_channels}")
             print(f"Latency     : {device_info['default_low_output_latency']*1000:.1f} ms - {device_info['default_high_output_latency']*1000:.1f} ms")
             print(f"---------------------------------")
 
@@ -2018,6 +1953,32 @@ def play_video_fullscreen(audio_path, playlist_index=0, playlist_type="CORE"):
     
         except ValueError:
             print("WASAPI is not available on this system.")
+
+        if device_channels > 2:
+            my_song_array, sample_rate, audio_len_seconds = ROG_Theta_71_SUNO_load_and_EQ(
+                playlist_type, 
+                audio_path, 
+                bass_db=2.0, 
+                mid_db=2.0, 
+                treble_db=2.0
+            )
+        else:
+            #my_song_array, sample_rate, audio_len_seconds = SUNO_load_and_EQ(playlist_type, audio_path, bass_db=9.5, mid_db=0.0, treble_db=2.5)
+
+            # JBL
+            my_song_array, sample_rate, audio_len_seconds = SUNO_load_and_EQ(playlist_type, audio_path, bass_db=9.5, mid_db=0.5, treble_db=2.7)
+
+            # AKG
+            #my_song_array, sample_rate, audio_len_seconds = SUNO_load_and_EQ(playlist_type, audio_path, bass_db=7.8, mid_db=1.8, treble_db=3.5)
+
+            ## DIFFERENT APPROACH
+            #my_song_array, sample_rate, audio_len_seconds = SUNO_load_and_EQ(playlist_type, audio_path, bass_db=0.0, mid_db=-6.0, treble_db=-4.3)
+
+        inferred_channels = my_song_array.shape[1] if my_song_array.ndim > 1 else 1
+        inferred_dtype = my_song_array.dtype.name
+        print(f"Audio Sample Rate : {sample_rate} Hz (Requested)")
+        print(f"Audio Channels    : {inferred_channels}")
+        print(f"Audio Format      : {inferred_dtype}")
 
         #______________________________
         #___INTRO______________________
@@ -2098,7 +2059,8 @@ def play_video_fullscreen(audio_path, playlist_index=0, playlist_type="CORE"):
         #___MAIN_LOOP__________________
 
         # Initialize our non-blocking rumble manager
-        rumble = XboxControllerRumble(controller_id=0)
+        rumble_1 = XboxControllerRumble(controller_id=0)
+        rumble_2 = XboxControllerRumble(controller_id=1)
 
         executor = ThreadPoolExecutor(max_workers=4)
         start_time = time.perf_counter()
@@ -2111,8 +2073,11 @@ def play_video_fullscreen(audio_path, playlist_index=0, playlist_type="CORE"):
         #pygame.mixer.music.play()
         #pygame.mixer.music.set_volume(0.0)
 
-        # This directly interfaces with WASAPI/DirectSound
-        sd.play(my_song_array, samplerate=sample_rate)
+        # Play the audio; this directly interfaces with WASAPI/DirectSound
+        if inferred_channels > 2:
+            sd.play(my_song_array, samplerate=sample_rate, mapping=[1, 2, 3, 4, 5, 6, 7, 8])
+        else:
+            sd.play(my_song_array, samplerate=sample_rate)
 
         # --- A/V SYNC COMPENSATION ---
         # 0.05 = 50 milliseconds. 
@@ -2541,14 +2506,6 @@ def play_video_fullscreen(audio_path, playlist_index=0, playlist_type="CORE"):
                         video_width_left, video_height_left = video_left.size
                         #print(f"Video width_left: {video_width_left}")
                         #print(f"Video height_left: {video_height_left}")
-
-                        if (video_width_left == 2560):
-                            if ENABLE_AUDIO_EFFECTS == 1:
-                                toggle_sound_effect = 1 #random.randint(0, 1)
-                                if toggle_sound_effect == 1:
-                                    random_audio_effect = audio_effect_pool.pop(random.randrange(len(audio_effect_pool)))
-                                    print(f"len_audio_effect_pool: {len(audio_effect_pool)}")
-                                    audio_effect_times_played = 0
 
                         left_horizontal_fullscreen = 1 if video_width_left in (1504, 1510, 1376, 1280, 2560) else 0
 
@@ -3180,17 +3137,23 @@ def play_video_fullscreen(audio_path, playlist_index=0, playlist_type="CORE"):
                 # 2. Finally, apply the requested rumbles!
 
                 if target_left_force > 0.7 and target_right_force > 0.7:
-                    rumble.rumble_left(force=1.0, duration=0.08)
-                    rumble.rumble_right(force=1.0, duration=0.08)
+                    rumble_1.rumble_left(force=1.0, duration=0.08)
+                    rumble_1.rumble_right(force=1.0, duration=0.08)
+
+                    rumble_2.rumble_left(force=1.0, duration=0.08)
+                    rumble_2.rumble_right(force=1.0, duration=0.08)
                 else:
                     if target_left_force > 0.0:
-                        rumble.rumble_left(force=target_left_force, duration=target_left_duration)
+                        rumble_1.rumble_left(force=target_left_force, duration=target_left_duration)
+                        rumble_2.rumble_left(force=target_left_force, duration=target_left_duration)
 
                     if target_right_force > 0.0:
-                        rumble.rumble_right(force=target_right_force, duration=target_right_duration)
+                        rumble_1.rumble_right(force=target_right_force, duration=target_right_duration)
+                        rumble_2.rumble_right(force=target_right_force, duration=target_right_duration)
 
                 # 3. Always run update to handle shutting them down when timers expire
-                rumble.update()
+                rumble_1.update()
+                rumble_2.update()
 
                 #______________________________________________________________________________________________________
 
@@ -3459,7 +3422,7 @@ if __name__ == '__main__':
     play_video_fullscreen(audio_path)
     #play_video_fullscreen("C:/1/light_wave_tech/DATA/SUNO_HIGHEST_QUALITY/PSY_TRANCE/0 Elara's Transmission.wav")
 
-    pygame.quit()
+    pygame.quit()6
     sys.exit()
     """
 
@@ -3550,9 +3513,6 @@ if __name__ == '__main__':
     pygame.quit()
     sys.exit()
 
-# >>> GPU COMPOSITION michael. AI STUDIO
-# >>> https://aistudio.google.com/u/1/prompts/1szFxnGrEKhjbHy9xREAlQp6EapdCLKcN
-# >>> VR R&D michael. AI STUDIO
-# >>> https://aistudio.google.com/u/1/prompts/1ShDZkQ3-S555cigxgHORuEv2hQSyMzZX
+
     
 
