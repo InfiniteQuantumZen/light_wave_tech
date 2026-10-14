@@ -6,14 +6,49 @@
 # python -c "import torch; print(torch.__version__); print(torch.cuda.is_available())"
 #_____________________________________________________________________________________
 
-# THIS ~8GB VRAM
-# python LOCAL_v5_OPTIMIZED_trainer.py --input_file FINAL_dataset_0-120k.txt --epochs 100 --batch_size 512 --embed_size 512 --seq_length 1024 --patch_size 16 --checkpoint model_v5.pth --checkpoint_interval 1 --val_split 0.1 --val_every 1 --early_stop 10 --seed 123
+#________________________
+# RTX 3060 >>> ~8GB VRAM <<< @58% POWER LIMIT ~ 1000/24595 = 10 minutes =~ 4 hours / epoch
+# python LOCAL_v5_OPTIMIZED_trainer.py --input_file FINAL_TRAINING_dataset_0-120k.txt --epochs 100 --batch_size 512 --embed_size 512 --seq_length 1024 --patch_size 16 --checkpoint model_v5.pth --checkpoint_interval 1 --val_split 0.1 --val_every 1 --early_stop 10 --seed 123
 
-# THIS ~12GB VRAM
-# python LOCAL_v5_OPTIMIZED_trainer.py --input_file FINAL_dataset_0-120k.txt --epochs 100 --batch_size 512 --embed_size 1024 --seq_length 1024 --patch_size 16 --checkpoint model_v5.pth --checkpoint_interval 1 --val_split 0.1 --val_every 1 --early_stop 10 --seed 123
+# RTX 3060 >>> ~12GB VRAM <<< @58% POWER LIMIT ~ 500/24595 = 10 minutes =~ 8 hours / epoch
+# python RUNPOD_v5_OPTIMIZED_trainer.py --input_file FINAL_TRAINING_dataset_0-120k.txt --epochs 100 --batch_size 512 --embed_size 1024 --seq_length 1024 --patch_size 16 --checkpoint model_v5.pth --checkpoint_interval 1 --val_split 0.1 --val_every 1 --early_stop 10 --seed 123
+
+
+#________________________
+# RTX 5080 >>> 10 GB VRAM <<< 1200/26360 = 10 minutes =~ 3,5 hours / epoch
+# python RUNPOD_v5_OPTIMIZED_trainer.py --input_file FINAL_TRAINING_dataset_0-120k.txt --epochs 100 --batch_size 512 --embed_size 1024 --seq_length 1024 --patch_size 16 --checkpoint model_v5.pth --checkpoint_interval 1 --val_split 0.1 --val_every 1 --early_stop 10 --seed 123
+
+# RTX 5080 >>> 13 GB VRAM <<< 1200/21088 = 10 minutes =~ 3,0 hours / epoch
+# python RUNPOD_v5_OPTIMIZED_trainer.py --input_file FINAL_TRAINING_dataset_0-120k.txt --epochs 100 --batch_size 640 --embed_size 1024 --seq_length 1024 --patch_size 16 --checkpoint model_v5.pth --checkpoint_interval 1 --val_split 0.1 --val_every 1 --early_stop 10 --seed 123
+
+
+### 2026-10-14: TRY THIS NEXT 10 GB >> 15 GB OR SO (MIGHT BE TIGHT ON 16GB)
+# python RUNPOD_v5_OPTIMIZED_trainer.py --input_file FINAL_TRAINING_dataset_0-120k.txt --epochs 100 --batch_size 768 --embed_size 1024 --seq_length 1024 --patch_size 16 --checkpoint model_v5.pth --checkpoint_interval 1 --val_split 0.1 --val_every 1 --early_stop 10 --seed 123
+
+
+# __IF_RTX_5090 >>> --batch_size 1536 >> SHOULD BE ~30 GB | OTHERWISE TRY 1408
+# python RUNPOD_v5_OPTIMIZED_trainer.py --input_file FINAL_TRAINING_dataset_0-120k.txt --epochs 100 --batch_size 640 --embed_size 1024 --seq_length 1024 --patch_size 16 --checkpoint model_v5.pth --checkpoint_interval 1 --val_split 0.1 --val_every 1 --early_stop 10 --seed 123
+
+
+
+#   Validation MSE Loss: 1.0866
+#   *** NEW BEST VAL LOSS: 1.0866 ***
+# Epoch 1 took 11568.1s
+# Epoch 1/100 | Train loss: 261.1968 | Val loss: 1.0866
+#   Checkpoint saved (epoch 1)
+#   >>> New best model saved (val loss 1.0866)
+
+#   Validation MSE Loss: 0.9836
+#   *** NEW BEST VAL LOSS: 0.9836 ***
+# Epoch 2 took 11812.3s
+# Epoch 2/100 | Train loss: 0.9957 | Val loss: 0.9836
+#   Checkpoint saved (epoch 2)
+#   >>> New best model saved (val loss 0.9836)
+# Iteration: 1/21088
+
 
 # RUNPOD MIGHT BE --batch_size 1024
-# RUNPOD python LOCAL_v5_OPTIMIZED_trainer.py --input_file FINAL_dataset_0-120k.txt --epochs 100 --batch_size 512 --embed_size 1024 --seq_length 4096 --patch_size 16 --checkpoint model_v5.pth --checkpoint_interval 1 --val_split 0.1 --val_every 1 --early_stop 10 --seed 123
+# python RUNPOD_v5_OPTIMIZED_trainer.py --input_file FINAL_TRAINING_dataset_0-120k.txt --epochs 100 --batch_size 512 --embed_size 1024 --seq_length 4096 --patch_size 16 --checkpoint model_v5.pth --checkpoint_interval 1 --val_split 0.1 --val_every 1 --early_stop 10 --seed 123
 
 import torch
 import torch.nn as nn
@@ -212,9 +247,16 @@ def train(model, train_loader, val_loader, optimizer, criterion,
         # ---------- TRAINING ----------
         model.train()
         total_train = 0.0
-        for inputs, targets in train_loader:
-            inputs, targets = inputs.to(device), targets.to(device)
+        #for inputs, targets in train_loader:
 
+        # Extract the total number of iterations in the epoch
+        total_iterations = len(train_loader)
+
+        for i, (inputs, targets) in enumerate(train_loader):
+            # Print the progress
+            print(f"Iteration: {i + 1}/{total_iterations}")
+
+            inputs, targets = inputs.to(device), targets.to(device)
             optimizer.zero_grad()
 
             with torch.autocast(device_type='cuda', dtype=torch.float16):
@@ -236,7 +278,12 @@ def train(model, train_loader, val_loader, optimizer, criterion,
             model.eval()
             total_val = 0.0
             with torch.no_grad():
-                for inputs, targets in val_loader:
+                # Extract the total number of val iterations in the epoch
+                total_iterations = len(val_loader)
+                for i, (inputs, targets) in enumerate(val_loader):
+                    # Print the progress
+                    print(f"Iteration: {i + 1}/{total_iterations}")
+
                     inputs, targets = inputs.to(device), targets.to(device)
                     outputs = model(inputs)
                     loss = criterion(outputs, targets)
@@ -347,7 +394,7 @@ def main():
         val_loader   = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False, num_workers=4, pin_memory=True)
 
         model = PatchedContinuousTransformer(patch_size=args.patch_size, embed_size=args.embed_size, num_heads=8, num_layers=8).to(device)
-        #model = torch.compile(model) 
+        model = torch.compile(model) 
 
         optimizer = optim.AdamW(model.parameters(), lr=0.001, fused=True)
         criterion = nn.MSELoss() 
