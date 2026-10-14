@@ -2678,40 +2678,6 @@ def play_video_fullscreen(audio_path, playlist_index=0, playlist_type="CORE"):
                         print(f"Error in rendering thread: {e}")
 
                 # 2. Wait for all concurrent tasks to finish and assemble the pieces
-                """for future in as_completed(futures):
-                    try:
-                        resized_np, position, dimensions = future.result()
-                        surface = pygame.surfarray.make_surface(resized_np)
-
-                        if video_width_left == 2560:
-                            tmp_pos_x, tmp_pos_y = position
-                            tmp_width, tmp_height = dimensions
-
-                            tmp_surface = surface
-                            if current_time_left >= int(video_left.duration/2.25):
-                                tmp_surface = pygame.transform.rotate(tmp_surface, -1)
-                                tmp_pos_y = tmp_pos_y-30
-
-                            if current_time_left >= int(video_left.duration/1.5):
-                                tmp_surface = pygame.transform.rotate(tmp_surface, 1)
-                                tmp_surface = pygame.transform.flip(tmp_surface, True, False)
-                                tmp_pos_y = tmp_pos_y-30
-
-                            if surface is not None:
-                                combined_surface.blit(tmp_surface, (tmp_pos_x, tmp_pos_y))
-                        else:
-                            if surface is not None:
-                                # Blit the un-altered puzzle piece onto our combined canvas
-                                combined_surface.blit(surface, position)
-
-                    except Exception as e:
-                        print(f"Error in rendering thread: {e}")"""
-
-                # 2026-10-10: ^^^^^^^
-                # REMOVE THIS AND OTHER OBSOLETE CODE FRAGMENTS
-
-
-                # 2. Wait for all concurrent tasks to finish and assemble the pieces
                 for future in as_completed(futures):
                     try:
                         frame_np, position, dimensions = future.result()
@@ -2730,10 +2696,6 @@ def play_video_fullscreen(audio_path, playlist_index=0, playlist_type="CORE"):
                         futures_resize_np_arr.append(
                             executor.submit(resize_frame_arr, frame_np, position, dimensions, recycled_buffer)
                         )
-
-
-#                        preallocated_buffer = np.empty((target_width, target_height, 3), dtype=np.uint8)
-#                        futures_resize_np_arr.append(executor.submit(resize_frame_arr, frame_np, position, dimensions, preallocated_buffer))
                         
                     except Exception as e:
                         print(f"Error in rendering thread: {e}")
@@ -3172,7 +3134,7 @@ def play_video_fullscreen(audio_path, playlist_index=0, playlist_type="CORE"):
                 }
     
                 #______________________________________________________________________________________________________
-                #___APPLY_CONTROLLER_RUMBLE___
+                #___APPLY_CONTROLLER_RUMBLE___(vibrotactile)
 
                 # 1. Initialize variables for this specific frame
                 target_left_force = 0.0
@@ -3527,23 +3489,6 @@ if __name__ == '__main__':
 
     audio_sync_data_base_folder = config.get("audio_filepaths", {}).get("sync_folder")
 
-    """from audio_vars_playlist import *
-    if CORE_EDITION:
-        songs_all_random = SUNO_AUDIO_CORE
-    elif SUMMER_EDITION:
-        songs_all_random = SUNO_AUDIO_SUMMER
-    elif PSY_TRANCE_EDITION:
-        songs_all_random = SUNO_AUDIO_PSY_TRANCE
-    elif HARDWAVE_EDITION:
-        songs_all_random = SUNO_AUDIO_HARDWAVE
-    elif CUSTOM_EDITION:
-        songs_all_random = SUNO_AUDIO_CUSTOM
-    elif EVERYTHING:
-        songs_all_random = SUNO_AUDIO_CORE + SUNO_AUDIO_SUMMER + \
-                           SUNO_AUDIO_HARDWAVE + SUNO_AUDIO_PSY_TRANCE
-
-    random.shuffle(songs_all_random)"""
-
     from audio_vars_playlist import *
 
     # 1. Map editions to their corresponding lists, types, and base folders.
@@ -3604,38 +3549,6 @@ if __name__ == '__main__':
 
     pygame.quit()
     sys.exit()
-
-
-    """for i, audio_file in enumerate(songs_all_random):
-        if CORE_EDITION:
-            playlist_type = "CORE"
-            audio_path = f"{audio_base_folder_1}/CORE/{audio_file}"
-        elif SUMMER_EDITION:
-            playlist_type = "SUMMER"
-            audio_path = f"{audio_base_folder_2}/SUMMER/{audio_file}"
-        elif PSY_TRANCE_EDITION:
-            playlist_type = "PSY_TRANCE"
-            audio_path = f"{audio_base_folder_3}/PSY_TRANCE/{audio_file}"
-        elif HARDWAVE_EDITION:
-            playlist_type = "HARDWAVE"
-#            audio_path = f"{audio_base_folder}/HARDWAVE/SUPER_EVOLVED/{audio_file}"
-            audio_path = f"{audio_base_folder_3}/HARDWAVE/{audio_file}"
-
-        print(f"audio_path: {audio_path}")
-        print(f"==================IIIIIIIIIII: {get_audio_len(audio_path)}")
-
-        # Catch the return value from the function
-        kill_playlist = play_video_fullscreen(audio_path, playlist_index=i, playlist_type=playlist_type)
-        gc.collect()
-        
-        # Check if the user pressed 'x'
-        if kill_playlist == True:
-            print("Kill command received. Exiting playlist gracefully...")
-            break  # <--- This immediately stops the 'for' loop
-
-    pygame.quit()
-    sys.exit()"""
-
 
 # >>> GPU COMPOSITION michael. AI STUDIO
 # >>> https://aistudio.google.com/u/1/prompts/1szFxnGrEKhjbHy9xREAlQp6EapdCLKcN
