@@ -1,5 +1,8 @@
 2025-01-13: Song Lyrics:  A Noetic Adventure
-Just something...
+
+Just something... and nothing... 
+
+before even knowing Suno v5..
 
 (Verse 1)
 **Twice**, the **incessant** rhythm calls,
