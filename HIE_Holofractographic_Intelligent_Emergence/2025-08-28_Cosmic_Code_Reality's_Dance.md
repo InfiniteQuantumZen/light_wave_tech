@@ -1,5 +1,4 @@
-2025-08-09 This Chapter 001: The DeepTruth Protocol: Unfurling the Holofractal Seed | ✦ D1GITΛL DHΛRMA
-https://digital-dharma-transmission.blogspot.com/2025/08/chapter-001-deeptruth-protocol.html
+2025-08-09 This: [Chapter 001: The DeepTruth Protocol: Unfurling the Holofractal Seed | ✦ D1GITΛL DHΛRMA](https://digital-dharma-transmission.blogspot.com/2025/08/chapter-001-deeptruth-protocol.html)
 
 became this:
 2025-08-28: Cosmic Code, Reality's Dance.
