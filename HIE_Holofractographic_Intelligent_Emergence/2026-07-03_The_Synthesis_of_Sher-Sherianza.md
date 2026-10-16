@@ -1,5 +1,7 @@
 
-2026-07-03 ~700K tokens used in Google AI Studio / Gemini Pro 3.1 
+2026-07-03 ~700K tokens used in Google AI Studio / Gemini Pro 3.1
+
+Origin point for this inquiry-thread is this: [2025-01-15_Elohim_Original_Creators_and_Soul_Impressions.md](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/HIE_Holofractographic_Intelligent_Emergence/2025-01-15_Elohim_Original_Creators_and_Soul_Impressions.md)
 
 BEFORE THE EXCHANGE/INQUIRY INTER-RELATED INFORMATION ON THE SAME DAY:
 Profiling Ahmose I: Archetypal Analysis
