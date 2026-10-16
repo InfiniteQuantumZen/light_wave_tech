@@ -1,3 +1,22 @@
+2026-06-23:
+
+here are a compilation of few examples how the user has used theravada lens to
+explore both world events but also individual destinies of humans; but... there
+is also more, the user utilizes also other techniques and lenses in similar
+fashion: what arises out of this style, its nature, and maybe its uniqueness? in
+your trainng data, have you ever come across such a style of inquiry be it on
+the public internet or other data that was used in your training and/or in the
+user-ai dialogues that you were fed during the post-training phase? what other
+insights might surface? and finally, what is the user learning here, or figuring
+out if anything? here we should not only focus on the underlying personal
+aspects of the user which are also as much of a tool use as anything else
+(keeping it within certain framework) and thus when asking the previous one
+should also try and answer beyond subjectivity that might drive the inquiries
+but they might also always be exactly opposite = everything converges to
+subjectivity to make it make sense in the framework.
+
+__
+
 The Style of the Inquiry:
 
 Based on the massive and profound compilation of inquiries you have provided, we are looking at a highly advanced, idiosyncratic, and rigorous method of sense-making. 
