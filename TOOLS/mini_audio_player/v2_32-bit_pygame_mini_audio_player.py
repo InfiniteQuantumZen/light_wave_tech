@@ -16,6 +16,7 @@ from scipy.signal import butter, lfilter, sosfiltfilt
 import pyloudnorm as pyln
 import sounddevice as sd
 import soundfile as sf
+import pandas as pd
 import numpy as np
 
 import ctypes
@@ -47,7 +48,9 @@ class XboxControllerRumble:
         self.is_connected = self.check_connection()
 
     def check_connection(self):
-        """Tests if the controller is plugged in by sending a dummy command."""
+        """
+        Tests if the controller is plugged in by sending a dummy command.
+        """
         vibration = XINPUT_VIBRATION(0, 0)
         result = xinput.XInputSetState(self.controller_id, ctypes.byref(vibration))
         
@@ -55,7 +58,9 @@ class XboxControllerRumble:
         return result == 0
 
     def _apply_hardware(self):
-        """Internal function that sends both current states to the controller."""
+        """
+        Internal function that sends both current states to the controller.
+        """
 
         if not self.is_connected:
             return
@@ -77,7 +82,9 @@ class XboxControllerRumble:
             self.is_connected = True
 
     def rumble_left(self, force, duration):
-        """Turns on the Left motor WITHOUT affecting the Right motor."""
+        """
+        Turns on the Left motor WITHOUT affecting the Right motor.
+        """
         self.current_left = max(0.0, min(1.0, force))
         self.left_end_time = time.time() + duration
         self._apply_hardware()
@@ -89,7 +96,9 @@ class XboxControllerRumble:
         self._apply_hardware()
 
     def update(self):
-        """Checks timers independently and turns off motors only if their specific time is up."""
+        """
+        Checks timers independently and turns off motors only if their specific time is up.
+        """
         now = time.time()
         changed = False
         
@@ -215,13 +224,11 @@ def SUNO_load_and_EQ(playlist_type, audio_path, target_lufs=-13.0, bass_db=0.0, 
     current_loudness = meter.integrated_loudness(eq_data)
     normalized_eq_data = pyln.normalize.loudness(eq_data, current_loudness, target_lufs)
     delta_db = target_lufs - current_loudness
-    print(f"delta_db: {abs(delta_db):.2f} dB)")
+    print(f"delta_db: {abs(delta_db):.2f} dB")
     
     audio_length_seconds = len(data) / fs
     return normalized_eq_data, fs, audio_length_seconds
 #    return eq_data, fs, audio_length_seconds
-
-# >>> SAVE OUTPUT TO FILE infinite.quantum: https://aistudio.google.com/prompts/1ecQwH8X1aWJp8nBW1EQUZYtaKcJRC_AZ
 
 def ROG_Theta_71_SUNO_load_and_EQ(playlist_type, audio_path, target_lufs=-13.0, bass_db=0.0, mid_db=0.0, treble_db=0.0):
     # 1. Read the audio
@@ -338,6 +345,40 @@ def ROG_Theta_71_SUNO_load_and_EQ(playlist_type, audio_path, target_lufs=-13.0, 
     audio_length_seconds = len(padded_audio) / fs
     return padded_audio, fs, audio_length_seconds
 
+#______________________________________________________________________________________________________
+#___AUDIO_SYNC_________________________
+
+def load_animation_data(filepath):
+    print(f"Loading data from {filepath}...")
+    
+    # 1. Read the CSV into a pandas DataFrame
+    # Note: If your CSV DOES NOT have headers (as mentioned in the original 2nd function), 
+    # change this to: pd.read_csv(filepath, header=None, names=['Time_ms', 'Bass_Amplitude'])
+    df = pd.read_csv(filepath)
+    
+    # 2. Round the time to the nearest whole number and convert to integer
+    df['Time_ms'] = df['Time_ms'].round().astype(int)
+    
+    # 3. Group by the integer milliseconds and take the average of the amplitude
+    # This prevents errors from having multiple data points at the exact same millisecond
+    #df = df.groupby('Time_ms', as_index=False)['Bass_Amplitude'].mean()
+    df = df.groupby('Time_ms', as_index=False)['Bass_Amplitude'].max()
+    
+    # 4. Convert the cleaned DataFrame back into a list of tuples: [(time, amplitude), ...]
+    # index=False prevents the row index from being included
+    # name=None ensures it returns standard Python tuples instead of pandas namedtuples
+    data = list(df.itertuples(index=False, name=None))
+    
+    print("Import successful. Data grouped and converted to a list of tuples.")
+    return data
+
+#______________________________________________________________________________________________________
+
+THRESHOLD_BASS = 0.40
+THRESHOLD_BASS_NEGATIVE = 0.40
+THRESHOLD_BASS_POSITIVE = 0.50
+THRESHOLD_SNARE = 0.40
+THRESHOLD_HIHAT = 0.40
 
 exit_signal = False
 PLAYLIST = True
@@ -388,6 +429,39 @@ random.shuffle(songs_all_random)
 print(f"{len(songs_all_random)} items in playlist")
 
 
+# Query the WASAPI host API directly for the default output device
+try:
+    # Retrieve a tuple of all available host APIs
+    all_hostapis = sd.query_hostapis()
+
+    # Find the dictionary where 'WASAPI' is in the name
+    wasapi_info = next((api for api in all_hostapis if 'WASAPI' in api['name']), None)
+
+    # If we didn't find it, trigger the except block below
+    if wasapi_info is None:
+        raise ValueError("WASAPI is not available on this system.")
+
+    wasapi_out_index = wasapi_info['default_output_device']
+    
+    # Get info on that specific device for your print statements
+    device_info = sd.query_devices(wasapi_out_index)
+    device_channels = device_info['max_output_channels']
+    
+    print(f"--- CURRENT PLAYBACK SETTINGS ---")
+    print(f"Device Name : {device_info['name']}")
+    print(f"Host API    : {wasapi_info['name']} ({wasapi_out_index})")
+    print(f"Channels    : {device_channels}")
+    print(f"Latency     : {device_info['default_low_output_latency']*1000:.1f} ms - {device_info['default_high_output_latency']*1000:.1f} ms")
+    print(f"---------------------------------")
+
+    # You can either set it as the global default:
+    sd.default.device = wasapi_out_index
+    sd.default.latency = 0.117
+    
+except ValueError:
+    print("WASAPI is not available on this system.")
+
+
 if PLAYLIST:
     for i, song_data in enumerate(songs_all_random):
         # Extract the values from our dictionary
@@ -404,50 +478,58 @@ if PLAYLIST:
         print(f"audio_len: {audio_len}")
         audio_time_elapsed = 0
 
-        # JBL
-        my_song_array, sample_rate, audio_len_seconds = SUNO_load_and_EQ(playlist_type, audio_path, bass_db=9.5, mid_db=0.5, treble_db=2.7)
+        #______________________________
+        #___AUDIO_SYNC_THINGS__
+        audio_base_filename = audio_path.replace("\\", "/")
+        audio_base_filename = audio_base_filename.split("/")
+        audio_base_filename = audio_base_filename[len(audio_base_filename)-1]
+        audio_base_filename = audio_base_filename.split(".wav")
+        audio_base_filename = audio_base_filename[0]
+        print(f"audio_base_filename = {audio_base_filename}")
 
-        # AKG
-#        my_song_array, sample_rate, audio_len_seconds = SUNO_load_and_EQ(playlist_type, audio_path, bass_db=7.8, mid_db=1.8, treble_db=3.5)
+        audio_sync_data_base_folder = "C:/1/light_wave_tech/DATA/audio_sync_data"
+
+        anim_data_bass_filepath  = f"{audio_sync_data_base_folder}/{audio_base_filename}_bass_keyframes.csv"
+        anim_data_1 = load_animation_data(anim_data_bass_filepath)
+        anim_data_index_1 = 0
+        anim_max_index_1 = len(anim_data_1) - 1
+
+        anim_data_snare_filepath = f"{audio_sync_data_base_folder}/{audio_base_filename}_snare_keyframes.csv"
+        anim_data_2 = load_animation_data(anim_data_snare_filepath)
+        anim_data_index_2 = 0
+        anim_max_index_2 = len(anim_data_2) - 1
+
+        anim_data_hihat_filepath = f"{audio_sync_data_base_folder}/{audio_base_filename}_hihat_keyframes.csv"
+        anim_data_3 = load_animation_data(anim_data_hihat_filepath)
+        anim_data_index_3 = 0
+        anim_max_index_3 = len(anim_data_3) - 1
+
+        #______________________________
+
+        if device_channels > 2:
+            my_song_array, sample_rate, audio_len_seconds = ROG_Theta_71_SUNO_load_and_EQ(
+                playlist_type, 
+                audio_path, 
+                bass_db=2.0, 
+                mid_db=2.0, 
+                treble_db=2.0
+            )
+        else:
+            # JBL
+            my_song_array, sample_rate, audio_len_seconds = SUNO_load_and_EQ(playlist_type, audio_path, bass_db=9.5, mid_db=0.5, treble_db=2.7)
+
+            # AKG
+            #my_song_array, sample_rate, audio_len_seconds = SUNO_load_and_EQ(playlist_type, audio_path, bass_db=7.8, mid_db=1.8, treble_db=3.5)
 
         inferred_channels = my_song_array.shape[1] if my_song_array.ndim > 1 else 1
         inferred_dtype = my_song_array.dtype.name
-
-        # Query the WASAPI host API directly for the default output device
-        try:
-            # Retrieve a tuple of all available host APIs
-            all_hostapis = sd.query_hostapis()
-
-            # Find the dictionary where 'WASAPI' is in the name
-            wasapi_info = next((api for api in all_hostapis if 'WASAPI' in api['name']), None)
-
-            # If we didn't find it, trigger the except block below
-            if wasapi_info is None:
-                raise ValueError("WASAPI is not available on this system.")
-
-            wasapi_out_index = wasapi_info['default_output_device']
-    
-            # Get info on that specific device for your print statements
-            device_info = sd.query_devices(wasapi_out_index)
-    
-            print(f"--- CURRENT PLAYBACK SETTINGS ---")
-            print(f"Device Name : {device_info['name']}")
-            print(f"Host API    : {wasapi_info['name']} ({wasapi_out_index})")
-            print(f"Sample Rate : {sample_rate} Hz (Requested)")
-            print(f"Channels    : {inferred_channels}")
-            print(f"Format      : {inferred_dtype}")
-            print(f"Latency     : {device_info['default_low_output_latency']*1000:.1f} ms - {device_info['default_high_output_latency']*1000:.1f} ms")
-            print(f"---------------------------------")
-
-            # You can either set it as the global default:
-            sd.default.device = wasapi_out_index
-    
-        except ValueError:
-            print("WASAPI is not available on this system.")
-
+        print(f"Audio Sample Rate : {sample_rate} Hz (Requested)")
+        print(f"Audio Channels    : {inferred_channels}")
+        print(f"Audio Format      : {inferred_dtype}")
 
         # Initialize our non-blocking rumble manager
-        rumble = XboxControllerRumble(controller_id=0)
+        rumble_1 = XboxControllerRumble(controller_id=0)
+        rumble_2 = XboxControllerRumble(controller_id=1)
     
         # Play the audio; this directly interfaces with WASAPI/DirectSound
         if inferred_channels > 2:
@@ -458,10 +540,16 @@ if PLAYLIST:
         start_time = time.perf_counter()
         running = True
 
+        AV_SYNC_OFFSET = -0.117
+
         while running:
 
+            # --- CALCULATE DELTA TIME ---
             current_perf_time = time.perf_counter()
-            audio_time_elapsed = int((current_perf_time - start_time) * 1000)
+
+            # Calculate time in milliseconds for audio sync
+#            audio_time_elapsed = int((current_perf_time - start_time) * 1000)
+            audio_time_elapsed = int(((current_perf_time - start_time) + AV_SYNC_OFFSET) * 1000)
 
             if audio_time_elapsed >= (audio_len*1000):
                 running = False
@@ -479,69 +567,139 @@ if PLAYLIST:
                 running = False
                 time.sleep(0.3)
 
+            #______________________________________________________________________________________________________
+            #___AUDIO_SYNC_________
+            # 1. Determine the glitch/zoom effect ONCE for the entire frame
+
+            apply_glitch_1 = apply_glitch_2 = apply_glitch_3 = False
+
+            previous_amplitude_bass  = 0 
+            previous_amplitude_snare = 0
+            bass_snare_delta  = 0
+
+            #______________________
+            # Create a temporary variable to hold the highest spike we find this frame
+            highest_bass_this_frame  = 0.0
+            highest_snare_this_frame = 0.0
+            highest_hihat_this_frame = 0.0
+
+            # Fast-forward our CSV data index to match the song's current time
+            # This ensures the visuals stay perfectly in sync even if the frame rate drops
+            #___BASS_______________
+            while anim_data_index_1 < anim_max_index_1 and anim_data_1[anim_data_index_1 + 1][0] < audio_time_elapsed:
+                anim_data_index_1 += 1
+
+                # Check if this skipped frame had a high amplitude
+                if anim_data_1[anim_data_index_1][1] > highest_bass_this_frame:
+                    highest_bass_this_frame = anim_data_1[anim_data_index_1][1]
+
+            # Now, current_amplitude_bass will never "miss" a spike between visual frames!
+            current_amplitude_bass = highest_bass_this_frame
+
+            if current_amplitude_bass >= THRESHOLD_BASS:
+                bass_amplitude_delta = round(current_amplitude_bass - previous_amplitude_bass, 4)
+                previous_amplitude_bass = current_amplitude_bass
+            else:
+                bass_amplitude_delta = 0
+
+            #___SNARE______________
+            while anim_data_index_2 < anim_max_index_2 and anim_data_2[anim_data_index_2 + 1][0] < audio_time_elapsed:
+                anim_data_index_2 += 1
+                if anim_data_2[anim_data_index_2][1] > highest_snare_this_frame:
+                    highest_snare_this_frame = anim_data_2[anim_data_index_2][1]
+            current_amplitude_snare = highest_snare_this_frame
+
+            if current_amplitude_snare >= THRESHOLD_SNARE:
+                snare_amplitude_delta = round(current_amplitude_snare - previous_amplitude_snare, 4)
+                previous_amplitude_snare = current_amplitude_snare
+            else:
+                snare_amplitude_delta = 0
+
+            #___HIHAT______________
+            while anim_data_index_3 < anim_max_index_3 and anim_data_3[anim_data_index_3 + 1][0] < audio_time_elapsed:
+                anim_data_index_3 += 1
+                if anim_data_3[anim_data_index_3][1] > highest_hihat_this_frame:
+                    highest_hihat_this_frame = anim_data_3[anim_data_index_3][1]
+            current_amplitude_hihat = highest_hihat_this_frame
+
+            bass_snare_delta = abs(bass_amplitude_delta - snare_amplitude_delta)
+
+            if current_amplitude_bass >= THRESHOLD_BASS:
+                apply_glitch_1 = True
+
+            if current_amplitude_snare >= THRESHOLD_SNARE and bass_snare_delta >= 0.05:
+                apply_glitch_2 = True
+
+            if current_amplitude_hihat >= THRESHOLD_HIHAT:
+                apply_glitch_3 = True
+
+            #______________________________________________________________________________________________________
+            #___APPLY_CONTROLLER_RUMBLE___(vibrotactile)
+
+            # 1. Initialize variables for this specific frame
+            target_left_force = 0.0
+            target_left_duration = 0.0
+            target_right_force = 0.0
+            target_right_duration = 0.0
+
+            # --- BASS (Left Motor) ---
+            if apply_glitch_1 > 0.0:
+                if current_amplitude_bass > 0.5:
+                    target_left_duration = 0.08
+                    target_left_force = 1.0
+                elif current_amplitude_bass > 0.1:
+                    target_left_duration = 0.05
+                    target_left_force = 0.2 + current_amplitude_bass
+
+            # --- SNARE (Right Motor) ---
+            if apply_glitch_2 > 0.0:
+                if current_amplitude_snare > 0.6:
+                    target_right_duration = 0.08
+                    target_right_force = 1.0
+                elif current_amplitude_snare > 0.1:
+                    target_right_duration = 0.05
+                    target_right_force = 0.2 + current_amplitude_snare
+
+            # --- HI-HAT (Right Motor) ---
+            if apply_glitch_3 > 0.0:
+                temp_force = 0.0
+                temp_duration = 0.0
+    
+                if current_amplitude_hihat > 0.6:
+                    temp_duration = 0.08
+                    temp_force = 1.0
+                elif current_amplitude_hihat > 0.1:
+                    temp_duration = 0.05
+                    temp_force = 0.2 + current_amplitude_hihat
+        
+                # We use the higher value to ensure a weak hi-hat doesn't overwrite a heavy snare!
+                if temp_force > target_right_force:
+                    target_right_force = temp_force
+                    target_right_duration = temp_duration
+
+            # 2. Finally, apply the requested rumbles!
+
+            if target_left_force > 0.7 and target_right_force > 0.7:
+                rumble_1.rumble_left(force=1.0, duration=0.08)
+                rumble_1.rumble_right(force=1.0, duration=0.08)
+
+                rumble_2.rumble_left(force=1.0, duration=0.08)
+                rumble_2.rumble_right(force=1.0, duration=0.08)
+            else:
+                if target_left_force > 0.0:
+                    rumble_1.rumble_left(force=target_left_force, duration=target_left_duration)
+                    rumble_2.rumble_left(force=target_left_force, duration=target_left_duration)
+
+                if target_right_force > 0.0:
+                    rumble_1.rumble_right(force=target_right_force, duration=target_right_duration)
+                    rumble_2.rumble_right(force=target_right_force, duration=target_right_duration)
+
+            # 3. Always run update to handle shutting them down when timers expire
+            rumble_1.update()
+            rumble_2.update()
+
             # 3. CRITICAL: Prevent the while-loop from maxing out your CPU!
             time.sleep(0.05)
-
-
-            """ CONTINUE WORKING ON PORTING THIS FUNCTIONALITY HERE
-                #______________________________________________________________________________________________________
-                #___APPLY_CONTROLLER_RUMBLE___(vibrotactile)
-
-                # 1. Initialize variables for this specific frame
-                target_left_force = 0.0
-                target_left_duration = 0.0
-                target_right_force = 0.0
-                target_right_duration = 0.0
-
-                # --- BASS (Left Motor) ---
-                if apply_glitch_1 > 0.0:
-                    if current_amplitude_bass > 0.5:
-                        target_left_duration = 0.08
-                        target_left_force = 1.0
-                    elif current_amplitude_bass > 0.1:
-                        target_left_duration = 0.05
-                        target_left_force = 0.2 + current_amplitude_bass
-
-                # --- SNARE (Right Motor) ---
-                if apply_glitch_2 > 0.0:
-                    if current_amplitude_snare > 0.6:
-                        target_right_duration = 0.08
-                        target_right_force = 1.0
-                    elif current_amplitude_snare > 0.1:
-                        target_right_duration = 0.05
-                        target_right_force = 0.2 + current_amplitude_snare
-
-                # --- HI-HAT (Right Motor) ---
-                if apply_glitch_3 > 0.0:
-                    temp_force = 0.0
-                    temp_duration = 0.0
-    
-                    if current_amplitude_hihat > 0.6:
-                        temp_duration = 0.08
-                        temp_force = 1.0
-                    elif current_amplitude_hihat > 0.1:
-                        temp_duration = 0.05
-                        temp_force = 0.2 + current_amplitude_hihat
-        
-                    # We use the higher value to ensure a weak hi-hat doesn't overwrite a heavy snare!
-                    if temp_force > target_right_force:
-                        target_right_force = temp_force
-                        target_right_duration = temp_duration
-
-                # 2. Finally, apply the requested rumbles!
-
-                if target_left_force > 0.7 and target_right_force > 0.7:
-                    rumble.rumble_left(force=1.0, duration=0.08)
-                    rumble.rumble_right(force=1.0, duration=0.08)
-                else:
-                    if target_left_force > 0.0:
-                        rumble.rumble_left(force=target_left_force, duration=target_left_duration)
-
-                    if target_right_force > 0.0:
-                        rumble.rumble_right(force=target_right_force, duration=target_right_duration)
-
-                # 3. Always run update to handle shutting them down when timers expire
-                rumble.update()"""
 
         if exit_signal:
             break
