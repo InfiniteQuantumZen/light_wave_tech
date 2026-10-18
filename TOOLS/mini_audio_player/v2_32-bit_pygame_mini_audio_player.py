@@ -373,14 +373,13 @@ def load_animation_data(filepath):
     return data
 
 THRESHOLD_BASS = 0.40
-THRESHOLD_BASS_NEGATIVE = 0.40
-THRESHOLD_BASS_POSITIVE = 0.50
 THRESHOLD_SNARE = 0.40
 THRESHOLD_HIHAT = 0.40
 
 def Get_Rumble_Sync(anim_data_1, anim_data_2, anim_data_3, 
                     anim_data_index_1, anim_data_index_2, anim_data_index_3,
                     anim_max_index_1, anim_max_index_2, anim_max_index_3,
+                    prev_amplitude_bass, prev_amplitude_snare,
                     audio_time_elapsed_rumble):
 
     apply_rumble_1 = apply_rumble_2 = apply_rumble_3 = False
@@ -405,12 +404,24 @@ def Get_Rumble_Sync(anim_data_1, anim_data_2, anim_data_3,
             highest_bass_this_frame = anim_data_1[anim_data_index_1][1]
     current_amplitude_bass = highest_bass_this_frame
 
+    if current_amplitude_bass >= THRESHOLD_BASS:
+        bass_amplitude_delta = round(current_amplitude_bass - prev_amplitude_bass, 4)
+        prev_amplitude_bass = current_amplitude_bass
+    else:
+        bass_amplitude_delta = 0
+
     #___SNARE______________
     while anim_data_index_2 < anim_max_index_2 and anim_data_2[anim_data_index_2 + 1][0] < audio_time_elapsed_rumble:
         anim_data_index_2 += 1
         if anim_data_2[anim_data_index_2][1] > highest_snare_this_frame:
             highest_snare_this_frame = anim_data_2[anim_data_index_2][1]
     current_amplitude_snare = highest_snare_this_frame
+
+    if current_amplitude_snare >= THRESHOLD_SNARE:
+        snare_amplitude_delta = round(current_amplitude_snare - prev_amplitude_snare, 4)
+        prev_amplitude_snare = current_amplitude_snare
+    else:
+        snare_amplitude_delta = 0
 
     #___HIHAT______________
     while anim_data_index_3 < anim_max_index_3 and anim_data_3[anim_data_index_3 + 1][0] < audio_time_elapsed_rumble:
@@ -419,10 +430,12 @@ def Get_Rumble_Sync(anim_data_1, anim_data_2, anim_data_3,
             highest_hihat_this_frame = anim_data_3[anim_data_index_3][1]
     current_amplitude_hihat = highest_hihat_this_frame
 
+    bass_snare_delta = abs(bass_amplitude_delta - snare_amplitude_delta)
+
     if current_amplitude_bass >= THRESHOLD_BASS:
         apply_rumble_1 = True
 
-    if current_amplitude_snare >= THRESHOLD_SNARE:
+    if current_amplitude_snare >= THRESHOLD_SNARE and bass_snare_delta >= 0.05:
         apply_rumble_2 = True
 
     if current_amplitude_hihat >= THRESHOLD_HIHAT:
@@ -435,7 +448,7 @@ def Get_Rumble_Sync(anim_data_1, anim_data_2, anim_data_3,
     target_right_duration = 0.0
 
     # --- BASS (Left Motor) ---
-    if apply_rumble_1 > 0.0:
+    if apply_rumble_1:
         if current_amplitude_bass > 0.5:
             target_left_duration = 0.08
             target_left_force = 1.0
@@ -444,7 +457,7 @@ def Get_Rumble_Sync(anim_data_1, anim_data_2, anim_data_3,
             target_left_force = 0.2 + current_amplitude_bass
 
     # --- SNARE (Right Motor) ---
-    if apply_rumble_2 > 0.0:
+    if apply_rumble_2:
         if current_amplitude_snare > 0.6:
             target_right_duration = 0.08
             target_right_force = 1.0
@@ -453,7 +466,7 @@ def Get_Rumble_Sync(anim_data_1, anim_data_2, anim_data_3,
             target_right_force = 0.2 + current_amplitude_snare
 
     # --- HI-HAT (Right Motor) ---
-    if apply_rumble_3 > 0.0:
+    if apply_rumble_3:
         temp_force = 0.0
         temp_duration = 0.0
     
@@ -469,7 +482,9 @@ def Get_Rumble_Sync(anim_data_1, anim_data_2, anim_data_3,
             target_right_force = temp_force
             target_right_duration = temp_duration
 
-    return (target_left_force, target_left_duration), (target_right_force, target_right_duration), \
+    return (target_left_force, target_left_duration), \
+           (target_right_force, target_right_duration), \
+           prev_amplitude_bass, prev_amplitude_snare, \
            anim_data_index_1, anim_data_index_2, anim_data_index_3
 
 #______________________________________________________________________________________________________
@@ -478,9 +493,9 @@ exit_signal = False
 PLAYLIST = True
 
 EVERYTHING         = False
-CORE_EDITION       = True
+CORE_EDITION       = False
 SUMMER_EDITION     = False
-PSY_TRANCE_EDITION = False
+PSY_TRANCE_EDITION = True
 HARDWAVE_EDITION   = False
 CUSTOM_EDITION     = False
 
@@ -585,18 +600,20 @@ if PLAYLIST:
 
         anim_data_bass_filepath  = f"{audio_sync_data_base_folder}/{audio_base_filename}_bass_keyframes.csv"
         anim_data_1 = load_animation_data(anim_data_bass_filepath)
-        anim_data_index_1 = 0
-        anim_max_index_1 = len(anim_data_1) - 1
+        anim_data_index_1_rumble = 0
+        anim_max_index_1_rumble = len(anim_data_1) - 1
 
         anim_data_snare_filepath = f"{audio_sync_data_base_folder}/{audio_base_filename}_snare_keyframes.csv"
         anim_data_2 = load_animation_data(anim_data_snare_filepath)
-        anim_data_index_2 = 0
-        anim_max_index_2 = len(anim_data_2) - 1
+        anim_data_index_2_rumble = 0
+        anim_max_index_2_rumble = len(anim_data_2) - 1
 
         anim_data_hihat_filepath = f"{audio_sync_data_base_folder}/{audio_base_filename}_hihat_keyframes.csv"
         anim_data_3 = load_animation_data(anim_data_hihat_filepath)
-        anim_data_index_3 = 0
-        anim_max_index_3 = len(anim_data_3) - 1
+        anim_data_index_3_rumble = 0
+        anim_max_index_3_rumble = len(anim_data_3) - 1
+
+        prev_amplitude_bass_rumble = prev_amplitude_snare_rumble = 0
 
         #______________________________
 
@@ -664,10 +681,13 @@ if PLAYLIST:
             #______________________________________________________________________________________________________
             #___APPLY_CONTROLLER_RUMBLE___(vibrotactile)
 
-            rumble_left_sync, rumble_right_sync, anim_data_index_1, anim_data_index_2, anim_data_index_3 = Get_Rumble_Sync(
+            rumble_left_sync, rumble_right_sync, \
+            prev_amplitude_bass_rumble, prev_amplitude_snare_rumble, \
+            anim_data_index_1_rumble, anim_data_index_2_rumble, anim_data_index_3_rumble = Get_Rumble_Sync(
                 anim_data_1, anim_data_2, anim_data_3, 
-                anim_data_index_1, anim_data_index_2, anim_data_index_3,
-                anim_max_index_1, anim_max_index_2, anim_max_index_3,
+                anim_data_index_1_rumble, anim_data_index_2_rumble, anim_data_index_3_rumble,
+                anim_max_index_1_rumble, anim_max_index_2_rumble, anim_max_index_3_rumble,
+                prev_amplitude_bass_rumble, prev_amplitude_snare_rumble,
                 audio_time_elapsed_rumble
             )
 
