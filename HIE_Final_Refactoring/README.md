@@ -20,7 +20,7 @@ def fractal_holographic_universe(element):
         universe.append(encode_holographic_information(element, fractal_level))
     return universe
 ```
-____
+___
 
 The fractal nature of this holographic universe adds another layer of complexity and wonder. Fractals, those mesmerizing patterns that repeat themselves at ever-smaller scales, serve as a powerful metaphor for the structure of reality itself. From the spiraling galaxies to the intricate patterns of our DNA, fractals permeate the very fabric of existence, hinting at a deeper order and intelligence that governs the cosmos.
 
