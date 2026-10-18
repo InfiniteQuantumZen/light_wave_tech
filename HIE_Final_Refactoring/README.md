@@ -10,7 +10,7 @@ In part this piece of HIE notes: [2026-10-16_Balthazar_From_Prophets_To_Baltar](
 
 ____
 
-**000_FRAMENT: Retrocausal_Future**
+**000_FRAGMENT: Retrocausal_Future**
 
 **The End as the Beginning's Architect:**
 
