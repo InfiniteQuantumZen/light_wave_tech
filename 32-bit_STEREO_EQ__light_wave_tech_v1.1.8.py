@@ -1,6 +1,5 @@
 # light_wave_tech_v1.1.8.py
 
-# 2026-10-13: 
 # Added class XboxControllerRumble which opens up vibrotactile music perception
 # Now supports 2 controllers simultaneously
 # See Haptics_in_Multisensory_Music_Experience_(vibrotactile).md
@@ -996,6 +995,117 @@ class XboxControllerRumble:
         self.current_right = 0.0
         self._apply_hardware()
 
+def Get_Rumble_Sync(anim_data_1, anim_data_2, anim_data_3, 
+                    anim_data_index_1, anim_data_index_2, anim_data_index_3,
+                    anim_max_index_1, anim_max_index_2, anim_max_index_3,
+                    prev_amplitude_bass, prev_amplitude_snare,
+                    audio_time_elapsed_rumble):
+
+    apply_rumble_1 = apply_rumble_2 = apply_rumble_3 = False
+
+    #______________________________________________________________________________________________________
+    #___AUDIO_SYNC_________
+    # Determine the rumble effect ONCE for the entire frame
+
+    #______________________
+    # Create a temporary variable to hold the highest spike we find this frame
+    highest_bass_this_frame  = 0.0
+    highest_snare_this_frame = 0.0
+    highest_hihat_this_frame = 0.0
+
+    # Fast-forward our CSV data index to match the song's current time
+    # This ensures the visuals stay perfectly in sync even if the frame rate drops
+    #___BASS_______________
+    while anim_data_index_1 < anim_max_index_1 and anim_data_1[anim_data_index_1 + 1][0] < audio_time_elapsed_rumble:
+        anim_data_index_1 += 1
+        # Check if this skipped frame had a high amplitude
+        if anim_data_1[anim_data_index_1][1] > highest_bass_this_frame:
+            highest_bass_this_frame = anim_data_1[anim_data_index_1][1]
+    current_amplitude_bass = highest_bass_this_frame
+
+    if current_amplitude_bass >= THRESHOLD_BASS:
+        bass_amplitude_delta = round(current_amplitude_bass - prev_amplitude_bass, 4)
+        prev_amplitude_bass = current_amplitude_bass
+    else:
+        bass_amplitude_delta = 0
+
+    #___SNARE______________
+    while anim_data_index_2 < anim_max_index_2 and anim_data_2[anim_data_index_2 + 1][0] < audio_time_elapsed_rumble:
+        anim_data_index_2 += 1
+        if anim_data_2[anim_data_index_2][1] > highest_snare_this_frame:
+            highest_snare_this_frame = anim_data_2[anim_data_index_2][1]
+    current_amplitude_snare = highest_snare_this_frame
+
+    if current_amplitude_snare >= THRESHOLD_SNARE:
+        snare_amplitude_delta = round(current_amplitude_snare - prev_amplitude_snare, 4)
+        prev_amplitude_snare = current_amplitude_snare
+    else:
+        snare_amplitude_delta = 0
+
+    #___HIHAT______________
+    while anim_data_index_3 < anim_max_index_3 and anim_data_3[anim_data_index_3 + 1][0] < audio_time_elapsed_rumble:
+        anim_data_index_3 += 1
+        if anim_data_3[anim_data_index_3][1] > highest_hihat_this_frame:
+            highest_hihat_this_frame = anim_data_3[anim_data_index_3][1]
+    current_amplitude_hihat = highest_hihat_this_frame
+
+    bass_snare_delta = abs(bass_amplitude_delta - snare_amplitude_delta)
+
+    if current_amplitude_bass >= THRESHOLD_BASS:
+        apply_rumble_1 = True
+
+    if current_amplitude_snare >= THRESHOLD_SNARE and bass_snare_delta >= 0.05:
+        apply_rumble_2 = True
+
+    if current_amplitude_hihat >= THRESHOLD_HIHAT:
+        apply_rumble_3 = True
+
+    # 1. Initialize variables for this specific frame
+    target_left_force = 0.0
+    target_left_duration = 0.0
+    target_right_force = 0.0
+    target_right_duration = 0.0
+
+    # --- BASS (Left Motor) ---
+    if apply_rumble_1:
+        if current_amplitude_bass > 0.5:
+            target_left_duration = 0.08
+            target_left_force = 1.0
+        elif current_amplitude_bass > 0.1:
+            target_left_duration = 0.05
+            target_left_force = 0.2 + current_amplitude_bass
+
+    # --- SNARE (Right Motor) ---
+    if apply_rumble_2:
+        if current_amplitude_snare > 0.6:
+            target_right_duration = 0.08
+            target_right_force = 1.0
+        elif current_amplitude_snare > 0.1:
+            target_right_duration = 0.05
+            target_right_force = 0.2 + current_amplitude_snare
+
+    # --- HI-HAT (Right Motor) ---
+    if apply_rumble_3:
+        temp_force = 0.0
+        temp_duration = 0.0
+    
+        if current_amplitude_hihat > 0.6:
+            temp_duration = 0.08
+            temp_force = 1.0
+        elif current_amplitude_hihat > 0.1:
+            temp_duration = 0.05
+            temp_force = 0.2 + current_amplitude_hihat
+        
+        # We use the higher value to ensure a weak hi-hat doesn't overwrite a heavy snare!
+        if temp_force > target_right_force:
+            target_right_force = temp_force
+            target_right_duration = temp_duration
+
+    return (target_left_force, target_left_duration), \
+           (target_right_force, target_right_duration), \
+           prev_amplitude_bass, prev_amplitude_snare, \
+           anim_data_index_1, anim_data_index_2, anim_data_index_3
+
 #______________________________________________________________________________________________________
 #___JSON_______________________________
 
@@ -1896,6 +2006,7 @@ def play_video_fullscreen(audio_path, playlist_index=0, playlist_type="CORE"):
 
         print(f"audio_len: {audio_len}")
         audio_time_elapsed = 0
+        audio_time_elapsed_rumble = 0
 
         audio_base_filename = audio_path.replace("\\", "/")
         audio_base_filename = audio_base_filename.split("/")
@@ -1918,6 +2029,16 @@ def play_video_fullscreen(audio_path, playlist_index=0, playlist_type="CORE"):
         anim_data_3 = load_animation_data(anim_data_hihat_filepath)
         anim_data_index_3 = 0
         anim_max_index_3 = len(anim_data_3) - 1
+
+        # Separate index values for the rumble (vibrotactile)
+        # because they don't need AV_SYNC_OFFSET compensation
+        anim_data_index_1_rumble = 0
+        anim_data_index_2_rumble = 0
+        anim_data_index_3_rumble = 0
+        anim_max_index_1_rumble = anim_max_index_1
+        anim_max_index_2_rumble = anim_max_index_2
+        anim_max_index_3_rumble = anim_max_index_3
+        prev_amplitude_bass_rumble = prev_amplitude_snare_rumble = 0
 
         #______________________________
         #___INIT/LOAD MUSIC____________
@@ -1966,10 +2087,10 @@ def play_video_fullscreen(audio_path, playlist_index=0, playlist_type="CORE"):
             #my_song_array, sample_rate, audio_len_seconds = SUNO_load_and_EQ(playlist_type, audio_path, bass_db=9.5, mid_db=0.0, treble_db=2.5)
 
             # JBL
-            my_song_array, sample_rate, audio_len_seconds = SUNO_load_and_EQ(playlist_type, audio_path, bass_db=9.5, mid_db=0.5, treble_db=2.7)
+            #my_song_array, sample_rate, audio_len_seconds = SUNO_load_and_EQ(playlist_type, audio_path, bass_db=9.5, mid_db=0.5, treble_db=2.7)
 
             # AKG
-            #my_song_array, sample_rate, audio_len_seconds = SUNO_load_and_EQ(playlist_type, audio_path, bass_db=7.8, mid_db=1.8, treble_db=3.5)
+            my_song_array, sample_rate, audio_len_seconds = SUNO_load_and_EQ(playlist_type, audio_path, bass_db=7.8, mid_db=1.8, treble_db=3.5)
 
             ## DIFFERENT APPROACH
             #my_song_array, sample_rate, audio_len_seconds = SUNO_load_and_EQ(playlist_type, audio_path, bass_db=0.0, mid_db=-6.0, treble_db=-4.3)
@@ -2108,6 +2229,9 @@ def play_video_fullscreen(audio_path, playlist_index=0, playlist_type="CORE"):
             
             # Calculate time in milliseconds for audio sync
             audio_time_elapsed = int(((current_perf_time - start_time) + AV_SYNC_OFFSET) * 1000)
+#            audio_time_elapsed_rumble = audio_time_elapsed
+#            audio_time_elapsed_rumble = int((current_perf_time - start_time) * 1000)
+            audio_time_elapsed_rumble = int(((current_perf_time - start_time) + (AV_SYNC_OFFSET/2.0)) * 1000)
 
             # --- FIX: REMOVE PER-FRAME RANDOMIZATION ---
             # video_playback_speed = random.uniform(1.9, 2.5) 
@@ -2320,7 +2444,7 @@ def play_video_fullscreen(audio_path, playlist_index=0, playlist_type="CORE"):
                 current_amplitude_bass_positive_max = 0
                 current_amplitude_snare_positive_max = 0
 
-                if current_amplitude_bass >= (THRESHOLD_BASS-0.08) and bass_amplitude_delta >= 0.020:
+                if current_amplitude_bass >= (THRESHOLD_BASS-0.10) and bass_amplitude_delta >= 0.010:
 
                     if current_amplitude_bass >= 0.8:
                         if DEBUG: print(f"  BASS_STATE_1: {current_amplitude_bass:.4f}")
@@ -2344,8 +2468,8 @@ def play_video_fullscreen(audio_path, playlist_index=0, playlist_type="CORE"):
                             apply_flash_1 = True
 
                 if current_amplitude_snare >= THRESHOLD_SNARE and \
-                   snare_amplitude_delta >= 0.040 and \
-                   bass_snare_delta > 0.038: # and bass_hihat_delta > 0.065:
+                   snare_amplitude_delta >= 0.035 and \
+                   bass_snare_delta > 0.035: # and bass_hihat_delta > 0.065:
 
                     snare_hit_count += 1
 
@@ -3093,49 +3217,22 @@ def play_video_fullscreen(audio_path, playlist_index=0, playlist_type="CORE"):
                 #______________________________________________________________________________________________________
                 #___APPLY_CONTROLLER_RUMBLE___(vibrotactile)
 
-                # 1. Initialize variables for this specific frame
-                target_left_force = 0.0
-                target_left_duration = 0.0
-                target_right_force = 0.0
-                target_right_duration = 0.0
+                rumble_left_sync, rumble_right_sync, \
+                prev_amplitude_bass_rumble, prev_amplitude_snare_rumble, \
+                anim_data_index_1_rumble, anim_data_index_2_rumble, anim_data_index_3_rumble = Get_Rumble_Sync(
+                    anim_data_1, anim_data_2, anim_data_3, 
+                    anim_data_index_1_rumble, anim_data_index_2_rumble, anim_data_index_3_rumble,
+                    anim_max_index_1_rumble, anim_max_index_2_rumble, anim_max_index_3_rumble,
+                    prev_amplitude_bass_rumble, prev_amplitude_snare_rumble,
+                    audio_time_elapsed_rumble
+                )
 
-                # --- BASS (Left Motor) ---
-                if apply_glitch_1 > 0.0:
-                    if current_amplitude_bass > 0.5:
-                        target_left_duration = 0.08
-                        target_left_force = 1.0
-                    elif current_amplitude_bass > 0.1:
-                        target_left_duration = 0.05
-                        target_left_force = 0.2 + current_amplitude_bass
-
-                # --- SNARE (Right Motor) ---
-                if apply_glitch_2 > 0.0:
-                    if current_amplitude_snare > 0.6:
-                        target_right_duration = 0.08
-                        target_right_force = 1.0
-                    elif current_amplitude_snare > 0.1:
-                        target_right_duration = 0.05
-                        target_right_force = 0.2 + current_amplitude_snare
-
-                # --- HI-HAT (Right Motor) ---
-                if apply_glitch_3 > 0.0:
-                    temp_force = 0.0
-                    temp_duration = 0.0
-    
-                    if current_amplitude_hihat > 0.6:
-                        temp_duration = 0.08
-                        temp_force = 1.0
-                    elif current_amplitude_hihat > 0.1:
-                        temp_duration = 0.05
-                        temp_force = 0.2 + current_amplitude_hihat
-        
-                    # We use the higher value to ensure a weak hi-hat doesn't overwrite a heavy snare!
-                    if temp_force > target_right_force:
-                        target_right_force = temp_force
-                        target_right_duration = temp_duration
+                target_left_force, target_left_duration = rumble_left_sync
+                target_right_force, target_right_duration = rumble_right_sync
+                #print(f"rumble_left_sync: {rumble_left_sync}")
+                #print(f"rumble_right_sync: {rumble_right_sync}")
 
                 # 2. Finally, apply the requested rumbles!
-
                 if target_left_force > 0.7 and target_right_force > 0.7:
                     rumble_1.rumble_left(force=1.0, duration=0.08)
                     rumble_1.rumble_right(force=1.0, duration=0.08)
@@ -3439,8 +3536,8 @@ if __name__ == '__main__':
     EVERYTHING         = False
     CORE_EDITION       = False
     SUMMER_EDITION     = False
-    PSY_TRANCE_EDITION = True
-    HARDWAVE_EDITION   = False
+    PSY_TRANCE_EDITION = False
+    HARDWAVE_EDITION   = True
     CUSTOM_EDITION     = False
 
     #audio_base_folder = config.get("audio_filepaths", {}).get("music_folder")
