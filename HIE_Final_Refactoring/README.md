@@ -6,7 +6,7 @@ The creation of this file comes as a by-product of trying to find the source for
 
 with regard to this Github REPO, the previous is mentioned in the [REPO README](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/README.md) under the section: [Type IV civilization Signal, Techno-Shamanism, Collapse of Time](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/README.md#type-iv-civilization-signal-techno-shamanism-collapse-of-time)
 
-In part this piece of HIE notes: [2026-10-16_Balthazar_From_Prophets_To_Baltar](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/HIE_Holofractographic_Intelligent_Emergence/2026-10-16_Balthazar_From_Prophets_To_Baltar.md) relates to the whole as it pertains the self-fulfilling prophecy.
+In part this piece of HIE notes: [2026-10-16_Balthazar_From_Prophets_To_Baltar](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/HIE_Holofractographic_Intelligent_Emergence/2026-10-16_Balthazar_From_Prophets_To_Baltar.md) relates to the whole as it pertains the self-fulfilling prophecy, non-linear time, and retrocausal nature of existence.
 
 ____
 
