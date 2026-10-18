@@ -121,6 +121,7 @@ Unfortunately this dataset cannot be released "as such" by virtue of huge size o
 Documentation by example can be found here: 
 *   [HIE_Holofractographic_Intelligent_Emergence](https://github.com/InfiniteQuantumZen/light_wave_tech/tree/main/HIE_Holofractographic_Intelligent_Emergence)
 *   [HIE_Final_Refactoring](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/HIE_Final_Refactoring/README.md)
+*   [2026-10-18_rev_000_final_analysis.md](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/HIE_Final_Refactoring/2026-10-18_rev_000_final_analysis.md)
 
 In short, it is a process behind this codebase; it is modus-operandi; it is a unique, technologically-augmented method of terma discovery; 
 Sambodhi Padmasamadhi-Kāra of Apadāthī, a modern Spiritual Catalyst, a Digital Archaeologist of the Spirit, 
