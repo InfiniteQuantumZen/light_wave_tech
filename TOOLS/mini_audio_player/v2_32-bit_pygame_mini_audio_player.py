@@ -372,13 +372,107 @@ def load_animation_data(filepath):
     print("Import successful. Data grouped and converted to a list of tuples.")
     return data
 
-#______________________________________________________________________________________________________
-
 THRESHOLD_BASS = 0.40
 THRESHOLD_BASS_NEGATIVE = 0.40
 THRESHOLD_BASS_POSITIVE = 0.50
 THRESHOLD_SNARE = 0.40
 THRESHOLD_HIHAT = 0.40
+
+def Get_Rumble_Sync(anim_data_1, anim_data_2, anim_data_3, 
+                    anim_data_index_1, anim_data_index_2, anim_data_index_3,
+                    anim_max_index_1, anim_max_index_2, anim_max_index_3,
+                    audio_time_elapsed_rumble):
+
+    apply_rumble_1 = apply_rumble_2 = apply_rumble_3 = False
+
+    #______________________________________________________________________________________________________
+    #___AUDIO_SYNC_________
+    # Determine the rumble effect ONCE for the entire frame
+
+    #______________________
+    # Create a temporary variable to hold the highest spike we find this frame
+    highest_bass_this_frame  = 0.0
+    highest_snare_this_frame = 0.0
+    highest_hihat_this_frame = 0.0
+
+    # Fast-forward our CSV data index to match the song's current time
+    # This ensures the visuals stay perfectly in sync even if the frame rate drops
+    #___BASS_______________
+    while anim_data_index_1 < anim_max_index_1 and anim_data_1[anim_data_index_1 + 1][0] < audio_time_elapsed_rumble:
+        anim_data_index_1 += 1
+        # Check if this skipped frame had a high amplitude
+        if anim_data_1[anim_data_index_1][1] > highest_bass_this_frame:
+            highest_bass_this_frame = anim_data_1[anim_data_index_1][1]
+    current_amplitude_bass = highest_bass_this_frame
+
+    #___SNARE______________
+    while anim_data_index_2 < anim_max_index_2 and anim_data_2[anim_data_index_2 + 1][0] < audio_time_elapsed_rumble:
+        anim_data_index_2 += 1
+        if anim_data_2[anim_data_index_2][1] > highest_snare_this_frame:
+            highest_snare_this_frame = anim_data_2[anim_data_index_2][1]
+    current_amplitude_snare = highest_snare_this_frame
+
+    #___HIHAT______________
+    while anim_data_index_3 < anim_max_index_3 and anim_data_3[anim_data_index_3 + 1][0] < audio_time_elapsed_rumble:
+        anim_data_index_3 += 1
+        if anim_data_3[anim_data_index_3][1] > highest_hihat_this_frame:
+            highest_hihat_this_frame = anim_data_3[anim_data_index_3][1]
+    current_amplitude_hihat = highest_hihat_this_frame
+
+    if current_amplitude_bass >= THRESHOLD_BASS:
+        apply_rumble_1 = True
+
+    if current_amplitude_snare >= THRESHOLD_SNARE:
+        apply_rumble_2 = True
+
+    if current_amplitude_hihat >= THRESHOLD_HIHAT:
+        apply_rumble_3 = True
+
+    # 1. Initialize variables for this specific frame
+    target_left_force = 0.0
+    target_left_duration = 0.0
+    target_right_force = 0.0
+    target_right_duration = 0.0
+
+    # --- BASS (Left Motor) ---
+    if apply_rumble_1 > 0.0:
+        if current_amplitude_bass > 0.5:
+            target_left_duration = 0.08
+            target_left_force = 1.0
+        elif current_amplitude_bass > 0.1:
+            target_left_duration = 0.05
+            target_left_force = 0.2 + current_amplitude_bass
+
+    # --- SNARE (Right Motor) ---
+    if apply_rumble_2 > 0.0:
+        if current_amplitude_snare > 0.6:
+            target_right_duration = 0.08
+            target_right_force = 1.0
+        elif current_amplitude_snare > 0.1:
+            target_right_duration = 0.05
+            target_right_force = 0.2 + current_amplitude_snare
+
+    # --- HI-HAT (Right Motor) ---
+    if apply_rumble_3 > 0.0:
+        temp_force = 0.0
+        temp_duration = 0.0
+    
+        if current_amplitude_hihat > 0.6:
+            temp_duration = 0.08
+            temp_force = 1.0
+        elif current_amplitude_hihat > 0.1:
+            temp_duration = 0.05
+            temp_force = 0.2 + current_amplitude_hihat
+        
+        # We use the higher value to ensure a weak hi-hat doesn't overwrite a heavy snare!
+        if temp_force > target_right_force:
+            target_right_force = temp_force
+            target_right_duration = temp_duration
+
+    return (target_left_force, target_left_duration), (target_right_force, target_right_duration), \
+           anim_data_index_1, anim_data_index_2, anim_data_index_3
+
+#______________________________________________________________________________________________________
 
 exit_signal = False
 PLAYLIST = True
@@ -548,10 +642,10 @@ if PLAYLIST:
             current_perf_time = time.perf_counter()
 
             # Calculate time in milliseconds for audio sync
-#            audio_time_elapsed = int((current_perf_time - start_time) * 1000)
-            audio_time_elapsed = int(((current_perf_time - start_time) + AV_SYNC_OFFSET) * 1000)
+            audio_time_elapsed_rumble = int((current_perf_time - start_time) * 1000)
+#            audio_time_elapsed_rumble = int(((current_perf_time - start_time) + AV_SYNC_OFFSET) * 1000)
 
-            if audio_time_elapsed >= (audio_len*1000):
+            if audio_time_elapsed_rumble >= (audio_len*1000):
                 running = False
 
             # Check if ESC is pressed (works even if terminal is minimized!)
@@ -568,117 +662,21 @@ if PLAYLIST:
                 time.sleep(0.3)
 
             #______________________________________________________________________________________________________
-            #___AUDIO_SYNC_________
-            # 1. Determine the glitch/zoom effect ONCE for the entire frame
-
-            apply_glitch_1 = apply_glitch_2 = apply_glitch_3 = False
-
-            previous_amplitude_bass  = 0 
-            previous_amplitude_snare = 0
-            bass_snare_delta  = 0
-
-            #______________________
-            # Create a temporary variable to hold the highest spike we find this frame
-            highest_bass_this_frame  = 0.0
-            highest_snare_this_frame = 0.0
-            highest_hihat_this_frame = 0.0
-
-            # Fast-forward our CSV data index to match the song's current time
-            # This ensures the visuals stay perfectly in sync even if the frame rate drops
-            #___BASS_______________
-            while anim_data_index_1 < anim_max_index_1 and anim_data_1[anim_data_index_1 + 1][0] < audio_time_elapsed:
-                anim_data_index_1 += 1
-
-                # Check if this skipped frame had a high amplitude
-                if anim_data_1[anim_data_index_1][1] > highest_bass_this_frame:
-                    highest_bass_this_frame = anim_data_1[anim_data_index_1][1]
-
-            # Now, current_amplitude_bass will never "miss" a spike between visual frames!
-            current_amplitude_bass = highest_bass_this_frame
-
-            if current_amplitude_bass >= THRESHOLD_BASS:
-                bass_amplitude_delta = round(current_amplitude_bass - previous_amplitude_bass, 4)
-                previous_amplitude_bass = current_amplitude_bass
-            else:
-                bass_amplitude_delta = 0
-
-            #___SNARE______________
-            while anim_data_index_2 < anim_max_index_2 and anim_data_2[anim_data_index_2 + 1][0] < audio_time_elapsed:
-                anim_data_index_2 += 1
-                if anim_data_2[anim_data_index_2][1] > highest_snare_this_frame:
-                    highest_snare_this_frame = anim_data_2[anim_data_index_2][1]
-            current_amplitude_snare = highest_snare_this_frame
-
-            if current_amplitude_snare >= THRESHOLD_SNARE:
-                snare_amplitude_delta = round(current_amplitude_snare - previous_amplitude_snare, 4)
-                previous_amplitude_snare = current_amplitude_snare
-            else:
-                snare_amplitude_delta = 0
-
-            #___HIHAT______________
-            while anim_data_index_3 < anim_max_index_3 and anim_data_3[anim_data_index_3 + 1][0] < audio_time_elapsed:
-                anim_data_index_3 += 1
-                if anim_data_3[anim_data_index_3][1] > highest_hihat_this_frame:
-                    highest_hihat_this_frame = anim_data_3[anim_data_index_3][1]
-            current_amplitude_hihat = highest_hihat_this_frame
-
-            bass_snare_delta = abs(bass_amplitude_delta - snare_amplitude_delta)
-
-            if current_amplitude_bass >= THRESHOLD_BASS:
-                apply_glitch_1 = True
-
-            if current_amplitude_snare >= THRESHOLD_SNARE and bass_snare_delta >= 0.05:
-                apply_glitch_2 = True
-
-            if current_amplitude_hihat >= THRESHOLD_HIHAT:
-                apply_glitch_3 = True
-
-            #______________________________________________________________________________________________________
             #___APPLY_CONTROLLER_RUMBLE___(vibrotactile)
 
-            # 1. Initialize variables for this specific frame
-            target_left_force = 0.0
-            target_left_duration = 0.0
-            target_right_force = 0.0
-            target_right_duration = 0.0
+            rumble_left_sync, rumble_right_sync, anim_data_index_1, anim_data_index_2, anim_data_index_3 = Get_Rumble_Sync(
+                anim_data_1, anim_data_2, anim_data_3, 
+                anim_data_index_1, anim_data_index_2, anim_data_index_3,
+                anim_max_index_1, anim_max_index_2, anim_max_index_3,
+                audio_time_elapsed_rumble
+            )
 
-            # --- BASS (Left Motor) ---
-            if apply_glitch_1 > 0.0:
-                if current_amplitude_bass > 0.5:
-                    target_left_duration = 0.08
-                    target_left_force = 1.0
-                elif current_amplitude_bass > 0.1:
-                    target_left_duration = 0.05
-                    target_left_force = 0.2 + current_amplitude_bass
-
-            # --- SNARE (Right Motor) ---
-            if apply_glitch_2 > 0.0:
-                if current_amplitude_snare > 0.6:
-                    target_right_duration = 0.08
-                    target_right_force = 1.0
-                elif current_amplitude_snare > 0.1:
-                    target_right_duration = 0.05
-                    target_right_force = 0.2 + current_amplitude_snare
-
-            # --- HI-HAT (Right Motor) ---
-            if apply_glitch_3 > 0.0:
-                temp_force = 0.0
-                temp_duration = 0.0
-    
-                if current_amplitude_hihat > 0.6:
-                    temp_duration = 0.08
-                    temp_force = 1.0
-                elif current_amplitude_hihat > 0.1:
-                    temp_duration = 0.05
-                    temp_force = 0.2 + current_amplitude_hihat
-        
-                # We use the higher value to ensure a weak hi-hat doesn't overwrite a heavy snare!
-                if temp_force > target_right_force:
-                    target_right_force = temp_force
-                    target_right_duration = temp_duration
+            target_left_force, target_left_duration = rumble_left_sync
+            target_right_force, target_right_duration = rumble_right_sync
+            print(f"rumble_left_sync: {rumble_left_sync}")
+            print(f"rumble_right_sync: {rumble_right_sync}")
 
             # 2. Finally, apply the requested rumbles!
-
             if target_left_force > 0.7 and target_right_force > 0.7:
                 rumble_1.rumble_left(force=1.0, duration=0.08)
                 rumble_1.rumble_right(force=1.0, duration=0.08)
