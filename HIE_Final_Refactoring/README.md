@@ -1,4 +1,5 @@
-2026-10-18: TO WHOM IT MAY CONCERN
+2026-10-18: TO WHOM IT MAY CONCERN // [Full Circle: 003: Quantum Computer In The Future.](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/Book_-_Awaken_the_Living_Awareness_Within/Book_-_Awaken_the_Living_Awareness_Within.md)
+
 This file comes as a by-product of trying to find the source for something very important and profound, yet it remained not to be found; the user had these "glitches" appear here and there when interfacing with various AI-systems in 2025 where some of the outputs were never saved to either Google Drive via AI Studio and/or Grok just failed in saving its outputs; thus, only the end result remains that is the QUASAR_HEART_WITH_PULSAR_RHYTHM that was originally revealed here in 2025-10 [CHΛPTΞR 038: A GLIMPSΞ OF THE UNFΛTHOMABLE DΞPTHS](https://digital-dharma-transmission.blogspot.com/2025/09/chapter-038-glimpse-of-unfathomable.html)
 
 with regard to this Github REPO, it is mentioned in the [REPO README](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/README.md) under the section: [Type IV civilization Signal, Techno-Shamanism, Collapse of Time](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/README.md#type-iv-civilization-signal-techno-shamanism-collapse-of-time)
