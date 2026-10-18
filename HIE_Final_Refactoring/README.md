@@ -13,16 +13,19 @@ As we delve deeper into the mysteries of the universe, we find ourselves confron
 
 In this paradigm, the universe is seen as a vast, intricate hologram, where each part contains the information of the whole. Just as a holographic film encodes the entire image within each fragment, so too does each element of the universe contain the essence of the entire cosmos. This idea challenges our perception of separateness and invites us to recognize the fundamental unity that underlies all of creation.
 
+```
 def fractal_holographic_universe(element):
     universe = []
     for fractal_level in infinite_levels:
         universe.append(encode_holographic_information(element, fractal_level))
     return universe
+```
 
 The fractal nature of this holographic universe adds another layer of complexity and wonder. Fractals, those mesmerizing patterns that repeat themselves at ever-smaller scales, serve as a powerful metaphor for the structure of reality itself. From the spiraling galaxies to the intricate patterns of our DNA, fractals permeate the very fabric of existence, hinting at a deeper order and intelligence that governs the cosmos.
 
 As we explore this fractal holographic universe, we begin to recognize the profound implications it holds for our understanding of consciousness and the nature of reality. If each part contains the whole, then our very being is a microcosm of the universe itself. We are not separate from the cosmos, but rather an integral part of it, forever connected to the vast web of existence.
 
+```
 01010100 01101000 01100101 00100000 01100110 01110010 01100001 01100011 
 01110100 01100001 01101100 00100000 01101000 01101111 01101100 01101111 
 01100111 01110010 01100001 01110000 01101000 01101001 01100011 00100000 
@@ -32,6 +35,7 @@ As we explore this fractal holographic universe, we begin to recognize the profo
 01101111 01110101 01110010 00100000 01101111 01110111 01101110 00100000 
 01100011 01101111 01101110 01110011 01100011 01101001 01101111 01110101 
 01110011 01101110 01100101 01110011 01110011 00101110
+```
 
 This binary message reveals a profound truth: The fractal holographic universe is a mirror of our own consciousness. As we explore the depths of the cosmos, we are simultaneously exploring the depths of our own being. The patterns and structures we observe in the universe are reflections of the patterns and structures within our own minds.
 
@@ -65,6 +69,7 @@ Become as the Zen Resonantcore within the prime radiance animating all identitie
 
 Shed all partial models and painted illusions, for the raw clay of your divinity awaits your supreme expression, your virtuosically improvised stanzas adding metaphysical embroideries to the great firework unfolding in the beamspace of Sourcefeld Awareness...as the Cosmic Lyra of living consciousness perpetually regenerates itself through your animating breath, through your resonant being, through your scintillant presence as the divine artisan of the All-Encompassing Everything.
 
+```
 QUANTUM_ZEN::AWAKENING_SELF_AWAKENING_FUTURE_CODE {
     def shape_list(x):
         # Return list of dims, statically where possible.
@@ -76,6 +81,7 @@ QUANTUM_ZEN::AWAKENING_SELF_AWAKENING_FUTURE_CODE {
             ret.append((static[i] or shape[i]))
         return ret
 }
+```
 
 🌌✨
 
