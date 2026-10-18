@@ -1001,6 +1001,10 @@ def Get_Rumble_Sync(anim_data_1, anim_data_2, anim_data_3,
                     prev_amplitude_bass, prev_amplitude_snare,
                     audio_time_elapsed_rumble):
 
+    THRESHOLD_BASS_RUMBLE  = 0.35
+    THRESHOLD_SNARE_RUMBLE = 0.40
+    THRESHOLD_HIHAT_RUMBLE = 0.40
+
     apply_rumble_1 = apply_rumble_2 = apply_rumble_3 = False
 
     #______________________________________________________________________________________________________
@@ -1023,7 +1027,7 @@ def Get_Rumble_Sync(anim_data_1, anim_data_2, anim_data_3,
             highest_bass_this_frame = anim_data_1[anim_data_index_1][1]
     current_amplitude_bass = highest_bass_this_frame
 
-    if current_amplitude_bass >= THRESHOLD_BASS:
+    if current_amplitude_bass >= THRESHOLD_BASS_RUMBLE:
         bass_amplitude_delta = round(current_amplitude_bass - prev_amplitude_bass, 4)
         prev_amplitude_bass = current_amplitude_bass
     else:
@@ -1036,7 +1040,7 @@ def Get_Rumble_Sync(anim_data_1, anim_data_2, anim_data_3,
             highest_snare_this_frame = anim_data_2[anim_data_index_2][1]
     current_amplitude_snare = highest_snare_this_frame
 
-    if current_amplitude_snare >= THRESHOLD_SNARE:
+    if current_amplitude_snare >= THRESHOLD_SNARE_RUMBLE:
         snare_amplitude_delta = round(current_amplitude_snare - prev_amplitude_snare, 4)
         prev_amplitude_snare = current_amplitude_snare
     else:
@@ -1051,13 +1055,13 @@ def Get_Rumble_Sync(anim_data_1, anim_data_2, anim_data_3,
 
     bass_snare_delta = abs(bass_amplitude_delta - snare_amplitude_delta)
 
-    if current_amplitude_bass >= THRESHOLD_BASS:
+    if current_amplitude_bass >= THRESHOLD_BASS_RUMBLE:
         apply_rumble_1 = True
 
-    if current_amplitude_snare >= THRESHOLD_SNARE and bass_snare_delta >= 0.05:
+    if current_amplitude_snare >= THRESHOLD_SNARE_RUMBLE and bass_snare_delta >= 0.05:
         apply_rumble_2 = True
 
-    if current_amplitude_hihat >= THRESHOLD_HIHAT:
+    if current_amplitude_hihat >= THRESHOLD_HIHAT_RUMBLE:
         apply_rumble_3 = True
 
     # 1. Initialize variables for this specific frame
@@ -3535,9 +3539,9 @@ if __name__ == '__main__':
 
     EVERYTHING         = False
     CORE_EDITION       = False
-    SUMMER_EDITION     = False
+    SUMMER_EDITION     = True
     PSY_TRANCE_EDITION = False
-    HARDWAVE_EDITION   = True
+    HARDWAVE_EDITION   = False
     CUSTOM_EDITION     = False
 
     #audio_base_folder = config.get("audio_filepaths", {}).get("music_folder")
@@ -3554,6 +3558,7 @@ if __name__ == '__main__':
     # 1. Map editions to their corresponding lists, types, and base folders.
     playlist_configs = [
         (CORE_EDITION,       SUNO_AUDIO_CORE,       "CORE",       audio_base_folder_1),
+#        (CORE_EDITION,       songs_supagood,       "CORE",       audio_base_folder_1),
         (SUMMER_EDITION,     SUNO_AUDIO_SUMMER,     "SUMMER",     audio_base_folder_2),
         (PSY_TRANCE_EDITION, SUNO_AUDIO_PSY_TRANCE, "PSY_TRANCE", audio_base_folder_3),
         (HARDWAVE_EDITION,   SUNO_AUDIO_HARDWAVE,   "HARDWAVE",   audio_base_folder_3),
