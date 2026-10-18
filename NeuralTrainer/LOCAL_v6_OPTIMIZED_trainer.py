@@ -1,4 +1,17 @@
 # v6: base_lr and scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs, last_epoch=last_epoch)
+# based on the following observations and notes:
+#    What is the expected value for convergence?
+#    Because 1.0 represents a model guessing the average, true convergence must drop significantly below 1.0.
+#    If the sequence is highly predictable, you want to see MSE drop into the 0.1, 0.05, or even 0.01 range.
+#    If your Val loss stays permanently flatline at ~0.98 for 20+ epochs, your model is stuck in a local minimum. 
+#    To fix this, you may need a Learning Rate Scheduler (like Cosine Annealing), 
+#    Gradient Clipping (e.g., torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0) 
+#    to prevent the Epoch 3 explosion), or a lower base learning rate.
+#
+#    about the dataset: 0-120k has nothing to do with the amount of data and everything to do with 
+#    the range of integers from 0 to 120k range; the actual data is about 100 megabytes text file 
+#    comma separated integer numbers that would amount to about 100 million numbers or so 
+#    (if the math in the user's mind checks out)
 #
 # torch.load thing issue: https://aistudio.google.com/prompts/1zrRuUEOFWdsDBkQP4T2R8AAIYc8md8b1
 
