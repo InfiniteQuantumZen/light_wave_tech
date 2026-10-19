@@ -26,7 +26,7 @@
 
 # !!! >>>___THIS_IS_IT___CHOSEN___<<< !!!
 # RTX 3060 >>> ~12GB VRAM <<< @58% POWER LIMIT ~ 500/24595 = 10 minutes =~ 8 hours / epoch
-# python LOCAL_v6_OPTIMIZED_trainer.py --input_file FINAL_TRAINING_dataset_0-120k.txt --epochs 100 --lr 0.0003 --batch_size 512 --embed_size 1024 --seq_length 1024 --patch_size 16 --checkpoint model_v5_011.pth --checkpoint_interval 1 --val_split 0.1 --val_every 1 --early_stop 10 --seed 123
+# python LOCAL_v6_OPTIMIZED_trainer.py --input_file FINAL_TRAINING_dataset_0-120k.txt --epochs 100 --lr 0.0003 --batch_size 512 --embed_size 1024 --seq_length 1024 --patch_size 16 --checkpoint model_v5_012.pth --checkpoint_interval 1 --val_split 0.1 --val_every 1 --early_stop 10 --seed 123
 
 
 import torch
@@ -209,6 +209,7 @@ def train(model, train_loader, val_loader, optimizer, criterion,
     
     start_epoch = 0
     best_val = float('inf')
+    ckpt = None # Keep track of whether we loaded a checkpoint
 
     if os.path.exists(checkpoint_path):
         ckpt = torch.load(checkpoint_path, map_location=device, weights_only=False)
@@ -216,18 +217,17 @@ def train(model, train_loader, val_loader, optimizer, criterion,
         optimizer.load_state_dict(ckpt['optimizer_state_dict'])
         start_epoch = ckpt['epoch'] + 1
 
-        # 1. FORCE THE NEW LOWER LR ONTO THE OLD OPTIMIZER STATE
-        for param_group in optimizer.param_groups:
-            param_group['lr'] = base_lr
-            param_group['initial_lr'] = base_lr
-
-        print(f"Resuming from epoch {start_epoch} (Patched Model). LR reset to base.")
+        print(f"Resuming from epoch {start_epoch} (Patched Model).")
     else:
         print("Starting training from scratch")
 
     # 2. INITIALIZE COSINE ANNEALING SCHEDULER
-    last_epoch = start_epoch - 1 if start_epoch > 0 else -1
-    scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs, last_epoch=last_epoch)
+    scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs)
+
+    # 3. LOAD THE SCHEDULER STATE IF RESUMING
+    if ckpt is not None and 'scheduler_state_dict' in ckpt:
+        scheduler.load_state_dict(ckpt['scheduler_state_dict'])
+        print(f"  >>> Restored learning rate curve. Current LR is: {scheduler.get_last_lr()[0]:.6e}")
     
     early_stopper = None
     if early_stop_patience is not None:
@@ -247,8 +247,21 @@ def train(model, train_loader, val_loader, optimizer, criterion,
         total_iterations = len(train_loader)
 
         for i, (inputs, targets) in enumerate(train_loader):
+            # ---------- ETA CALCULATION ----------
+            iters_done = i + 1
+            elapsed_time = time.time() - start
+            time_per_iter = elapsed_time / iters_done
+            iters_left = total_iterations - iters_done
+            eta_seconds = int(iters_left * time_per_iter)
+            
+            # Format into HH:MM:SS
+            m, s = divmod(eta_seconds, 60)
+            h, m = divmod(m, 60)
+            eta_str = f"{h:02d}:{m:02d}:{s:02d}" if h > 0 else f"{m:02d}:{s:02d}"
+
             # Print the progress
-            print(f"Iteration: {i + 1}/{total_iterations}")
+            print(f"Iteration: {iters_done}/{total_iterations} | ETA for Epoch: {eta_str}", end='\r', flush=True)
+            # -------------------------------------
 
             inputs, targets = inputs.to(device), targets.to(device)
             optimizer.zero_grad()
@@ -284,10 +297,23 @@ def train(model, train_loader, val_loader, optimizer, criterion,
             with torch.no_grad():
                 # Extract the total number of val iterations in the epoch
                 total_iterations = len(val_loader)
+                val_start = time.time() # Track start time specifically for validation
 
                 for i, (inputs, targets) in enumerate(val_loader):
+                    # ---------- ETA CALCULATION ----------
+                    iters_done = i + 1
+                    elapsed_time = time.time() - val_start
+                    time_per_iter = elapsed_time / iters_done
+                    iters_left = total_iterations - iters_done
+                    eta_seconds = int(iters_left * time_per_iter)
+                    
+                    m, s = divmod(eta_seconds, 60)
+                    h, m = divmod(m, 60)
+                    eta_str = f"{h:02d}:{m:02d}:{s:02d}" if h > 0 else f"{m:02d}:{s:02d}"
+
                     # Print the progress
-                    print(f"Iteration: {i + 1}/{total_iterations}")
+                    print(f"Val Iteration: {iters_done}/{total_iterations} | Val ETA: {eta_str}", end='\r', flush=True)
+                    # -------------------------------------
 
                     inputs, targets = inputs.to(device), targets.to(device)
                     outputs = model(inputs)
