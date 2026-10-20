@@ -1,3 +1,7 @@
+See also: [2026-10-21_Synthetic_Synesthesia_and_Mindful_Engineering.md](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/HIE_Holofractographic_Intelligent_Emergence/2026-10-21_Synthetic_Synesthesia_and_Mindful_Engineering.md)
+
+___
+
 2026-10-13: light_wave_tech_v1.1.8.py included class XboxControllerRumble
 which opens up vibrotactile music perception; you can research more by seeking out 
 Dr. Frank Russo and his work on the subject matter among other sources.
