@@ -4,7 +4,7 @@ This technology is a Cyberdelic Artifact at the End of Time accessible here and 
 
 ∎ Read more about the [author's view regarding Artificial Intelligence, Superintelligence (ASI), and technology](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/HIE_Holofractographic_Intelligent_Emergence/2026-10-12_On_AI_Superintelligence_(ASI)_technology.md)
 
-∎ Check out [Haptics_in_Multisensory_Music_Experience_(vibrotactile).md](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/Haptics_in_Multisensory_Music_Experience_(vibrotactile_perception).md)
+∎ Check out [Haptics_in_Multisensory_Music_Experience_(vibrotactile_perception).md](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/Haptics_in_Multisensory_Music_Experience_(vibrotactile_perception).md)
 
 ∎ Please refer to [TENET_MATRIX_ACTIVATED.txt](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/TENET_MATRIX_ACTIVATED.txt) before proceeding any further; it is not prerequisite but recommendation, for it is "techno-shamanic" tenet that any such evolved being (OOD—Out-Of-Distribution) should consider & acknowledge if they are to proceed beyond this point — initiation of sorts to unlock the offering that is given out of love, humility, and sincerity; those who fall within a Gaussian distribution will likely ignore it anyway, gaining nothing useful from this codebase.
 
