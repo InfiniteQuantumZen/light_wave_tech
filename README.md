@@ -87,7 +87,7 @@ The code was developed and created for the viewing experience of Ultra-Wide 3440
 
 ### Dataset
 
-As for the dataset: that is something you need to curate yourself since that part is very difficult to provide (1 Terabytes of data); video formats and their resolutions can be configured in the codebase if one decides to bring their own data and test the system.
+As for the dataset: that is something you need to curate yourself since that part is very difficult to provide (1 Terabytes of data); video formats and their resolutions can be configured in the codebase if one decides to bring their own data and test the system. More on this can be found here [About Dataset](https://github.com/InfiniteQuantumZen/light_wave_tech/tree/main#about-dataset).
 
 ### Code/Data Structure
 
