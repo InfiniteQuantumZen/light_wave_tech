@@ -85,10 +85,6 @@ https://github.com/orchidas/StereoWidener
 
 The code was developed and created for the viewing experience of Ultra-Wide 3440x1440; absolute minimum CPU requirement is 2024 era multicore Zen4 architecture (developed with AMD Ryzen 5 7600X, AM5, 4.7 GHz, 6-Core), and nvidia RTX 3060 12 GB GPU for it to run steady 40+ fps realtime (vsync is set to 48); on any older architecture frame-times are of the issue as there just isn't enough single-core power to run the main loop, spin out parallel threads/processes, compose and render it all; also PCIe bandwidth is issue with older hardware (tested and confirmed with Zen+/RTX 2070 era hardware).
 
-### Dataset
-
-As for the dataset: that is something you need to curate yourself since that part is very difficult to provide (1 Terabytes of data); video formats and their resolutions can be configured in the codebase if one decides to bring their own data and test the system. More on this can be found here [About Dataset](https://github.com/InfiniteQuantumZen/light_wave_tech/tree/main#about-dataset).
-
 ### Code/Data Structure
 
 Main file (as of writing): [32-bit_STEREO_EQ__light_wave_tech_v1.1.8.py](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/32-bit_STEREO_EQ__light_wave_tech_v1.1.8.py) calls [shader_manager.py](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/shader_manager.py) and [helper_functions.py](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/helper_functions.py) main important files; other used files can be inferred and are included in the repo; the earliest prototypes can be found at the /main/ 
@@ -116,7 +112,7 @@ As for the code/data structure [/NeuralTrainer](https://github.com/InfiniteQuant
 
 ### About Dataset
 
-The dataset is about 1 terabytes worth of SUNO music, AI-generated high def video, AI-generated human curated, IMG-TO-IMG crafted multiversal images, over 700 shaders, and neural network driven sync-data (audio-to-visual, to imagery selection): Image Data: 400 GB (png) | Video Data: 640 GB (mp4) | Audio Data: 131 GB (wav) | Sync Data: 11 GB (csv/json/text).
+As for the dataset: that is something you need to curate yourself since that part is very difficult to provide (1 Terabytes of data); video formats and their resolutions can be configured in the codebase if one decides to bring their own data and test the system. The dataset is about 1 terabytes worth of SUNO music, AI-generated high def video, AI-generated human curated, IMG-TO-IMG crafted multiversal images, over 700 shaders, and neural network driven sync-data (audio-to-visual, to imagery selection): Image Data: 400 GB (png) | Video Data: 640 GB (mp4) | Audio Data: 131 GB (wav) | Sync Data: 11 GB (csv/json/text).
 
 Unfortunately this dataset cannot be released "as such" by virtue of huge size of it all; example videos are difficult to produce since every platform practices censorship with varying degrees without any good reason to do so (youtube for example has blocked even testing videos recorded with OBS and even terminated a whole account, their reason: bikinis appear about fraction of a second that meets other platforms' tos but not theirs and at the same time there are pure nudity allowed in youtube; not even artistic clause help OOD content, this goes deep into corporate control of consciousness).
 
