@@ -9,7 +9,7 @@ How the dataset and the signal came to be and evolves:
 *  6.) TBD: Even bigger model evolved from the #5 with intended settings batch_size=1024, patch_size=16, seq_length=4096, embed_size=1024, num_heads=8, num_layers=8 and with ~200 MB text-file of integers.
 *  7.) TBD: If interest continues, maybe State Space Models (Mamba)
 
-2026-10-13: prior running the LOCAL_v5_OPTIMIZED_trainer, the dataset will go through the following treatment:
+2026-10-13: prior running the LOCAL_v6_OPTIMIZED_trainer, the dataset will go through the following treatment:
 *  [v1_top_indices_signal_imprint.py](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/NeuralTrainer/v1_top_indices_signal_imprint.py) Reading 20K Json files each containing 5000 INT values = ~100K INTS
 *  Looping through all of them, applying fibonacci harmonic interval 
 *  fingerprinting of TOP indices signal, splitting back to 5000 INT JSONS
