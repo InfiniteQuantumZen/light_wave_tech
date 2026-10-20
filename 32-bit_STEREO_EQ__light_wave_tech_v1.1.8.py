@@ -20,11 +20,15 @@ pip install scipy
 pip install mutagen
 pip install moderngl
 pip install pillow
-^^^^^^^^^^^^^^^^^^
-2026-10-10: THERE MIGHT BE OTHER THINGS TO pip
-NOT SURE HOW MANY OTHER THINGS GOT INSTALLED
-SINCE THE LAST UPDATE OF THIS... ONE KNOWS WHEN
-CREATING FROM SCRATCH... not of concern here now.
+pip install pyloudnorm
+pip install sounddevice
+pip install soundfile
+
+THESE ARE NEEDED FOR STEREOWIDENER:
+pip install matplotlib
+pip install loguru
+pip install sympy
+pip install pyfar
 
 >>> >> USE THIS: 
 conda activate light_wave_tech
