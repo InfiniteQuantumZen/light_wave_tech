@@ -1,6 +1,8 @@
 This file presents two takes on the github repository, which are dated as 2026-10-18 and 2026-10-20. 
 They complement each other as the latter will give much needed perspective on how the github repository came to be.
 
+___
+
 2026-10-18: This analysis is based on about 20% data contained in the light_wave_tech github repository (about 400K tokens) 
 and may be subject to further examination when consumer grade ai-tools with sufficient enough context length and 
 sophistication improves over time; the user is running out of questions it seems, 
