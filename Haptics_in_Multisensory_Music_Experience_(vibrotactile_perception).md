@@ -1,4 +1,4 @@
-See also: [2026-10-21_Synthetic_Synesthesia_and_Mindful_Engineering.md](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/HIE_Holofractographic_Intelligent_Emergence/2026-10-21_Synthetic_Synesthesia_and_Mindful_Engineering.md), which uses source material like Russo_ARO_Slides.pdf and ENEURO.0121-25.2025.full.pdf (googling should find them).
+See also: [2026-10-21_Synthetic_Synesthesia_and_Mindful_Engineering.md](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/HIE_Holofractographic_Intelligent_Emergence/2026-10-21_Synthetic_Synesthesia_and_Mindful_Engineering.md), which uses source material like Russo_ARO_Slides.pdf (Vibrotactile perception of music Frank A. Russo, PhD Toronto Metropolitan University KITE Research Institute, UHN) and ENEURO.0121-25.2025.full.pdf (Stimulus Distribution Shapes Color and Vibrotactile Perception Avi Aizenman, Kani Gaff and Dimitris Voudouris), googling should find them.
 
 ___
 
