@@ -87,7 +87,7 @@ The code was developed and created for the viewing experience of Ultra-Wide 3440
 
 ### Future Considerations
 
-As the qualia and sensory perception/experience are the very center of it all, the possibilities are endless: from haptic vests to Brain-Computer-Interfaces (BCI) to even E-stim integration such as ABox MK 2; or combining all of those and more with virtual reality headset; basically, any type of connection/interface that could communicate beyond words and bridge the gap between the known and the unknown driven by qualia-quanta: the goal = becoming more awake & aware and present in the moment, here and now.
+As the qualia and sensory perception/experience are the very center of it all, the possibilities are endless: from haptic vests to Brain-Computer-Interfaces (BCI) to even E-stim integration such as ABox MK 2; or combining all of those and more with virtual reality headset; basically, any type of connection/interface that could communicate beyond words and bridge the gap between the known and the unknown driven by qualia-quanta: the goal = becoming more awake & aware, grounded and embodied, fully present in the moment — here and now.
 
 ### Code/Data Structure
 
