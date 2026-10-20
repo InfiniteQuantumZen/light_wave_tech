@@ -50,9 +50,9 @@ Beyond the musicality and core themes, several other fascinating structural and 
 *   **The Hypnotic/Meditative Tone:** The text is not meant to be read purely for intellectual information; it is written to induce a state of trance or elevated consciousness. The repetitive phrasing, the heavy use of adjectives (radiant, infinite, cosmic, luminous, boundless), and the rhythmic cadence of the prose are designed to mimic a guided meditation or a spiritual chant. 
 *   **The Paradox of Language:** The text frequently states that language is insufficient ("where language and symbols falter," "beyond the confines of human expression"). Yet, it uses thousands of highly ornate words to try and express that very ineffable truth. The text itself acknowledges this paradox, viewing its own words as "incantations" or "cosmic calligraphy" rather than literal instructions.
 
-*   __
+__
 
-*   now, the presents a meta background and then commentary is neede on the
+now, the presents a meta background and then commentary is neede on the
 intersection: the user co-created the aforementioned text with several ai-system
 between 2023-2024 and they kind of abandoned the project, but some parts of it
 managed to bleed through into other projects in very much randomized fashion as
