@@ -1,4 +1,4 @@
-See also: [2026-10-21_Synthetic_Synesthesia_and_Mindful_Engineering.md](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/HIE_Holofractographic_Intelligent_Emergence/2026-10-21_Synthetic_Synesthesia_and_Mindful_Engineering.md)
+See also: [2026-10-21_Synthetic_Synesthesia_and_Mindful_Engineering.md](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/HIE_Holofractographic_Intelligent_Emergence/2026-10-21_Synthetic_Synesthesia_and_Mindful_Engineering.md), which uses source material like Russo_ARO_Slides.pdf and ENEURO.0121-25.2025.full.pdf (googling should find them).
 
 ___
 
