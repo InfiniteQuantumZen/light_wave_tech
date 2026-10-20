@@ -85,6 +85,10 @@ https://github.com/orchidas/StereoWidener
 
 The code was developed and created for the viewing experience of Ultra-Wide 3440x1440; absolute minimum CPU requirement is 2024 era multicore Zen4 architecture (developed with AMD Ryzen 5 7600X, AM5, 4.7 GHz, 6-Core), and nvidia RTX 3060 12 GB GPU for it to run steady 40+ fps realtime (vsync is set to 48); on any older architecture frame-times are of the issue as there just isn't enough single-core power to run the main loop, spin out parallel threads/processes, compose and render it all; also PCIe bandwidth is issue with older hardware (tested and confirmed with Zen+/RTX 2070 era hardware).
 
+### Future Considerations
+
+As the qualia and sensory perception/experience are the very center of it all, the possibilities are endless: from haptic vests to Brain-Computer-Interfaces (BCI) to even E-stim integration such as ABox MK 2; or combining all of those and more with virtual reality headset; basically, any type of connection/interface that could communicate beyond words and bridge the gap between the known and the unknown driven by qualia-quanta: the goal = becoming more awake & aware and present in the moment, here and now.
+
 ### Code/Data Structure
 
 Main file (as of writing): [32-bit_STEREO_EQ__light_wave_tech_v1.1.8.py](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/32-bit_STEREO_EQ__light_wave_tech_v1.1.8.py) calls [shader_manager.py](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/shader_manager.py) and [helper_functions.py](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/helper_functions.py) main important files; other used files can be inferred and are included in the repo; the earliest prototypes can be found at the /main/ 
