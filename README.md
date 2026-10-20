@@ -83,7 +83,7 @@ https://github.com/orchidas/StereoWidener
 
 ### Hardware Requirements
 
-The code was developed and created for the viewing experience of Ultra-Wide 3440x1440; absolute minimum CPU requirement is 2024 era multicore Zen4 architecture, and nvidia RTX 3060 12 GB GPU for it to run steady 40+ fps realtime (vsync is set to 48); on any older architecture frame-times are of the issue as there just isn't enough single-core power to run the main loop, spin out parallel thereads, compose and render it all; also PCIe bandwidth is issue with older hardware (tested and confirmed with Zen+/RTX 2070 era hardware).
+The code was developed and created for the viewing experience of Ultra-Wide 3440x1440; absolute minimum CPU requirement is 2024 era multicore Zen4 architecture (developed with AMD Ryzen 5 7600X, AM5, 4.7 GHz, 6-Core), and nvidia RTX 3060 12 GB GPU for it to run steady 40+ fps realtime (vsync is set to 48); on any older architecture frame-times are of the issue as there just isn't enough single-core power to run the main loop, spin out parallel thereads, compose and render it all; also PCIe bandwidth is issue with older hardware (tested and confirmed with Zen+/RTX 2070 era hardware).
 
 ### Dataset
 
