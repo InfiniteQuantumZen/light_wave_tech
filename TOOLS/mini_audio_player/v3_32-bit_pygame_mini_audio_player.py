@@ -410,7 +410,7 @@ def ROG_Theta_71_SUNO_load_and_EQ(playlist_type, audio_path, target_lufs=-13.0, 
     right_surround = eq_data_stereo_widener[:, 1]
 
     # Generate the filter coefficients for 120Hz at whatever the sample rate is (e.g., 48000)
-    mono_for_sub = (left + right) * 0.5
+    mono_for_sub = (left + right) * 0.8
     b, a = create_lowpass_filter(cutoff=140.0, fs=fs, order=4)
 
     # Apply the filter mathematically to the mono signal
@@ -554,7 +554,7 @@ def Get_Rumble_Sync(anim_data_1, anim_data_2, anim_data_3,
 #______________________________________________________________________________________________________
 
 exit_signal = False
-PLAYLIST = False
+PLAYLIST = True
 
 if not PLAYLIST:
     audio_path = "C:/SUNO_32-BIT_AUDIO/SUMMER/0 199_SUMMER.wav"
@@ -673,9 +673,9 @@ if PLAYLIST:
             my_song_array, sample_rate, audio_len_seconds = ROG_Theta_71_SUNO_load_and_EQ(
                 playlist_type, 
                 audio_path, 
-                bass_db=1.7, 
-                mid_db=1.7, 
-                treble_db=1.7
+                bass_db=2.0, 
+                mid_db=2.0, 
+                treble_db=2.0
             )
         else:
             # JBL
@@ -804,9 +804,9 @@ else:
        my_song_array, sample_rate, audio_len_seconds = ROG_Theta_71_SUNO_load_and_EQ(
             playlist_type, 
             audio_path, 
-            bass_db=1.7, 
-            mid_db=1.7, 
-            treble_db=1.7
+            bass_db=2.0, 
+            mid_db=2.0, 
+            treble_db=2.0
         )
     else:
         # JBL
