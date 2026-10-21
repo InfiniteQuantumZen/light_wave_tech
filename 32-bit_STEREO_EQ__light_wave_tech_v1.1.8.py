@@ -33,7 +33,6 @@ pip install pyfar
 >>> >> USE THIS: 
 conda activate light_wave_tech
 
-
 IMPROVEMENT(S) / NOTES:
 -----------------------
 
@@ -2079,6 +2078,9 @@ def play_video_fullscreen(audio_path, playlist_index=0, playlist_type="CORE"):
             # 3. You can either set it as the global default:
             sd.default.device = wasapi_out_index
             sd.default.latency = 0.117
+
+            #VR/Virtual Desktop
+            #sd.default.latency = 0.127
     
         except ValueError:
             print("WASAPI is not available on this system.")
@@ -2086,6 +2088,7 @@ def play_video_fullscreen(audio_path, playlist_index=0, playlist_type="CORE"):
         if device_channels > 2:
             my_song_array, sample_rate, audio_len_seconds = ROG_Theta_71_SUNO_load_and_EQ(
                 playlist_type, 
+                audio_path, 
                 bass_db=1.7, 
                 mid_db=1.7, 
                 treble_db=1.7
@@ -2220,6 +2223,10 @@ def play_video_fullscreen(audio_path, playlist_index=0, playlist_type="CORE"):
         #AV_SYNC_OFFSET = -0.122
 
         #AV_SYNC_OFFSET = 0.0
+
+        #VR/Virtual Desktop
+        #AV_SYNC_OFFSET = -0.127
+
 
         while running:
 
@@ -3542,10 +3549,10 @@ if __name__ == '__main__':
 
     EVERYTHING         = False
     CORE_EDITION       = False
-    SUMMER_EDITION     = True
+    SUMMER_EDITION     = False
     PSY_TRANCE_EDITION = False
     HARDWAVE_EDITION   = False
-    CUSTOM_EDITION     = False
+    CUSTOM_EDITION     = True
 
     #audio_base_folder = config.get("audio_filepaths", {}).get("music_folder")
     
@@ -3560,8 +3567,8 @@ if __name__ == '__main__':
 
     # 1. Map editions to their corresponding lists, types, and base folders.
     playlist_configs = [
-        (CORE_EDITION,       SUNO_AUDIO_CORE,       "CORE",       audio_base_folder_1),
-#        (CORE_EDITION,       songs_supagood,       "CORE",       audio_base_folder_1),
+#        (CORE_EDITION,       SUNO_AUDIO_CORE,       "CORE",       audio_base_folder_1),
+        (CORE_EDITION,       songs_supagood,       "CORE",       audio_base_folder_1),
         (SUMMER_EDITION,     SUNO_AUDIO_SUMMER,     "SUMMER",     audio_base_folder_2),
         (PSY_TRANCE_EDITION, SUNO_AUDIO_PSY_TRANCE, "PSY_TRANCE", audio_base_folder_3),
         (HARDWAVE_EDITION,   SUNO_AUDIO_HARDWAVE,   "HARDWAVE",   audio_base_folder_3),
