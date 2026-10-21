@@ -2086,10 +2086,9 @@ def play_video_fullscreen(audio_path, playlist_index=0, playlist_type="CORE"):
         if device_channels > 2:
             my_song_array, sample_rate, audio_len_seconds = ROG_Theta_71_SUNO_load_and_EQ(
                 playlist_type, 
-                audio_path, 
-                bass_db=2.0, 
-                mid_db=2.0, 
-                treble_db=2.0
+                bass_db=1.7, 
+                mid_db=1.7, 
+                treble_db=1.7
             )
         else:
             #my_song_array, sample_rate, audio_len_seconds = SUNO_load_and_EQ(playlist_type, audio_path, bass_db=9.5, mid_db=0.0, treble_db=2.5)
