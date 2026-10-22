@@ -27,8 +27,8 @@ or additionally port the real-time version of fourier transforms from
 2.) Edit CONFIG/filepaths.json to match your filestructure.
 
 3.) For config steps you need to run /CONFIG/config_preload_path_names.py 
-which is used to generate precalc version of the video files used
-by the system; this also precalc files from /DATA/neural_json_batches
+which is used to generate precalc version of the video filenames used
+by the system; this also precalc filenames from /DATA/neural_json_batches
 used to select the assets. 
 
 4.) If you don't have used /NeuralTrainer to train your own model, you need to
