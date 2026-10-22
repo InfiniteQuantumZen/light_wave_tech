@@ -4,7 +4,12 @@ the files that record the extensive history of the project to what its now.
 
 
 ∎ 2026-10-22: Light Wave Tech v0.1.1
-Updated elements include base code, some bug fixes in the main file with regard to video frame multicore composition, improved audio, DSP and EQ sections, ROG Theta 7.1 headphone specific code alterations, new v6 NeuralTrainer code, many documentation improvements, new metaphysical lore additions; tested cloning the repo and rebuilding config on RTX 2070 based rig and it worked just fine (meaning anyone can have it working if they are ready to tinker with settings and match their dataset, neural selection can be bypassed by introducing random.shuffle for instance). This is v0.1.1 and the author is pleased with it.
+Updated elements include base code, some bug fixes in the main file with regard to video frame multicore composition, 
+improved audio, DSP and EQ sections, ROG Theta 7.1 headphone specific code alterations, new v6 NeuralTrainer code, 
+many documentation improvements, new metaphysical lore additions; tested cloning the repo and rebuilding 
+config on RTX 2070 based rig and it worked just fine (meaning anyone can have it working if they are 
+ready to tinker with settings and match their dataset, neural selection can be bypassed by introducing 
+random.shuffle for instance). This is v0.1.1 and the author is pleased with it.
 
 ∎__LEGACY__
 │   0x1_STEREO__light_wave_tech_v1.1.2.py.txt
