@@ -1,3 +1,5 @@
+// 2026-10-21: this version has bezel sync
+//
 // --- SDF Helper Functions ---
 
 // Calculates distance to a line segment (x) and the 1D distance ALONG the segment (y)
