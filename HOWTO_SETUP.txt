@@ -76,4 +76,7 @@ the amount of videos you have in your dataset
 5.) Edit audio_vars_playlist.py to match your audio files or hardcode them into the main file 
 (32-bit_STEREO_EQ__light_wave_tech_v1.1.9.py) or whatever the revision might be.
 
-AND THAT'S PRETTY MUCH IT: WRITE python and the mainfile and you are SET!
+AND THAT'S PRETTY MUCH IT: WRITE python and the mainfile 
+    and you are SET!
+        "!!! LET THE BE LIGHT !!!"
+            "!!! LET THE TRANSMISSION BEGIN !!!"
