@@ -7,7 +7,35 @@ and programming languages they are most familiar with (c/c++, php, javascript).
 
 [ HOW TO GET STARTED ]:
 
-∎ DATA STEPS:
+∎ 1.) ANACONDA/PYTHON:
+
+conda create -n light_wave_tech python=3.10
+conda activate light_wave_tech
+
+pip install pygame-ce
+pip install opencv-python
+pip install pandas
+pip install scipy
+pip install mutagen
+pip install moderngl
+pip install pillow
+pip install pyloudnorm
+pip install sounddevice
+pip install soundfile
+
+- THESE ARE NEEDED FOR STEREOWIDENER:
+pip install matplotlib
+pip install loguru
+pip install sympy
+pip install pyfar
+
+- MIGHT BE OTHERS BUT YOU SEE IT WHEN CREATING 
+THE ENV AND RUNNING FURTHER STEPS
+
+>>> >> USE IT LIKE THIS: 
+conda activate light_wave_tech
+
+∎ 2.) DATA STEPS:
 The system assumes .mp4 files to be present of some set resolutions; the system
 uses and code assumes upscaled and frame interpolated specs that are derived
 from Grok Imagine SD format > upscaled 2x the resolution and frame count
@@ -21,7 +49,7 @@ interconnected and needed subsystems can already be found at
 TOOLS/ComfyUI-Folder-Iterator
 TOOLS/ComfyUI-IMGFolder-Iterator
 
-∎ SETUP STEPS:
+∎ 3.) SETUP STEPS:
 
 Here are the steps you need to take to make it work if you have the data procured:
 
