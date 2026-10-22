@@ -1,5 +1,12 @@
 # light_wave_tech_v1.1.8.py
 
+# NEXT FIX: infinite.quan... https://aistudio.google.com/prompts/18TSghY8OOd3Ayot4ICDlwtWUIHzfH5Ow
+#  cv2.resize(..., dst=buffer) is the collision point 
+#  The Cache Collision (position as a key)
+#
+#
+
+
 # Added class XboxControllerRumble which opens up vibrotactile music perception
 # Now supports 2 controllers simultaneously
 # See Haptics_in_Multisensory_Music_Experience_(vibrotactile).md
@@ -2127,7 +2134,7 @@ def play_video_fullscreen(audio_path, playlist_index=0, playlist_type="CORE"):
         shader_cache = shader_manager.ShaderCache(main_ctx)
         
         if playlist_index >= 0:
-            random_timeline = random.randint(0, 3)
+            random_timeline = random.randint(1, 3)
             if random_timeline == 0:
                 timeline_json_filepath = "DATA/timelines/timeline_cyan_intro.json"
                 console_color_intro = CYAN_LIGHT
@@ -3524,18 +3531,30 @@ def play_video_fullscreen(audio_path, playlist_index=0, playlist_type="CORE"):
 
 if __name__ == '__main__':
 
-    """
-    audio_base_folder = config.get("audio_filepaths", {}).get("music_folder")
+    
+    """audio_base_folder = config.get("audio_filepaths", {}).get("music_folder")
     audio_sync_data_base_folder = config.get("audio_filepaths", {}).get("sync_folder")
 
     from audio_vars import *
 
-    play_video_fullscreen(audio_path)
-    #play_video_fullscreen("C:/1/light_wave_tech/DATA/SUNO_HIGHEST_QUALITY/PSY_TRANCE/0 Elara's Transmission.wav")
+    #play_video_fullscreen(audio_path)
+   
 
-    pygame.quit()6
-    sys.exit()
-    """
+# TEST THESE AND DOWNLOAD LATER FROM SUNO IF NEED BE
+# THESE ARE 16-bit SRC ON RTX 2070
+#audio_path = f"{audio_base_folder_}/Glitch 4721.wav"						# Ok'ish
+#audio_path = f"{audio_base_folder_}/The Fairy in the Machine.wav"				# OK'ish
+#audio_path = f"{audio_base_folder_}/The Saptarishi Vector.wav"					# OK'ish
+
+#audio_path = f"{audio_base_folder_}/Re_ Manifestation [Glitch].wav"				# OK'ish "jazzy" SYNC OVERSHOOTS
+#audio_path = f"{audio_base_folder_}/M Y T H O G E N E S I S __ . E X E.wav"			# OK'ish "on the odd-side"
+    
+
+    play_video_fullscreen("H:/SUNO_32-BIT_AUDIO/CORE/0 SC²ATTER_VARSIS.wav") 
+
+    pygame.quit()
+    sys.exit()"""
+    
 
 ####____PLAYLIST____####
     
@@ -3544,15 +3563,17 @@ if __name__ == '__main__':
     ###_____ -2 >> -1 and angle_to_apply = angle_to_apply * 0.6
     ###_____ ALSO TESTED total_frame_count % 30 but i might not have been that good
 
-# TRY "shader_effect_file": "DATA/shaders/music_video/v2/crack_monochrome.txt",
+# TRY FOR INTRO crack_monochrome.txt
+# TRY shining_hope_star.txt
+# TRY THIS AS INTRO tunnel_fract_003.txt (now fixed colors)
 # TRY rainbow vortex + zoom/rot
 
     EVERYTHING         = False
     CORE_EDITION       = False
     SUMMER_EDITION     = False
     PSY_TRANCE_EDITION = False
-    HARDWAVE_EDITION   = False
-    CUSTOM_EDITION     = True
+    HARDWAVE_EDITION   = True
+    CUSTOM_EDITION     = False
 
     #audio_base_folder = config.get("audio_filepaths", {}).get("music_folder")
     
@@ -3624,7 +3645,6 @@ if __name__ == '__main__':
 
     pygame.quit()
     sys.exit()
-
-
+    
     
 
