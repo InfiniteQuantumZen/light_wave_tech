@@ -5,7 +5,7 @@ the files that record the extensive history of the project to what its now.
 In __LEGACY__ version numbers mean little if anything as the system started with a single python file, 
 extended to couple files, optimizing from CPU to GPU then it became about shaders, timelines, 
 further testing led to other aspects and versions that eventually settled to 
-32-bit_STEREO_EQ__light_wave_tech_v1.1.9.py where we're now (2026-10-22) for that file; 
+32-bit_STEREO_EQ__light_wave_tech_v1.1.9.py where we're now (2026-10-22) for that main file; 
 the github repository / codebase will always have its own version number which represents 
 the whole (everything put out there publically)
 
