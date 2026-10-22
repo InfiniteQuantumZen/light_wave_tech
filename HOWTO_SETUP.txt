@@ -1,5 +1,9 @@
-As described in the licence, this codebase is referred as a piece of art, and thus 
+As described in the /LICENSE.txt, this codebase is referred as a piece of art, and thus 
 we don't even label or call it software, or at least not a "out of the box" ready.
+The functional python code is not industry standard or strictly pythonic by any measure
+as the author has liberated software engineering from its utilitarian constraints 
+to create a piece of experiential art, which reflects their demoscene background
+and programming languages they are most familiar with (c/c++, php, javascript).
 
 HOW TO GET STARTED:
 
