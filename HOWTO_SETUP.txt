@@ -19,6 +19,7 @@ Here are the steps you need to take to make it work if you have the data procure
 
 1. For music sync you need to run 
 /TOOLS/PfreqReact/USE_THIS__32-bit__instrumental_batch_extract_freq_all.py
+and place the resulting in files here DATA\audio_sync_data
 
 or additionally port the real-time version of fourier transforms from 
 /TOOLS/mini_audio_player/v3_32-bit_pygame_mini_audio_player.py
