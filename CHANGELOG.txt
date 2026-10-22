@@ -13,7 +13,7 @@ ________________________________________________________________________________
 
 ∎ 2026-10-22: UPCOMING to the next codebase release (already done but not deployed [new release]): 
 - Added this file CHANGELOG.txt
-- Added instrutions: HOWTO_SETUP.txt
+- Added instructions: HOWTO_SETUP.txt
 
 - Added 34 new shaders into DATA\shaders\music_video\v2
   these are _bufA.txt and for the filenames without that suffix 
