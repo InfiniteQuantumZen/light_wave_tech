@@ -1,6 +1,6 @@
 The aim for this file is to try and log some major changes to the codebase/repository
 starting with the release notes of Light Wave Tech v0.1.1 and a comprehensive list of
-the files that record the extensive history of the project to what its now.
+the files that record the extensive history of the project to its current form.
 
 In __LEGACY__ version numbers mean little if anything as the system started with a single python file, 
 extended to couple files, optimizing from CPU to GPU then it became about shaders, timelines, 
