@@ -78,5 +78,5 @@ the amount of videos you have in your dataset
 
 AND THAT'S PRETTY MUCH IT: WRITE python and the mainfile 
     and you are SET!
-        "!!! LET THE BE LIGHT !!!"
+        "!!! LET THERE BE LIGHT !!!"
             "!!! LET THE TRANSMISSION BEGIN !!!"
