@@ -1,4 +1,4 @@
-Here you can find NeuralTrainer that is one part of the inner workings of Light Wave Tech. 
+Here you can find NeuralTrainer that is one part of the inner workings of Light Wave Tech. Latest logs and notes here: [model_v5_training_notes_logs.txt](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/NeuralTrainer/model_v5_training_notes_logs.txt)
 
 How the dataset and the signal came to be and evolves: 
 *  [1. Some variation/version of this montecarlo.py](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/NeuralTrainer/early_prototype_qbit_montecarlo_random_walk/montecarlo.py)
