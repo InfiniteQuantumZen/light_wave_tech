@@ -5,9 +5,9 @@ as the author has liberated software engineering from its utilitarian constraint
 to create a piece of experiential art, which reflects their demoscene background
 and programming languages they are most familiar with (c/c++, php, javascript).
 
-HOW TO GET STARTED:
+[ HOW TO GET STARTED ]:
 
-DATA STEPS:
+∎ DATA STEPS:
 The system assumes .mp4 files to be present of some set resolutions; the system
 uses and code assumes upscaled and frame interpolated specs that are derived
 from Grok Imagine SD format > upscaled 2x the resolution and frame count
@@ -16,8 +16,12 @@ approximately 2xSPEED (with some random variation). See all the resolutions
 used in the main file (32-bit_STEREO_EQ__light_wave_tech_v1.1.9.py 
 or whatever the revision might be)
 
+ComfyUI template will be made available when the author finds it somewhere... 
+interconnected and needed subsystems can already be found at 
+TOOLS/ComfyUI-Folder-Iterator
+TOOLS/ComfyUI-IMGFolder-Iterator
 
-SETUP STEPS:
+∎ SETUP STEPS:
 
 Here are the steps you need to take to make it work if you have the data procured:
 
