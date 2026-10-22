@@ -1,6 +1,20 @@
 As described in the licence, this codebase is referred as a piece of art, 
 and thus we don't even label or call it software, or at least not a "out of the box" ready.
 
+HOW TO GET STARTED:
+
+DATA STEPS:
+The system assumes .mp4 files to be present of some set resolutions; the system
+uses and code assumes upscaled and frame interpolated specs that are derived
+from Grok Imagine SD format > upscaled 2x the resolution and frame count
+via ComfyUI Custom Node; assumed framerate 24 fps which the system plays
+approximately 2xSPEED (with some random variation). See all the resolutions 
+used in the main file (32-bit_STEREO_EQ__light_wave_tech_v1.1.9.py 
+or whatever the revision might be)
+
+
+SETUP STEPS:
+
 Here are the steps you need to take to make it work if you have the data procured:
 
 1. For music sync you need to run 
