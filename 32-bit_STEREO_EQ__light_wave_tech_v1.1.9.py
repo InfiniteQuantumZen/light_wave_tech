@@ -1,5 +1,14 @@
 # light_wave_tech_v1.1.9.py
 
+# 2026-10-22: fixed a bug related to video frame composition
+#   cv2.resize(..., dst=buffer) was the collision point
+#   The Cache Collision (position as a key) 
+#   changed using this method:
+#   f1 = executor.submit(process_video_unified, video_right, current_time_right...
+#   futures_map[f1] = "triune_right_22" # Assign unique ID
+#   Iterate over the dictionary keys and assemble the pieces
+#     for future in as_completed(futures_map.keys()):
+
 # Added class XboxControllerRumble which opens up vibrotactile music perception
 # Now supports 2 controllers simultaneously
 # See Haptics_in_Multisensory_Music_Experience_(vibrotactile).md
