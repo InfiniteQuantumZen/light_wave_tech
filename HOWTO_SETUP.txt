@@ -1,5 +1,5 @@
-As described in the licence, this codebase is referred as a piece of art, 
-and thus we don't even label or call it software, or at least not a "out of the box" ready.
+As described in the licence, this codebase is referred as a piece of art, and thus 
+we don't even label or call it software, or at least not a "out of the box" ready.
 
 HOW TO GET STARTED:
 
