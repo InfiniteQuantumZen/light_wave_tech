@@ -11,7 +11,7 @@ the whole (everything put out there publicly).
 
 _____________________________________________________________________________________________________________________
 
-∎ 2026-10-22: UPCOMING to the next codebase release (already done): 
+∎ 2026-10-22: UPCOMING to the next codebase release (already done but not deployed [new release]): 
 - Added this file CHANGELOG.txt
 - Added instrutions: HOWTO_SETUP.txt
 
