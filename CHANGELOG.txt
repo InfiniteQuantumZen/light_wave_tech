@@ -11,6 +11,17 @@ the whole (everything put out there publicly).
 
 _____________________________________________________________________________________________________________________
 
+∎ 2026-10-22: UPCOMING to the next codebase release (already done): 
+- Added this file CHANGELOG.txt
+- Added instrutions: HOWTO_SETUP.txt
+- Added 34 new shaders into DATA\shaders\music_video\v2
+  these are _bufA.txt and for the filenames without that suffix 
+  run TOOLS\shader_boilerplate\copy_contents.py which just copies
+  updated boilerplate shader into ./shader_output (zoom_rot_flash_mask_shader_template.txt)
+  and from there you need to copy those files into DATA\shaders\music_video\v2 
+  the author is too lazy to separate these new files from all to rest to upload them
+  (not using git to commit... mostly manually copy&paste here as text)
+
 ∎ 2026-10-22: Light Wave Tech v0.1.1
 Updated elements include base code, some bug fixes in the main file with regard to video frame multicore composition, 
 improved audio, DSP and EQ sections, ROG Theta 7.1 headphone specific code alterations, new v6 NeuralTrainer code, 
