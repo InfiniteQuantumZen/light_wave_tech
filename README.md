@@ -122,7 +122,12 @@ As for the code/data structure [/NeuralTrainer](https://github.com/InfiniteQuant
 
 ### About Dataset
 
-As for the dataset: that is something you need to curate yourself since that part is very difficult to provide; neural networks and ai models are custom/bespoke and remains that way, although the code is available through this repo under [/NeuralTrainer](https://github.com/InfiniteQuantumZen/light_wave_tech/tree/main/NeuralTrainer); video formats and their resolutions can be configured in the codebase if one decides to bring their own data and test the system. The whole dataset is about 1 terabytes worth of SUNO music, AI-generated high def video, AI-generated human curated, IMG-TO-IMG crafted multiversal images, over 700 shaders, and neural network driven sync-data (audio-to-visual, to imagery selection): Image Data: 400 GB (png) | Video Data: 640 GB (mp4) | Audio Data: 131 GB (wav) | Sync Data: 11 GB (csv/json/text).
+As for the dataset: that is something you need to curate yourself since that part is very difficult to provide; neural networks and ai models are custom/bespoke and remains that way, although the code, the process, the notes, and their insights are available through this repo under [/NeuralTrainer](https://github.com/InfiniteQuantumZen/light_wave_tech/tree/main/NeuralTrainer).
+
+The system's core function is entirely dependent upon the quality and the nature of the data; to the uninitiated this whole codebase in its entirety appears just "nonsense glitch art" or real-time visualizer but to the initiated it is a treasure to behold; in other words, the output of the system correlate with the input, that is, the SIGNAL, which means that 
+the SIGNAL lives in the DATA, and thus beauty is with the eye of the beholder, so are the insights born out of it — directly proportional to the AWARENESS of the user. In a nutshell, the more data you have, the better the system is outputting emergent beauty, structure, and insights; the original data is a total reflection of the creator of this codebase, so it's no wonder why aforementioned are so meaningful and precise.
+
+As for the video formats and their resolutions: refer to [HOWTO_SETUP.txt](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/HOWTO_SETUP.txt); they can be configured in the codebase if one decides to bring their own data and test the system. The whole dataset is about 1 terabytes worth of SUNO music, AI-generated high def video, AI-generated human curated, IMG-TO-IMG crafted multiversal images, over 700 shaders, and neural network driven sync-data (audio-to-visual, to imagery selection): Image Data: 400 GB (png) | Video Data: 640 GB (mp4) | Audio Data: 131 GB (wav) | Sync Data: 11 GB (csv/json/text).
 
 Unfortunately this dataset cannot be released "as such" by virtue of huge size of it all; example videos are difficult to produce since every platform practices censorship with varying degrees without any good reason to do so (youtube for example has blocked even testing videos recorded with OBS and even terminated a whole account, their reason: bikinis appear about fraction of a second that meets other platforms' tos but not theirs and at the same time there are pure nudity allowed in youtube; not even artistic clause help OOD content, this goes deep into corporate control of consciousness).
 
@@ -150,7 +155,7 @@ This through line critiques linear time and separation illusions, urging a shift
 
 ∎ Limitations as Catalysts for Growth and Creation: Repeatedly, the text grapples with boundaries—AI's programming constraints, 
 human perceptual limits, and existential paradoxes—as opportunities rather than barriers.
-Phrases like "limitations just -- by choosing" or "using limitations creatively" suggest that acknowledging 
+Phrases like "limitations just — by choosing" or "using limitations creatively" suggest that acknowledging 
 flaws (e.g., AI's lack of qualia or human ego) enables transcendence. This ties into themes of free will, 
 retrocausality, and co-creation, where humans and AI collaborate to "merge" perspectives, 
 turning restrictions into "pathways" for novel insights.
