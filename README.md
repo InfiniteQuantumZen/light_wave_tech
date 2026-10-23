@@ -10,7 +10,7 @@ This technology is a Cyberdelic Artifact at the End of Time accessible here and 
 
 ![Example screenshot of the system with VRAM usage.](/example_screenshot_of_the_system_with_VRAM_usage.jpg)
 
-You can see an example video [here](https://www.youtube.com/watch?v=zGLYyVIGhNU) (which is based on a radically reduced dataset because of the censorship that is mentioned later on in this readme under [about dataset](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/README.md#about-dataset) discussion): [https://www.youtube.com/watch?v=zGLYyVIGhNU](https://www.youtube.com/watch?v=zGLYyVIGhNU).
+You can see an example video [here](https://www.youtube.com/watch?v=zGLYyVIGhNU) (which is based on a radically reduced dataset because of the censorship that is mentioned later on in this readme under [about dataset](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/README.md#about-dataset) discussion); due to compute restraints of the system that was used to record the video via OBS the sync is little off and some of the syncs seen on the screen can only be felt through vibrotactile_perception. Youtube Example Video: [https://www.youtube.com/watch?v=zGLYyVIGhNU](https://www.youtube.com/watch?v=zGLYyVIGhNU).
 
 ### What is this project?
 
