@@ -10,6 +10,8 @@ This technology is a Cyberdelic Artifact at the End of Time accessible here and 
 
 ![Example screenshot of the system with VRAM usage.](/example_screenshot_of_the_system_with_VRAM_usage.jpg)
 
+You can see and example video here (which is based a radically reduced dataset because of the censorship that is mentioned later on in this readme under dataset discussion): [https://www.youtube.com/watch?v=zGLYyVIGhNU](https://www.youtube.com/watch?v=zGLYyVIGhNU).
+
 ### What is this project?
 
 Based on a comprehensive, objective analysis of the provided dataset—which encompasses directory trees, Python and GLSL source code, machine learning architectures, DSP (Digital Signal Processing) algorithms, and vast amounts of metaphysical literature—this repository is a highly sophisticated, deeply layered **esoteric software artifact.** 
