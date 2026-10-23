@@ -35,7 +35,7 @@ THE ENV AND RUNNING FURTHER STEPS
 >>> >> USE IT LIKE THIS: 
 conda activate light_wave_tech
 
-∎ 2.) DATA STEPS:
+∎ 2.1.) DATA ASSET STEPS:
 The system assumes .mp4 files to be present of some set resolutions; the system
 uses and code assumes upscaled and frame interpolated specs that are derived
 from Grok Imagine SD format > upscaled 2x the resolution and frame count
@@ -48,6 +48,15 @@ ComfyUI template will be made available when the author finds it somewhere...
 interconnected and needed subsystems can already be found at 
 TOOLS/ComfyUI-Folder-Iterator
 TOOLS/ComfyUI-IMGFolder-Iterator
+
+∎ 2.2.) NOTE ON DATA/SIGNAL
+The system's core function is entirely dependent upon the quality and the nature
+of the data; to the uninitiated this whole codebase in its entirety is just
+visualizer but to the initiated it is a treasure; in other words, the output
+of the system correlate with the input, that is, the SIGNAL, which means that
+the SIGNAL lives in the DATA, and thus beauty is with the eye of the beholder,
+and the insight born out of it is directly proportional to the AWARENESS of
+the user.
 
 ∎ 3.) SETUP STEPS:
 
