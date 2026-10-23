@@ -526,10 +526,11 @@ class ShaderCache:
         print("Cache release complete.")
 
 class ShaderTimelineManager:
-    def __init__(self, debug: bool, shader_path_glsl: str, ctx: moderngl.Context, 
-                 width: int, height: int, audio_path: str, timeline_filepath: str, 
-                 randomize_effects: bool, shader_cache: ShaderCache,
-                 video_playback_speeds: list[float], video_durations: list[float] = None):
+    def __init__(self, debug: bool, shader_path_glsl: str, ctx: moderngl.Context,
+                 width: int, height: int, audio_path: str, timeline_filepath: str,
+                 neural_indices_filenames_all: list[str], randomize_effects: bool,
+                 shader_cache: ShaderCache, video_playback_speeds: list[float],
+                 video_durations: list[float] = None):
         self.debug = debug
         self.ctx = ctx
         self.width = width
@@ -546,7 +547,10 @@ class ShaderTimelineManager:
         if randomize_effects:
             # Reconstruct the config as a dictionary
             rnd_effects = TimelineEffectReconstructor(
-                timeline_filepath, "config/main_seq_events.json", shader_path_glsl
+                timeline_filepath,
+                "config/main_seq_events.json",
+                shader_path_glsl,
+                neural_indices_filenames_all
             )
             self.reconstructed_dict = rnd_effects.reconstruct_timeline()
             self.timeline_data = self.reconstructed_dict.get("timeline", [])
@@ -626,7 +630,7 @@ class ShaderTimelineManager:
             print(f"An error occurred loading main_seq_event config {filepath}: {e}")
             self.main_seq_event_data = []
 
-    """def is_main_sequence_event(self, current_time: float):
+    """OLD: def is_main_sequence_event(self, current_time: float):
         for effect_data in self.timeline_data:
             start_time = effect_data['effect_start_time']
             duration = effect_data['effect_duration']
@@ -1177,9 +1181,12 @@ class ShaderTimelineManager:
 from shader_vars import *
 
 class TimelineEffectGenerator:
-    def __init__(self, predefined_triunes, singular_list, predefined_prob=0.5):
+    def __init__(self, predefined_triunes, singular_list, neural_indices_filenames_all, predefined_prob=0.5):
         self.predefined_triunes = predefined_triunes
-        self.singular_list = list(singular_list)
+
+        #self.singular_list = list(singular_list)
+        self.singular_list = self._get_neural_singular_list(singular_list, neural_indices_filenames_all)
+
         self.predefined_prob = predefined_prob
         
         # Internal pools of unused options
@@ -1193,8 +1200,68 @@ class TimelineEffectGenerator:
         self._replenish_predefined()
         self._replenish_singular()
 
+    """
+    2026-10-23: neural indice-based approach
+    REPLACING _replenish_singular(self): random.shuffle
+    """
+    def _get_neural_singular_list(self, singular_list, neural_indices_filenames_all):
+        print(f"TimelineEffectGenerator::_get_neural_singular_list: len(singular_list): {len(singular_list)}")
+
+        # self-explanatory helper function
+        def load_neural_indices_json(filepath, ceiling=None):
+            try:
+                print(f"Loading neural_indices from {filepath}")
+
+                with open(filepath, 'r') as f:
+                    indices = json.load(f)
+            
+                    # If a ceiling is provided, filter the list
+                    if ceiling is not None:
+                        # Keep only the indices that are within the valid range
+                        filtered_indices = [idx for idx in indices if idx < ceiling]
+                
+                        if len(filtered_indices) < len(indices):
+                            print(f"Filtered out {len(indices) - len(filtered_indices)} out-of-bounds indices.")
+                    
+                        return filtered_indices
+            
+                    return indices
+            except json.JSONDecodeError as e:
+                # This triggers if the file was corrupted on the drive!
+                print(f"CORRUPTION DETECTED: The file {filepath} is not valid JSON.")
+                print(f"Specific error: {e}")
+                return None
+            except FileNotFoundError:
+                print("File not found.")
+                return None
+
+        # Iterate 20 times for enough variation
+        unique_top_signal_indices = []
+        for i in range(20):
+            tmp_data = load_neural_indices_json(
+                random.choice(neural_indices_filenames_all),
+                ceiling=len(singular_list)
+            )
+            unique_top_signal_indices.extend(tmp_data)
+
+        print(f"_get_neural_singular_list:: ORIG LEN: {len(unique_top_signal_indices)}")
+
+        unique_top_signal_indices = list(dict.fromkeys(unique_top_signal_indices[:]))
+        random.shuffle(unique_top_signal_indices)
+        print(f"_get_neural_singular_list: UNIQUE LEN: {len(unique_top_signal_indices)}")
+
+        random.shuffle(singular_list)
+        selected_shader_filenames = []
+        for index in unique_top_signal_indices:
+            selected_shader_filenames.append(singular_list[index])
+            print(f"index: {index} > {singular_list[index]}")
+
+        return selected_shader_filenames
+
     def _replenish_predefined(self):
-        """Replenishes the predefined groups draw pile."""
+        """
+        Replenishes the predefined groups draw pile.
+        """
         keys = list(self.predefined_triunes.keys())
         random.shuffle(keys)
         
@@ -1206,13 +1273,18 @@ class TimelineEffectGenerator:
         self.unused_predefined = keys
 
     def _replenish_singular(self):
-        """Replenishes the singular effects draw pile."""
+        """
+        Replenishes the singular effects draw pile.
+        """
         pool = list(self.singular_list)
-        random.shuffle(pool)
+        #print(f"_replenish_singular::pool>> {pool}")
+        #random.shuffle(pool)
         self.unused_singular = pool
 
     def _get_predefined_group(self) -> list:
-        """Draws one predefined triune group, replenishing the pile if empty."""
+        """
+        Draws one predefined triune group, replenishing the pile if empty.
+        """
         if not self.unused_predefined:
             self._replenish_predefined()
             
@@ -1221,7 +1293,9 @@ class TimelineEffectGenerator:
         return self.predefined_triunes[group_key]
 
     def _get_singular_elements(self, count: int) -> list:
-        """Draws 'count' unique singular elements, replenishing the pile if necessary."""
+        """
+        Draws 'count' unique singular elements, replenishing the pile if necessary.
+        """
         selected = []
         for _ in range(count):
             if not self.unused_singular:
@@ -1230,7 +1304,9 @@ class TimelineEffectGenerator:
         return selected
 
     def resolve_effect(self, effect_name: str) -> list:
-        """Resolves the given effect type to a list of file paths without duplications."""
+        """
+        Resolves the given effect type to a list of file paths without duplications.
+        """
         if effect_name == "TRIUNE_EFFECT":
             # 50/50 decision (or customized via predefined_prob)
             if random.random() < self.predefined_prob:
@@ -1246,7 +1322,8 @@ class TimelineEffectGenerator:
         return []
 
 class TimelineEffectReconstructor:
-    def __init__(self, timeline_filepath: str, main_seq_events: str, shader_path_glsl: str):
+    def __init__(self, timeline_filepath: str, main_seq_events: str, shader_path_glsl: str, 
+                 neural_indices_filenames_all: list[str]):
         self.timeline_data = []
         self.main_seq_event_data = []
 
@@ -1263,8 +1340,9 @@ class TimelineEffectReconstructor:
 
         # 3. Create the generator instance (maintains its own state across the timeline)
         self.generator = TimelineEffectGenerator(
-            PREDEFINED_TRIUNE_EFFECTS, 
-            SINGULAR_EFFECT_LIST, 
+            PREDEFINED_TRIUNE_EFFECTS,
+            SINGULAR_EFFECT_LIST,
+            neural_indices_filenames_all,
             predefined_prob=0.5
         )
 
