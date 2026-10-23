@@ -11,6 +11,19 @@ the whole (everything put out there publicly).
 
 _____________________________________________________________________________________________________________________
 
+∎ 2026-10-23: UPCOMING to the next codebase release (already done but not deployed [new release]): 
+Modified shader_manager.py in preparation for v5_model neural data:
+Affected classes:
+    ShaderTimelineManager
+    TimelineEffectReconstructor
+    TimelineEffectGenerator:
+
+    """
+    2026-10-23: neural indice-based approach
+    REPLACING _replenish_singular(self): random.shuffle
+    """
+    def _get_neural_singular_list(self, singular_list, neural_indices_filenames_all):
+
 ∎ 2026-10-22: UPCOMING to the next codebase release (already done but not deployed [new release]): 
 - Added this file CHANGELOG.txt
 - Added instructions: HOWTO_SETUP.txt
@@ -26,19 +39,6 @@ ________________________________________________________________________________
 - Updated aforementioned file to match the updated shader files 
   TOOLS\shader_boilerplate\copy_contents.py
   TOOLS\shader_boilerplate\zoom_rot_flash_mask_shader_template.txt
-
-∎ 2026-10-23: UPCOMING to the next codebase release (already done but not deployed [new release]): 
-Modified shader_manager.py in preparation for v5_model neural data:
-Affected classes:
-    ShaderTimelineManager
-    TimelineEffectReconstructor
-    TimelineEffectGenerator:
-
-    """
-    2026-10-23: neural indice-based approach
-    REPLACING _replenish_singular(self): random.shuffle
-    """
-    def _get_neural_singular_list(self, singular_list, neural_indices_filenames_all):
 
 ∎ 2026-10-22: Light Wave Tech v0.1.1
 Updated elements include base code, some bug fixes in the main file with regard to video frame multicore composition, 
