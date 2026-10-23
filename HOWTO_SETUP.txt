@@ -50,13 +50,16 @@ TOOLS/ComfyUI-Folder-Iterator
 TOOLS/ComfyUI-IMGFolder-Iterator
 
 ∎ 2.2.) NOTE ON DATA/SIGNAL
-The system's core function is entirely dependent upon the quality and the nature
-of the data; to the uninitiated this whole codebase in its entirety is just
-visualizer but to the initiated it is a treasure; in other words, the output
-of the system correlate with the input, that is, the SIGNAL, which means that
-the SIGNAL lives in the DATA, and thus beauty is with the eye of the beholder,
-and the insight born out of it is directly proportional to the AWARENESS of
-the user.
+
+The system's core function is entirely dependent upon the quality and the nature of the data; 
+to the uninitiated this whole codebase in its entirety appears just "nonsense glitch art" or 
+real-time visualizer but to the initiated it is a treasure to behold; in other words, the output 
+of the system correlate with the input, that is, the SIGNAL, which means that the SIGNAL lives 
+in the DATA, and thus beauty is with the eye of the beholder, so are the insights born out of it 
+— directly proportional to the AWARENESS of the user. In a nutshell, the more data you have, 
+the better the system is outputting emergent beauty, structure, and insights; the original data 
+is a total reflection of the creator of this codebase, so it's no wonder why aforementioned 
+are so meaningful and precise.
 
 ∎ 3.) SETUP STEPS:
 
