@@ -81,8 +81,8 @@ used to select the assets.
 
 4.) If you don't have used /NeuralTrainer to train your own model, you need to
 modify the code from the main file (32-bit_STEREO_EQ__light_wave_tech_v1.1.9.py or 
-whatever the revision might be) to use random.shuffle instead, which matches
-the amount of videos you have in your dataset.
+whatever the revision might be) to use random.shuffle instead, matching the amount 
+of videos you have in your dataset.
 
 Neural network (ai model) used by the system are custom/bespoke and remains that way, 
 although the code, the process, the notes, and their insights are available 
