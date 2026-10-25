@@ -539,6 +539,7 @@ class ShaderTimelineManager:
         self.shader_cache = shader_cache
         self.timeline_data: list[dict] = []
         self.main_seq_event_data = []
+        self._last_logged_event_id = None
 
         # This will hold pre-compiled and fully-resolved dictionaries ready for rendering
         self.resolved_effects: list[dict] = []
@@ -630,17 +631,11 @@ class ShaderTimelineManager:
             print(f"An error occurred loading main_seq_event config {filepath}: {e}")
             self.main_seq_event_data = []
 
-    """OLD: def is_main_sequence_event(self, current_time: float):
-        for effect_data in self.timeline_data:
-            start_time = effect_data['effect_start_time']
-            duration = effect_data['effect_duration']
-
-            if start_time <= current_time <= (start_time + duration):
-                shader_base_filepath = os.path.basename(effect_data['shader_effect_file'])
-                if shader_base_filepath in self.main_seq_event_data:
-                    return True
-                else:
-                    return False"""
+    def _log_shader_info(self, shader_base_filepath):
+        print(f"[DEBUG] Shader Running: filepath: {shader_base_filepath}")
+        log_file = "LOG_SHADERS.txt"
+        with open(log_file, "a", encoding="utf-8") as f:
+            f.write(f"{shader_base_filepath}\n")
 
     def is_main_sequence_event(self, current_time: float):
         for effect_data in self.timeline_data:
@@ -653,6 +648,14 @@ class ShaderTimelineManager:
                 # If we find an active main sequence event, we know it's True
                 if shader_base_filepath in self.main_seq_event_data:
                     return True
+                else:
+                    # --- LOG ONCE ---
+                    # Check if this is a new event we haven't logged yet
+                    current_event_id = id(effect_data)
+                    if self._last_logged_event_id != current_event_id:
+                        self._log_shader_info(shader_base_filepath)
+                        # Remember this event so we don't log it again next frame
+                        self._last_logged_event_id = current_event_id
             
                 # Note: We DO NOT return False here anymore. We just keep looping 
                 # in case there is another overlapping effect that IS a main seq event.
@@ -870,7 +873,6 @@ class ShaderTimelineManager:
         """
         print("\n--- Starting Upfront Resource Pre-Loading & Compilation ---")
 
-
         # =====================================================================
         # NEW: DYNAMIC TIMELINE CULLING
         # =====================================================================
@@ -892,11 +894,11 @@ class ShaderTimelineManager:
                 secs = int(audio_duration_sec % 60)
                 print(f"   => Detected audio track length: {mins}m {secs}s ({audio_duration_sec:.2f} seconds)")
 
-        # Safety Buffer: We add 120 seconds to the cutoff threshold. 
+        # Safety Buffer: We add 45 seconds to the cutoff threshold. 
         # Because `_sync_timeline_to_videos` runs AFTER this and might shrink 
         # video segments, this ensures we don't accidentally cull a shader that 
         # gets pulled backward into the active timeframe.
-        cull_threshold = audio_duration_sec + 120.0
+        cull_threshold = audio_duration_sec + 45.0
         # =====================================================================
 
         for effect_data in self.timeline_data:
@@ -1300,7 +1302,7 @@ class TimelineEffectGenerator:
         for _ in range(count):
             if not self.unused_singular:
                 self._replenish_singular()
-            selected.append(self.unused_singular.pop())
+            selected.append(self.unused_singular.pop())        
         return selected
 
     def resolve_effect(self, effect_name: str) -> list:
