@@ -99,7 +99,7 @@ Imagine for a while: what if... all of this... is a form of communication techno
 
 ### Code/Data Structure
 
-Main file (as of writing): [32-bit_STEREO_EQ__light_wave_tech_v1.1.8.py](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/32-bit_STEREO_EQ__light_wave_tech_v1.1.8.py) calls [shader_manager.py](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/shader_manager.py) and [helper_functions.py](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/helper_functions.py) main important files; other used files can be inferred and are included in the repo; the earliest prototypes can be found at the /main/ 
+All development is done with notepad nothing else. Main file (as of writing): [32-bit_STEREO_EQ__light_wave_tech_v1.1.9.py](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/32-bit_STEREO_EQ__light_wave_tech_v1.1.9.py) calls [shader_manager.py](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/shader_manager.py) and [helper_functions.py](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/helper_functions.py) main important files; other used files can be inferred and are included in the repo; the earliest prototypes can be found at the /main/ 
 *   [2024-09-02_early_prototype_vr_imagery_flash.py](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/2024-09-02_early_prototype_vr_imagery_flash.py)
 *   [2024-09-19_early_prototype_visual_gamma.py](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/2024-09-19_early_prototype_visual_gamma.py)
 *   [2025-10-12_early_prototype.py](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/2025-10-12_early_prototype.py)
