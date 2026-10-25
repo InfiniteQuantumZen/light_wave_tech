@@ -9,6 +9,7 @@ further testing led to other aspects and versions that eventually settled to
 the github repository / codebase will always have its own version number which represents 
 the whole (everything put out there publicly).
 
+NOTE ABOUT CODING: All development is done with windows notepad nothing else is needed.
 _____________________________________________________________________________________________________________________
 
 ∎ 2026-10-25: UPCOMING to the next codebase release (already done but not deployed [new release]): 
