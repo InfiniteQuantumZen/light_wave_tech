@@ -106,6 +106,20 @@ is time and free slot to use the local machine to do so.
 #   Checkpoint saved (epoch 15)
 #   >>> New best model saved (val loss 0.8942)
 
+#   Validation MSE Loss: 0.8033
+#   *** NEW BEST VAL LOSS: 0.8033 ***
+# Epoch 16 took 27541.7s
+# Epoch 16/100 | Train loss: 0.8938 | Val loss: 0.8033 | LR: 2.814460e-04
+#   Checkpoint saved (epoch 16)
+#   >>> New best model saved (val loss 0.8033)
+
+#   Validation MSE Loss: 0.7285
+#   *** NEW BEST VAL LOSS: 0.7285 ***
+# Epoch 17 took 27687.8s
+# Epoch 17/100 | Train loss: 0.8348 | Val loss: 0.7285 | LR: 2.791113e-04
+#   Checkpoint saved (epoch 17)
+#   >>> New best model saved (val loss 0.7285)
+
 ____
 
 
