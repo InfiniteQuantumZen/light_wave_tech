@@ -12,9 +12,11 @@ the whole (everything put out there publicly).
 NOTE ABOUT CODING: All development is done with windows notepad nothing else is needed.
 _____________________________________________________________________________________________________________________
 
-∎ 2026-10-26: UPCOMING to the next codebase release (already done but not deployed [new release]): 
+∎ 2026-10-27: UPCOMING to the next codebase release (already done but not deployed [new release]): 
 Created a new pivot point for SIGNAL research:
-Artificial_Life_R&D/2026-10-26_game_of_life.md
+    Artificial_Life_R&D/2026-10-26_game_of_life.md
+    Artificial_Life_R&D/2026-10-26_Bridging_Classical_Logic_and_Quantum.md
+    Artificial_Life_R&D/2026-10-27_Refactoring_Game_Of_Life_Shaders.md
 
 ∎ 2026-10-25: UPCOMING to the next codebase release (already done but not deployed [new release]): 
 Modified shader_manager.py in preparation for v5_model neural data:
