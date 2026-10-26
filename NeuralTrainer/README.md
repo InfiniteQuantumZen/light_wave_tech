@@ -15,6 +15,9 @@ How the dataset and the signal came to be and evolves:
 *  fingerprinting of TOP indices signal, splitting back to 5000 INT JSONS
 *  for further imprinting by SUNO hihat amplitude (this time after bass is already done)
 
+2026-10-26: pivoting to other aspects
+*  [Artificial_Life/2026-10-26_game_of_life.md](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/Artificial_Life/2026-10-26_game_of_life.md)
+
 ___
 
 In the /early_prototype_qbit_montecarlo_random_walk you can find files that are 
