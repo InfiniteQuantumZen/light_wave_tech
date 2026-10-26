@@ -1,1 +1,1 @@
-This folder contains various "stream of consciousness" sessions around pivoting into quantum algorithm design
+This folder contains various "stream of consciousness" sessions around pivoting into quantum algorithm design using ai-systems as "sounding boards" to reflect back the intelligence of the user to bounce ideas back and forth.
