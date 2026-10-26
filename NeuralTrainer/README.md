@@ -16,7 +16,7 @@ How the dataset and the signal came to be and evolves:
 *  for further imprinting by SUNO hihat amplitude (this time after bass is already done)
 
 2026-10-26: pivoting to other aspects
-*  [Artificial_Life_R&D and Quantum Programming/Algorithms](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/Artificial_Life/2026-10-26_game_of_life.md](https://github.com/InfiniteQuantumZen/light_wave_tech/tree/main/Artificial_Life_R%26D)
+*  [Artificial_Life_R&D and Quantum Programming/Algorithms](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/Artificial_Life/2026-10-26_game_of_life.md(https://github.com/InfiniteQuantumZen/light_wave_tech/tree/main/Artificial_Life_R%26D)
 
 ___
 
