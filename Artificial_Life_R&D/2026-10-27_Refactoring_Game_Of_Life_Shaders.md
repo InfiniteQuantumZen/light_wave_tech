@@ -22,6 +22,10 @@ its not current focus and concern.
 
 ___
 
+... SOME INTERACTION...
+
+___
+
 This is a perfect use case for connecting the two systems. To prevent PyTorch inference from freezing the Pygame render loop every time it needs to generate new numbers, we can load the model in a **background thread**. This thread will constantly generate normalized floats and push them into a queue. The shader can then pull these floats smoothly at 60 FPS.
 
 Here is the complete solution. You will need to update **two** files: the main `game_of_life.py` (which now includes your model code) and `game_of_life_bufA.txt` (to use the float data for the initial condition).
