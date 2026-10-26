@@ -12,6 +12,10 @@ the whole (everything put out there publicly).
 NOTE ABOUT CODING: All development is done with windows notepad nothing else is needed.
 _____________________________________________________________________________________________________________________
 
+∎ 2026-10-26: UPCOMING to the next codebase release (already done but not deployed [new release]): 
+Created a new pivot point for SIGNAL research:
+Artificial_Life/2026-10-26_game_of_life.md
+
 ∎ 2026-10-25: UPCOMING to the next codebase release (already done but not deployed [new release]): 
 Modified shader_manager.py in preparation for v5_model neural data:
 - Added: def _log_shader_info(self, shader_base_filepath):
