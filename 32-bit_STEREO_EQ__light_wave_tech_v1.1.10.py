@@ -1,13 +1,5 @@
 # light_wave_tech_v1.1.10.py
 
-# Added class XboxControllerRumble which opens up vibrotactile music perception
-# Now supports 2 controllers simultaneously
-# See Haptics_in_Multisensory_Music_Experience_(vibrotactile).md
-#
-# Added ROG_Theta_71_SUNO_load_and_EQ 
-# Data passed onward like so: sd.play(my_song_array, samplerate=sample_rate, mapping=[1, 2, 3, 4, 5, 6, 7, 8])
-
-
 """
 INSTALLATION/SETUP NOTES:
 -------------------------
@@ -24,13 +16,13 @@ pip install pyloudnorm
 pip install sounddevice
 pip install soundfile
 
-THESE ARE NEEDED FOR STEREOWIDENER:
+- THESE ARE NEEDED FOR STEREOWIDENER:
 pip install matplotlib
 pip install loguru
 pip install sympy
 pip install pyfar
 
-THESE ARE NEEDED FOR Qiskit:
+- THESE ARE NEEDED FOR Qiskit:
 pip install qiskit qiskit-aer
 
 >>> >> USE THIS: 
@@ -452,7 +444,7 @@ class QuantumBlackBox:
 
     def xor_parity_check(self, binary_string):
         """True if odd number of 1s, False if even."""
-        print(f"# of 1's: {binary_string.count('1')}")
+        #print(f"# of 1's: {binary_string.count('1')}")
         return binary_string.count('1') % 2 != 0
 
 def chunk_generator(data, size):
@@ -470,21 +462,39 @@ def filter_through_quantum_black_box(available_neural_indices, num_quantum_items
         random_qbit_str_list.append(random_qbit_str)
 
     # Generate a string where there is an 85% chance each qubit matches the outside data
+    batch_size = 100
+    time_start = time.time()
+    total_iterations = int(len(random_qbit_str_list)/batch_size)
     quantum_results_list = []
-    for i, batch in enumerate(chunk_generator(random_qbit_str_list, 100)):
-        print(f"Batch: {i}")
-        #print(f"{batch}")
+
+    for i, batch in enumerate(chunk_generator(random_qbit_str_list, batch_size)):
+
+        # ---------- ETA CALCULATION ----------
+        iters_done = i + 1
+        elapsed_time = time.time() - time_start
+        time_per_iter = elapsed_time / iters_done
+        iters_left = total_iterations - iters_done
+        eta_seconds = int(iters_left * time_per_iter)
+                    
+        m, s = divmod(eta_seconds, 60)
+        h, m = divmod(m, 60)
+        eta_str = f"{h:02d}:{m:02d}:{s:02d}" if h > 0 else f"{m:02d}:{s:02d}"
+
+        # Print the progress
+        print(f"Quantum_Black_Box Iteration: {iters_done}/{total_iterations} | ETA: {eta_str}", end='\r', flush=True)
+        # -------------------------------------
+
         quantum_results_list.extend(quantum_black_box.get_influenced_binary_string(batch, influence_strength=0.85))
 
     # Iterate until the list is completely full
     iter_num = 0
     selected_neural_indices = []
     while len(selected_neural_indices) < num_quantum_items-1 and iter_num < len(quantum_results_list):
-        print(f"{iter_num}/{num_quantum_items}")
+        #print(f"{iter_num}/{num_quantum_items}")
         quantum_binary_str = quantum_results_list[iter_num]
-        print(f"quantum_binary_str: {quantum_binary_str}")
+        #print(f"quantum_binary_str: {quantum_binary_str}")
         q_passed = quantum_black_box.xor_parity_check(quantum_binary_str)
-        print(f"q_passed: {q_passed}")
+        #print(f"q_passed: {q_passed}")
         
         # If the condition is met, fill one spot in the list
         if q_passed:
@@ -497,7 +507,7 @@ def filter_through_quantum_black_box(available_neural_indices, num_quantum_items
                 break
         iter_num += 1
 
-    print(f"TOTAL num_indices: {len(selected_neural_indices)}")
+    print(f"TOTAL num_indices: {len(selected_neural_indices)}\n")
     return selected_neural_indices
 
 #______________________________________________________________________________________________________
@@ -1650,7 +1660,7 @@ def video_loader_worker_triune(filenames, video_queue):
 #______________________________________________________________________________________________________________
 #___MAIN_LOOP_FUNCTION_________________
 
-def play_video_fullscreen(audio_path, playlist_index=0, playlist_type="CORE"):
+def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_path, playlist_index=0, playlist_type="CORE"):
     try:
 
         #______________________________________________________________________________________________________
@@ -1830,137 +1840,16 @@ def play_video_fullscreen(audio_path, playlist_index=0, playlist_type="CORE"):
         # NOTE: No DEPTH_TEST is needed for Shadertoy raymarching,
         # since it's just drawing flat pixels to the screen.
 
-        #______________________________________________________________________________________________________
-        # ___LOAD_CONFIG_FROM_CACHE____
+        #___SOME_CONFIG_STUFF___
         cached_vars = config.load_paths_from_cache()
-
-        # dynamically shuffled per run
         random.shuffle(cached_vars["neural_indices_filenames_all"])
-
-        # Assign out to your isolated variables exactly as they were named originally
-        neural_indices_filenames_all     = cached_vars.get("neural_indices_filenames_all", [])
-        video_filenames_all_left         = cached_vars.get("video_filenames_all_left", [])
-        video_filenames_left_replacement = cached_vars.get("video_filenames_left_replacement", [])
-        video_filenames_static           = cached_vars.get("video_filenames_static", [])
-        video_base_filenames_static      = cached_vars.get("video_base_filenames_static", [])
-        video_filenames_all_right        = cached_vars.get("video_filenames_all_right", [])
-        video_filenames_all_vertical     = cached_vars.get("video_filenames_all_vertical", [])
-
-        #______________________________________________________________________________________________________
-        #___LOAD_NEURAL_JSON_LEFT______
+        neural_indices_filenames_all = cached_vars.get("neural_indices_filenames_all", [])
+        video_filenames_all_vertical = cached_vars.get("video_filenames_all_vertical", [])
 
         log_accumulated_video_filenames_left = []
-
-        video_filenames_left = video_filenames_all_left[:]
-        num_videos_left = len(video_filenames_left)
-
-        unique_top_signal_indices = load_neural_indices_json(random.choice(neural_indices_filenames_all), ceiling=num_videos_left)
-        print(f"PRIOR 2026-10-29_EXPERIMENT: {len(unique_top_signal_indices)}")
-
-#_______NEW_QUANTUM_EXP_2026-10-29_______
-
-        unique_top_signal_indices_rnd = [random.randint(1, num_videos_left-1) for _ in range(2000)]
-        print(f"RND 2026-10-29_EXPERIMENT: {len(unique_top_signal_indices_rnd)}")
-        available_neural_indices = list(dict.fromkeys(unique_top_signal_indices[:] + unique_top_signal_indices_rnd[:]))
-        random.shuffle(available_neural_indices)
-        print(f"2026-10-29_EXPERIMENT: {len(available_neural_indices)}")
-
-        # --- NEW FILLING LOGIC ---
-        selected_neural_indices = filter_through_quantum_black_box(available_neural_indices, 500)
-
-        random.shuffle(video_filenames_left)
-        unique_top_signal_filenames = []
-        for index in selected_neural_indices:
-            unique_top_signal_filenames.append(video_filenames_left[index])
-        video_filenames_left = unique_top_signal_filenames
-        print(f"{len(video_filenames_left)}")
-#________________________________________
-
-
-        #______________________________________________________________________________________________________
-        #___LOAD_NEURAL_JSON_RIGHT_____
-
         log_accumulated_video_filenames_right = []
 
-        video_filenames_right = video_filenames_all_right[:]
-        num_videos_right = len(video_filenames_right)
-
-        unique_top_signal_indices = load_neural_indices_json(random.choice(neural_indices_filenames_all), ceiling=num_videos_right)
-        print(f"PRIOR 2026-04-28_EXPERIMENT: {len(unique_top_signal_indices)}")
-
-#_______NEW_QUANTUM_EXP_2026-10-29_______
-  
-        unique_top_signal_indices_rnd = [random.randint(1, num_videos_right-1) for _ in range(2000)]
-        print(f"RND 2026-10-29_EXPERIMENT: {len(unique_top_signal_indices_rnd)}")
-        available_neural_indices = list(dict.fromkeys(unique_top_signal_indices[:] + unique_top_signal_indices_rnd[:]))
-        random.shuffle(available_neural_indices)
-        print(f"2026-10-29_EXPERIMENT: {len(available_neural_indices)}")
-
-        # --- NEW FILLING LOGIC ---
-        selected_neural_indices = filter_through_quantum_black_box(available_neural_indices, 500)
-
-        random.shuffle(video_filenames_right)
-        unique_top_signal_filenames = []
-        for index in selected_neural_indices:
-            unique_top_signal_filenames.append(video_filenames_right[index])
-        video_filenames_right = unique_top_signal_filenames
-        print(f"{len(video_filenames_right)}")
-#________________________________________
-
         #______________________________________________________________________________________________________
-        #___SELECT_200_ENTRIES_LEFT____
-
-        # Calculate the start index for the main list
-        max_start_index = max(0, len(video_filenames_left) - 200)
-        start_index = random.randint(0, max_start_index)
-        print(f"start_index: {start_index}")
-        video_filenames_left = video_filenames_left[start_index : start_index + 200]
-        print(f"{len(video_filenames_left)}")
-
-        #___FRESH_REPLACEMENT_POOL_FOR_STATIC___
-
-        if SHIFT_STATIC == 1:
-            print(f"FRESH_BEFORE: {len(video_filenames_left_replacement)}")
-            # Filter out items in video_filenames_left
-            random.shuffle(video_filenames_left_replacement)
-            video_filenames_left_replacement_src = []
-            for each in video_filenames_left_replacement:
-                if each not in video_filenames_left:
-                    video_filenames_left_replacement_src.append(each)
-            random.shuffle(video_filenames_left_replacement_src)
-            num_videos_replacement_src = len(video_filenames_left_replacement_src)
-            print(f"FRESH_AFTER: {num_videos_replacement_src}")
-
-            # --- NEW FILLING LOGIC ---
-            available_neural_indices = load_neural_indices_json(random.choice(neural_indices_filenames_all), ceiling=num_videos_replacement_src)
-            selected_neural_indices = filter_through_quantum_black_box(available_neural_indices, 500)
-
-            selected_replacement_filenames = []
-            for index in selected_neural_indices:
-                selected_replacement_filenames.append(video_filenames_left_replacement_src[index])
-
-            video_filenames_left = Shift_Static_Position(
-                video_filenames_left,
-                video_base_filenames_static,
-                selected_replacement_filenames
-            )
-
-        #______________________________________________________________________________________________________
-        #___SELECT_200_ENTRIES_RIGHT___
-
-        max_start_index = max(0, len(video_filenames_right) - 200)
-        start_index = random.randint(0, max_start_index)
-        video_filenames_right = video_filenames_right[start_index : start_index + 200]
-
-        num_videos_left  = len(video_filenames_left)
-        num_videos_right = len(video_filenames_right)
-        print(f"FOO_LEFT: {num_videos_left}")
-        print(f"FOO_RIGHT: {num_videos_right}")
-
-        #___LOG___ >> moved at the end
-        #Log_Neural_Indices(video_filenames_left)
-        #Log_Neural_Indices(video_filenames_right)
-
         #___DYNAMIC_VIDEO_DURATION/PLAYBACK_SPEED___
         # MAIN light_wave_tech.py
         # only needs to be done for the left side since the right side is identical
@@ -3661,6 +3550,132 @@ def play_video_fullscreen(audio_path, playlist_index=0, playlist_type="CORE"):
 
     return exit_signal
 
+def run_video_init():
+    #______________________________________________________________________________________________________
+    # ___LOAD_CONFIG_FROM_CACHE____
+    cached_vars = config.load_paths_from_cache()
+
+    # dynamically shuffled per run
+    random.shuffle(cached_vars["neural_indices_filenames_all"])
+
+    # Assign out to your isolated variables exactly as they were named originally
+    neural_indices_filenames_all     = cached_vars.get("neural_indices_filenames_all", [])
+    video_filenames_all_left         = cached_vars.get("video_filenames_all_left", [])
+    video_filenames_left_replacement = cached_vars.get("video_filenames_left_replacement", [])
+    video_filenames_static           = cached_vars.get("video_filenames_static", [])
+    video_base_filenames_static      = cached_vars.get("video_base_filenames_static", [])
+    video_filenames_all_right        = cached_vars.get("video_filenames_all_right", [])
+    video_filenames_all_vertical     = cached_vars.get("video_filenames_all_vertical", [])
+
+    #______________________________________________________________________________________________________
+    #___LOAD_NEURAL_JSON_LEFT______
+
+    video_filenames_left = video_filenames_all_left[:]
+    num_videos_left = len(video_filenames_left)
+
+    unique_top_signal_indices = load_neural_indices_json(random.choice(neural_indices_filenames_all), ceiling=num_videos_left)
+    print(f"PRIOR 2026-10-29_EXPERIMENT: {len(unique_top_signal_indices)}")
+
+#_______NEW_QUANTUM_EXP_2026-10-29_______
+
+    unique_top_signal_indices_rnd = [random.randint(1, num_videos_left-1) for _ in range(2000)]
+    print(f"RND 2026-10-29_EXPERIMENT: {len(unique_top_signal_indices_rnd)}")
+    available_neural_indices = list(dict.fromkeys(unique_top_signal_indices[:] + unique_top_signal_indices_rnd[:]))
+    random.shuffle(available_neural_indices)
+    print(f"2026-10-29_EXPERIMENT: {len(available_neural_indices)}")
+
+    # --- NEW FILLING LOGIC ---
+    selected_neural_indices = filter_through_quantum_black_box(available_neural_indices, 500)
+
+    random.shuffle(video_filenames_left)
+    unique_top_signal_filenames = []
+    for index in selected_neural_indices:
+        unique_top_signal_filenames.append(video_filenames_left[index])
+    video_filenames_left = unique_top_signal_filenames
+    print(f"{len(video_filenames_left)}")
+#________________________________________
+
+    #______________________________________________________________________________________________________
+    #___LOAD_NEURAL_JSON_RIGHT_____
+
+    video_filenames_right = video_filenames_all_right[:]
+    num_videos_right = len(video_filenames_right)
+
+    unique_top_signal_indices = load_neural_indices_json(random.choice(neural_indices_filenames_all), ceiling=num_videos_right)
+    print(f"PRIOR 2026-04-28_EXPERIMENT: {len(unique_top_signal_indices)}")
+
+#_______NEW_QUANTUM_EXP_2026-10-29_______
+  
+    unique_top_signal_indices_rnd = [random.randint(1, num_videos_right-1) for _ in range(2000)]
+    print(f"RND 2026-10-29_EXPERIMENT: {len(unique_top_signal_indices_rnd)}")
+    available_neural_indices = list(dict.fromkeys(unique_top_signal_indices[:] + unique_top_signal_indices_rnd[:]))
+    random.shuffle(available_neural_indices)
+    print(f"2026-10-29_EXPERIMENT: {len(available_neural_indices)}")
+
+    # --- NEW FILLING LOGIC ---
+    selected_neural_indices = filter_through_quantum_black_box(available_neural_indices, 500)
+
+    random.shuffle(video_filenames_right)
+    unique_top_signal_filenames = []
+    for index in selected_neural_indices:
+        unique_top_signal_filenames.append(video_filenames_right[index])
+    video_filenames_right = unique_top_signal_filenames
+    print(f"{len(video_filenames_right)}")
+#________________________________________
+
+    #______________________________________________________________________________________________________
+    #___SELECT_200_ENTRIES_LEFT____
+
+    # Calculate the start index for the main list
+    max_start_index = max(0, len(video_filenames_left) - 200)
+    start_index = random.randint(0, max_start_index)
+    print(f"start_index: {start_index}")
+    video_filenames_left = video_filenames_left[start_index : start_index + 200]
+    print(f"{len(video_filenames_left)}")
+
+    #___FRESH_REPLACEMENT_POOL_FOR_STATIC___
+
+    if SHIFT_STATIC == 1:
+        print(f"FRESH_BEFORE: {len(video_filenames_left_replacement)}")
+        # Filter out items in video_filenames_left
+        random.shuffle(video_filenames_left_replacement)
+        video_filenames_left_replacement_src = []
+        for each in video_filenames_left_replacement:
+            if each not in video_filenames_left:
+                video_filenames_left_replacement_src.append(each)
+        random.shuffle(video_filenames_left_replacement_src)
+        num_videos_replacement_src = len(video_filenames_left_replacement_src)
+        print(f"FRESH_AFTER: {num_videos_replacement_src}")
+
+        # --- NEW FILLING LOGIC ---
+        available_neural_indices = load_neural_indices_json(random.choice(neural_indices_filenames_all), ceiling=num_videos_replacement_src)
+        selected_neural_indices = filter_through_quantum_black_box(available_neural_indices, 500)
+
+        selected_replacement_filenames = []
+        for index in selected_neural_indices:
+            selected_replacement_filenames.append(video_filenames_left_replacement_src[index])
+
+        video_filenames_left = Shift_Static_Position(
+            video_filenames_left,
+            video_base_filenames_static,
+            selected_replacement_filenames
+        )
+
+    #______________________________________________________________________________________________________
+    #___SELECT_200_ENTRIES_RIGHT___
+
+    max_start_index = max(0, len(video_filenames_right) - 200)
+    start_index = random.randint(0, max_start_index)
+    video_filenames_right = video_filenames_right[start_index : start_index + 200]
+
+    num_videos_left  = len(video_filenames_left)
+    num_videos_right = len(video_filenames_right)
+    print(f"FOO_LEFT: {num_videos_left}")
+    print(f"FOO_RIGHT: {num_videos_right}")
+
+    return video_filenames_left, video_filenames_right
+
+
 
 if __name__ == '__main__':
 
@@ -3690,7 +3705,32 @@ if __name__ == '__main__':
     
 
 ####____PLAYLIST____####
-    
+
+    NUM_SESSIONS = 3
+
+    time_start = time.time()
+    total_iterations = NUM_SESSIONS
+    session_precalc_data = []
+    for i in range(NUM_SESSIONS):
+        # ---------- ETA CALCULATION ----------
+        iters_done = i + 1
+        elapsed_time = time.time() - time_start
+        time_per_iter = elapsed_time / iters_done
+        iters_left = total_iterations - iters_done
+        eta_seconds = int(iters_left * time_per_iter)
+                    
+        m, s = divmod(eta_seconds, 60)
+        h, m = divmod(m, 60)
+        eta_str = f"{h:02d}:{m:02d}:{s:02d}" if h > 0 else f"{m:02d}:{s:02d}"
+
+        # Print the progress
+        print(f"SESSION_PRE_CALC: {iters_done}/{total_iterations} | ETA: {eta_str}")
+        # -------------------------------------
+
+        session_precalc_data.append(run_video_init())
+
+#_____________________________
+
     ###___PASS_VARIABLE TO play_video_fullscreen() TO ADJUST "shaking"/tilt
     ###_____ 2026-09-25 ADJUSTED rot to lower values 
     ###_____ -2 >> -1 and angle_to_apply = angle_to_apply * 0.6
@@ -3704,8 +3744,8 @@ if __name__ == '__main__':
     EVERYTHING         = False
     CORE_EDITION       = False
     SUMMER_EDITION     = False
-    PSY_TRANCE_EDITION = True
-    HARDWAVE_EDITION   = False
+    PSY_TRANCE_EDITION = False
+    HARDWAVE_EDITION   = True
     CUSTOM_EDITION     = False
 
     #audio_base_folder = config.get("audio_filepaths", {}).get("music_folder")
@@ -3755,6 +3795,9 @@ if __name__ == '__main__':
     #sys.exit()
 
     for i, song_data in enumerate(songs_all_random):
+#        video_filenames_left, video_filenames_right = run_video_init()
+        video_filenames_left, video_filenames_right = session_precalc_data[i]
+
         # Extract the values from our dictionary
         audio_file = song_data["filename"]
         playlist_type = song_data["type"]
@@ -3768,11 +3811,15 @@ if __name__ == '__main__':
         print(f"==================IIIIIIIIIII: {get_audio_len(audio_path)}")
 
         # Catch the return value from the function
-        kill_playlist = play_video_fullscreen(audio_path, playlist_index=i, playlist_type=playlist_type)
+        kill_playlist = play_video_fullscreen(video_filenames_left, video_filenames_right, audio_path, playlist_index=i, playlist_type=playlist_type)
         gc.collect()
         
         # Check if the user pressed 'x'
         if kill_playlist == True:
+            print("Kill command received. Exiting playlist gracefully...")
+            break  # <--- This immediately stops the 'for' loop
+
+        if i == NUM_SESSIONS:
             print("Kill command received. Exiting playlist gracefully...")
             break  # <--- This immediately stops the 'for' loop
 
