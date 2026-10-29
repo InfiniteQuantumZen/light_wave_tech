@@ -1,5 +1,9 @@
 2026-10-29 The_Butterfly_Effect_of_Intention_(Qubits)
 
+This file was originally placed here: [Artificial_Life_R%26D](https://github.com/InfiniteQuantumZen/light_wave_tech/tree/main/Artificial_Life_R%26D) but because its more than relevant to demonstrate HIE, it was also place in this folder.
+
+___
+
 quantum computing: how do a wave collapse in hardware? how do they enforce such
 an event to happen? in paper, you can say that such and such is such rotation of
 such and such and this wave is in superposition in so and so, and thus magic...
