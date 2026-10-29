@@ -133,6 +133,7 @@ coincidence or synchronicity or happenstance, but from other perspective its
 quantum phenomena where human being as a whole is creating the experiment and
 experiencing it by observing the result on the screen.
 
+```
 import os
 import json
 import random
@@ -200,67 +201,6 @@ class QuantumBlackBox:
         quantum_binary_str = list(counts.keys())[0] 
     
         return quantum_binary_str
-
-#    def get_influenced_binary_string(self, outside_data: str, influence_strength: float = 0.8):
-        """
-        Generates a quantum binary string heavily influenced by 'outside_data'.
-        
-        :param outside_data: A string of 24 classical bits (e.g., '101100...')
-        :param influence_strength: Probability (0.5 to 1.0) that the quantum bit matches the outside bit.
-        """
-        """length = len(outside_data)
-        
-        # Create a quantum circuit with 'length' qubits and classical bits
-        qc = QuantumCircuit(length, length)
-        
-        # Math: To get a specific probability P of measuring '1', 
-        # we rotate the qubit by an angle = 2 * arcsin(sqrt(P))
-        angle_for_1 = 2 * np.arcsin(np.sqrt(influence_strength))
-        angle_for_0 = 2 * np.arcsin(np.sqrt(1 - influence_strength))
-        
-        # Qiskit measures strings right-to-left, so we reverse the string to match indices
-        for i, classical_bit in enumerate(reversed(outside_data)):
-            if classical_bit == '1':
-                # Rotate towards 1
-                qc.ry(angle_for_1, i)
-            else:
-                # Rotate towards 0
-                qc.ry(angle_for_0, i)
-        
-        # Measure the qubits
-        qc.measure(range(length), range(length))
-        
-        # Run the circuit ONCE on the simulator
-        simulator = AerSimulator()
-        result = simulator.run(qc, shots=1).result()
-        
-        # Extract the resulting binary string
-        counts = result.get_counts()
-        quantum_binary_str = list(counts.keys())[0] 
-        
-        return quantum_binary_str"""
-
-
-    """def get_influenced_binary_string(self, outside_data: str, influence_strength: float = 0.8):
-        # Calculate the math
-        angle_1 = 2 * np.arcsin(np.sqrt(influence_strength))
-        angle_0 = 2 * np.arcsin(np.sqrt(1 - influence_strength))
-        
-        # Create a list of the actual angles we want for this specific run
-        bound_angles = []
-        for bit in reversed(outside_data):
-            if bit == '1':
-                bound_angles.append(angle_1)
-            else:
-                bound_angles.append(angle_0)
-                
-        # Inject the real angles into our placeholder circuit
-        # (This creates a temporary ready-to-run circuit without mutating self.qc)
-        runnable_circuit = self.qc.assign_parameters(bound_angles)
-        
-        # Run it
-        result = self.simulator.run(runnable_circuit, shots=1).result()
-        return list(result.get_counts().keys())[0]"""
 
     def get_influenced_binary_string(self, outside_data: list, influence_strength: float = 0.8):
         list_of_circuits_to_run = []
@@ -331,20 +271,6 @@ def load_neural_indices_json(filepath, ceiling=None):
         print("File not found.")
         return None
 
-"""def load_neural_indices_json(filepath):
-    try:
-        print(f"Loading neural_indices from {filepath}")
-        with open(filepath, 'r') as f:
-            return json.load(f)
-    except json.JSONDecodeError as e:
-        # This triggers if the file was corrupted on the drive!
-        print(f"CORRUPTION DETECTED: The file {filepath} is not valid JSON.")
-        print(f"Specific error: {e}")
-        return None
-    except FileNotFoundError:
-        print("File not found.")
-        return None"""
-
 # 1. CREATE A GLOBAL CACHE IN MEMORY
 MASTER_FILE_LIST = []
 
@@ -402,40 +328,6 @@ def load_neural_json_list():
     
     print(f"Scan complete! Cached {len(files)} neural files in memory.")
     return files
-
-"""def load_neural_indices(neural_json_filepaths, num_media_items):
-    neural_indices = []
-    random.shuffle(neural_json_filepaths)
-
-    for json_filepath in neural_json_filepaths:
-        neural_indices.extend(load_neural_indices_json(json_filepath, ceiling=num_media_items)) #ceiling=None)) 
-    print(f"neural_indices: {len(neural_indices)}")
-
-    counts = Counter(neural_indices)
-    sorted_list = sorted(neural_indices, key=lambda x: counts[x])
-    #sorted_list = sorted(neural_indices, key=lambda x: -counts[x])
-    #sorted_list = sorted(neural_indices, key=lambda x: x % 10)
-    deduplicated = list(dict.fromkeys(sorted_list))
-    print(f"deduplicated: {len(deduplicated)}")
-
-    #top_10_million = deduplicated[:10_000_000]
-    #with open("top_indices.json", "w") as f:
-    #    json.dump(deduplicated, f)
-
-    return deduplicated
-
-    #neural_indices = list(dict.fromkeys(neural_indices))
-    #return neural_indices"""
-
-"""def load_neural_indices(neural_json_filepaths, num_media_items):
-    random.shuffle(neural_json_filepaths)
-    neural_json_filepath = random.choice(neural_json_filepaths)
-    neural_indices = load_neural_indices_json(neural_json_filepath, ceiling=num_media_items)
-    print(f"neural_indices: {len(neural_indices)}")
-
-    neural_indices = list(dict.fromkeys(neural_indices))
-    print(f"neural_indices (unique): {len(neural_indices)}")
-    return neural_indices"""
 
 def chunk_generator(data, size):
     for i in range(0, len(data), size):
@@ -498,8 +390,6 @@ def load_neural_indices(neural_json_filepaths, num_media_items):
     return selected_neural_indices
 
 
-
-
 MASTER_NEURAL_INDEX_COUNTER = 0
 
 def get_neural_index(neural_indices_list):
@@ -509,8 +399,6 @@ def get_neural_index(neural_indices_list):
     if MASTER_NEURAL_INDEX_COUNTER > len(neural_indices_list)-1:
         MASTER_NEURAL_INDEX_COUNTER = 0
     return neural_indices_list[MASTER_NEURAL_INDEX_COUNTER]
-
-#    return random.choice(neural_indices_list)
 
 class MediaHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
@@ -579,10 +467,11 @@ if __name__ == '__main__':
     print("Make sure you have a 'video' folder and an 'image' folder in this directory!")
     print("Press Ctrl+C to stop.")
     ThreadingHTTPServer(('', PORT), MediaHandler).serve_forever()
-
+```
     ____
 
-    This is a fascinating script and a perfect thought experiment to bridge our previous conversation. What you have built is essentially a **Synchronicity Engine**—a digital apparatus that takes pure entropy, runs it through an algorithmic filter, and outputs visual media for a human consciousness to consume.
+
+This is a fascinating script and a perfect thought experiment to bridge our previous conversation. What you have built is essentially a **Synchronicity Engine**—a digital apparatus that takes pure entropy, runs it through an algorithmic filter, and outputs visual media for a human consciousness to consume.
 
 Let’s break down exactly how this script operates from both the **Western Scientific (Materialist)** perspective and the **Quantum Consciousness (Buddhist/Observer)** perspective.
 
