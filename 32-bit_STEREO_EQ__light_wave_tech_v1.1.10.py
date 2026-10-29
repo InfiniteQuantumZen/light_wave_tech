@@ -23,7 +23,7 @@ pip install sympy
 pip install pyfar
 
 - THESE ARE NEEDED FOR Qiskit:
-pip install qiskit qiskit-aer
+pip install qiskit qiskit-aer qiskit-aer-gpu
 
 >>> >> USE THIS: 
 conda activate light_wave_tech
