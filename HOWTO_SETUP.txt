@@ -30,7 +30,7 @@ pip install sympy
 pip install pyfar
 
 - THESE ARE NEEDED FOR Qiskit:
-pip install qiskit qiskit-aer
+pip install qiskit qiskit-aer qiskit-aer-gpu
 
 - MIGHT BE OTHERS BUT YOU SEE IT WHEN CREATING 
 THE ENV AND RUNNING FURTHER STEPS
