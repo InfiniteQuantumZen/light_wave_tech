@@ -23,7 +23,7 @@ pip install sympy
 pip install pyfar
 
 - THESE ARE NEEDED FOR Qiskit:
-pip install qiskit qiskit-aer
+pip install qiskit qiskit-aer 
 https://github.com/Qiskit/qiskit-aer/blob/main/CONTRIBUTING.md#building-with-gpu-support
 
 >>> >> USE THIS: 
@@ -69,6 +69,7 @@ import os
 import sys
 import cv2
 import csv
+import glob
 import math
 import wave
 import moderngl
@@ -376,125 +377,51 @@ class SongRatingManager:
 #______________________________________________________________________________________________________
 #___QUANTUM_____________________________
 
-class QuantumBlackBox:
-    def __init__(self, filepath, num_qubits=24):
-        self.qbit_string_list = self._get_qbit_strings(filepath)
+# 2026-10-30: 
+#  QuantumBlackBox has been migrated out of the main file into its own tool
+#  located at /TOOLS/quantum_blackbox. This functionality can be run "real-time"
+#  before actual graphics run but due to limitations in windows GPU cannot be used
+#  to calculate the vectors/wave probs; also WSL seemed to have trouble with qiskit,
+#  and also in linux it wasn't quite easy and still trying to compile from source the
+#  CUDA support that seems to be a mixed bag of success for people... thus, precalc.
 
-        self.num_qubits = num_qubits
-        self.simulator = AerSimulator()
-        
-        # 1. Create the circuit ONCE
-        self.qc = QuantumCircuit(num_qubits, num_qubits)
-        
-        # 2. Create 24 "Placeholders" (Parameters) for our angles
-        self.angles = ParameterVector('theta', num_qubits)
-        
-        # 3. Add the gates ONCE using the placeholders
-        for i in range(num_qubits):
-            self.qc.ry(self.angles[i], i)
-            
-        # 4. Add measurements ONCE
-        self.qc.measure(range(num_qubits), range(num_qubits))
-        
-        # Now, self.qc is locked in. We never add another gate to it.
-
-    def _get_qbit_strings(self, filepath):
-        with open(filepath, 'r', encoding='utf-8', errors='replace') as f:
-            text = f.read()
-        strings = text.split('\n')
-        random.shuffle(strings)
-        print(f"num_strings: {len(strings)}")
-        return strings
-
-    def get_random_qbit_string(self):
-        return random.choice(self.qbit_string_list)
-
-    def get_influenced_binary_string(self, outside_data: list, influence_strength: float = 0.8):
-        list_of_circuits_to_run = []
-        for i, data_string in enumerate(outside_data):
-            #print(f"{i}/{len(outside_data)}")
-            # Generate the bound angles for this string
-            # Calculate the math
-            angle_1 = 2 * np.arcsin(np.sqrt(influence_strength))
-            angle_0 = 2 * np.arcsin(np.sqrt(1 - influence_strength))
-        
-            # Create a list of the actual angles we want for this specific run
-            bound_angles = []
-            for bit in reversed(data_string):
-                if bit == '1':
-                    bound_angles.append(angle_1)
-                else:
-                    bound_angles.append(angle_0)
-
-            # Assign parameters and ADD TO LIST
-            # Inject the real angles into our placeholder circuit
-            # (This creates a temporary ready-to-run circuit without mutating self.qc)
-            list_of_circuits_to_run.append( self.qc.assign_parameters(bound_angles) )
-
-        # Run it
-        # The simulator will chew through all circuits in C++ very fast
-        batch_result_list = []
-        batch_result = self.simulator.run(list_of_circuits_to_run, shots=1).result()
-        for i in range(len(list_of_circuits_to_run)):
-            counts = batch_result.get_counts(i) 
-            quantum_binary_str = list(counts.keys())[0]
-            #print(f"Circuit {i} -> quantum_binary_str: {quantum_binary_str}")
-            batch_result_list.append(quantum_binary_str)
-        
-        return batch_result_list
-
-    def xor_parity_check(self, binary_string):
-        """True if odd number of 1s, False if even."""
-        #print(f"# of 1's: {binary_string.count('1')}")
-        return binary_string.count('1') % 2 != 0
-
-def chunk_generator(data, size):
-    for i in range(0, len(data), size):
-        yield data[i : i + size]
-
-quantum_black_box = QuantumBlackBox("DATA/qbit_strings_data.txt")
+def quantum_black_box_xor_parity_check(binary_string):
+    """True if odd number of 1s, False if even."""
+    #print(f"# of 1's: {binary_string.count('1')}")
+    return binary_string.count('1') % 2 != 0
 
 def filter_through_quantum_black_box(available_neural_indices, num_quantum_items=500):
-    random_qbit_str_list = []
-    for i in range(num_quantum_items):
-        #print(f"{i}/{num_quantum_items}")
-        random_qbit_str = quantum_black_box.get_random_qbit_string()
-        #print(f"random_qbit_str: {random_qbit_str}")
-        random_qbit_str_list.append(random_qbit_str)
 
-    # Generate a string where there is an 85% chance each qubit matches the outside data
-    batch_size = 100
-    time_start = time.time()
-    total_iterations = int(len(random_qbit_str_list)/batch_size)
-    quantum_results_list = []
+    all_combined_quantum_pairs = []
+    file_paths = glob.glob("DATA/quantum_json_batches/*.json") 
 
-    for i, batch in enumerate(chunk_generator(random_qbit_str_list, batch_size)):
+    for path in file_paths:
+        with open(path, "r") as f:
+            loaded_pairs = json.load(f)
+            all_combined_quantum_pairs.extend(loaded_pairs)
 
-        # ---------- ETA CALCULATION ----------
-        iters_done = i + 1
-        elapsed_time = time.time() - time_start
-        time_per_iter = elapsed_time / iters_done
-        iters_left = total_iterations - iters_done
-        eta_seconds = int(iters_left * time_per_iter)
-                    
-        m, s = divmod(eta_seconds, 60)
-        h, m = divmod(m, 60)
-        eta_str = f"{h:02d}:{m:02d}:{s:02d}" if h > 0 else f"{m:02d}:{s:02d}"
+    print(f"Successfully loaded a total of {len(all_combined_quantum_pairs)} pairs!")
 
-        # Print the progress
-        print(f"Quantum_Black_Box Iteration: {iters_done}/{total_iterations} | ETA: {eta_str}", end='\r', flush=True)
-        # -------------------------------------
+    random.shuffle(all_combined_quantum_pairs)
 
-        quantum_results_list.extend(quantum_black_box.get_influenced_binary_string(batch, influence_strength=0.85))
+    # 5. Use them one by one
+    for pair in all_combined_quantum_pairs[:5]: 
+        current_src = pair["src"]
+        current_dst = pair["dst"]
+        print(f"Source: {current_src}, Destination: {current_dst}")
+        # do something with current_src and current_dst...
+
 
     # Iterate until the list is completely full
     iter_num = 0
     selected_neural_indices = []
-    while len(selected_neural_indices) < num_quantum_items-1 and iter_num < len(quantum_results_list):
+    while len(selected_neural_indices) < num_quantum_items-1 and iter_num < len(all_combined_quantum_pairs):
         #print(f"{iter_num}/{num_quantum_items}")
-        quantum_binary_str = quantum_results_list[iter_num]
+        #quantum_binary_str = quantum_results_list[iter_num]
+        quantum_binary_str = all_combined_quantum_pairs[iter_num]["dst"]
         #print(f"quantum_binary_str: {quantum_binary_str}")
-        q_passed = quantum_black_box.xor_parity_check(quantum_binary_str)
+
+        q_passed = quantum_black_box_xor_parity_check(quantum_binary_str)
         #print(f"q_passed: {q_passed}")
         
         # If the condition is met, fill one spot in the list
@@ -3537,6 +3464,8 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
         #executor.shutdown(wait=False)
         executor.shutdown(wait=True)
 
+        print(f"log_accumulated_video_filenames_left_LEN: {len(log_accumulated_video_filenames_left)}")
+        print(f"log_accumulated_video_filenames_right_LEN: {len(log_accumulated_video_filenames_right)}")
         Log_Neural_Indices(log_accumulated_video_filenames_left)
         Log_Neural_Indices(log_accumulated_video_filenames_right)
 
@@ -3708,26 +3637,10 @@ if __name__ == '__main__':
 ####____PLAYLIST____####
 
     NUM_SESSIONS = 3
+    #NUM_SESSIONS = 1
 
-    time_start = time.time()
-    total_iterations = NUM_SESSIONS
     session_precalc_data = []
     for i in range(NUM_SESSIONS):
-        # ---------- ETA CALCULATION ----------
-        iters_done = i + 1
-        elapsed_time = time.time() - time_start
-        time_per_iter = elapsed_time / iters_done
-        iters_left = total_iterations - iters_done
-        eta_seconds = int(iters_left * time_per_iter)
-                    
-        m, s = divmod(eta_seconds, 60)
-        h, m = divmod(m, 60)
-        eta_str = f"{h:02d}:{m:02d}:{s:02d}" if h > 0 else f"{m:02d}:{s:02d}"
-
-        # Print the progress
-        print(f"SESSION_PRE_CALC: {iters_done}/{total_iterations} | ETA: {eta_str}")
-        # -------------------------------------
-
         session_precalc_data.append(run_video_init())
 
 #_____________________________
@@ -3743,10 +3656,10 @@ if __name__ == '__main__':
 # TRY rainbow vortex + zoom/rot
 
     EVERYTHING         = False
-    CORE_EDITION       = False
+    CORE_EDITION       = True
     SUMMER_EDITION     = False
     PSY_TRANCE_EDITION = False
-    HARDWAVE_EDITION   = True
+    HARDWAVE_EDITION   = False
     CUSTOM_EDITION     = False
 
     #audio_base_folder = config.get("audio_filepaths", {}).get("music_folder")
