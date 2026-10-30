@@ -1,0 +1,47 @@
+cd /media/pop-os/YOUR_USB_NAME/ 
+
+OR
+
+lsblk
+
+sudo mkdir -p /mnt/usb2
+sudo mount /dev/sdc1 /mnt/usb2
+cd /mnt/usb2
+
+___
+
+
+sudo apt update
+sudo apt install python3-venv python3-pip
+
+python3 -m venv ~/quantum_env
+source ~/quantum_env/bin/activate
+
+___
+
+nvidia-smi
+python -c "import torch; print(torch.cuda.is_available())"
+
+___
+
+https://github.com/Qiskit/qiskit-aer/releases/tag/0.18.2
+
+https://github.com/Qiskit/qiskit-aer/blob/main/CONTRIBUTING.md#building-with-gpu-support
+
+Download Installer for Linux Ubuntu 24.04 x86_64
+
+wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/cuda-ubuntu2404.pin
+sudo mv cuda-ubuntu2404.pin /etc/apt/preferences.d/cuda-repository-pin-600
+wget https://developer.download.nvidia.com/compute/cuda/13.4.3/local_installers/cuda-repo-ubuntu2404-13-4-local_13.4.3-1_amd64.deb
+sudo dpkg -i cuda-repo-ubuntu2404-13-4-local_13.4.3-1_amd64.deb
+sudo cp /var/cuda-repo-ubuntu2404-13-4-local/cuda-*-keyring.gpg /usr/share/keyrings/
+sudo apt-get update
+sudo apt-get -y install cuda-toolkit-13-4
+
+AER_THRUST_BACKEND=CUDA
+
+python ./setup.py bdist_wheel -- -DAER_THRUST_BACKEND=CUDA --
+
+pip install nvidia-cuda-runtime-cu13 nvidia-cublas-cu13 nvidia-cusolver-cu13 nvidia-cusparse-cu13 cuquantum-cu13
+
+python ./setup.py bdist_wheel -- -DAER_THRUST_BACKEND=CUDA -DAER_PYTHON_CUDA_ROOT=qiskit-aer-venv --
