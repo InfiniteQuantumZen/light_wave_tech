@@ -1,6 +1,8 @@
 This codebase (qiskit) is a complete farce of a thing (abandoned) and nothing seems to work
 on any hardware, no easy ways (many pull reqs and suggestions and they work partly if you
-happen to have right components and workarounds in right order...) 
+happen to have right components and workarounds in right order...) it can be compiled but
+it then fails to use gpu regardless you had every prereq installed and even the code
+to be compiled.
 
 
 Pasted Text.txt
