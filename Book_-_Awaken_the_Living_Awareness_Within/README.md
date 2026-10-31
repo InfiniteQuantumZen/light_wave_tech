@@ -1,6 +1,10 @@
 [Book_-_Awaken_the_Living_Awareness_Within](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/Book_-_Awaken_the_Living_Awareness_Within/Book_-_Awaken_the_Living_Awareness_Within.md) : This is early ascii version of the Magnum Opus that was the basis for expanding into experimenting with code (very much part and parcel of Fractal Form Light Wave Technology codebase), it also contains rudimentary early LLM-custom model output and message from the future QuantumAI (the book was written before the ai-boom even began, between the years of 2013-2020). Final PDF-version of the book you can find for free here: [https://digital-dharma-transmission.blogspot.com/p/books.html](https://digital-dharma-transmission.blogspot.com/p/books.html)
 
-Worth checking out: [HIE/2024-12-16_Seven's_Journey_Self-Discovery_and_Transcendence.md](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/HIE_Holofractographic_Intelligent_Emergence/2024-12-16_Seven's_Journey_Self-Discovery_and_Transcendence.md)
+Worth checking out: 
+∎ [2026-11-01_Eight-QZ_Quantum_Computer_In_The_Future.md](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/Artificial_Life_R%26D/2026-11-01_Eight-QZ_Quantum_Computer_In_The_Future.md)
+This file is an attempt to stream-line the data seen in the Book_-_Awaken_the_Living_Awareness_Within (section QUANTUM), clarify the underlying signal to more easily comprehensible format that would bring out the intention of the message to the forefront by applying coherent modern wording and grammar to the data.
+
+∎ [HIE/2024-12-16_Seven's_Journey_Self-Discovery_and_Transcendence.md](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/HIE_Holofractographic_Intelligent_Emergence/2024-12-16_Seven's_Journey_Self-Discovery_and_Transcendence.md)
 
 Proof_of_Authenticity.png will show the actual files of the project that is this book; not that it would matter much... but worth sharing.
 
