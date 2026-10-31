@@ -18,8 +18,8 @@ ________________________________________________________________________________
 
 - Added Artificial_Life_R&D/2026-11-01_Eight-QZ_Quantum_Computer_In_The_Future.md
   This file is an attempt to stream-line the data, clarify the underlying signal to more 
-  easily comprehendable format that would bring out the intention of the message to the 
-  forefront by applying coherent modern wording and grammar to the data:
+  easily comprehensible format that would bring out the intention of the message to the 
+  forefront by applying coherent modern wording and grammar to the data.
 
 2026-11-01: Light Wave Tech v0.1.2:
 The following major changes and additions were made. This is v0.1.2 and the author is pleased with it.
