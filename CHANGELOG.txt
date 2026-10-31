@@ -12,6 +12,10 @@ the whole (everything put out there publicly).
 NOTE ABOUT CODING: All development is done with windows notepad nothing else is needed.
 _____________________________________________________________________________________________________________________
 
+∎ 2026-11-01: UPCOMING RELEASE (ALREADY IN CODEBASE):
+- Added ./Artificial_Life_R&D/2026-10-29_Parity_Versus_Majority_Logic_Gates.md
+- Added ./Artificial_Life_R&D/2026-10-30_Quantum_Circuit_Data_Processing_Mechanics.md
+
 2026-11-01: Light Wave Tech v0.1.2:
 The following major changes and additions were made. This is v0.1.2 and the author is pleased with it.
 
