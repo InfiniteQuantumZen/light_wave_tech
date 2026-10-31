@@ -1,3 +1,775 @@
+This codebase (qiskit) is a complete farce of a thing (abandoned) and nothing seems to work
+on any hardware, no easy ways (many pull reqs and suggestions and they work partly if you
+happen to have right components and workarounds in right order...) 
+
+
+Pasted Text.txt
+100%
+THESE WERE CALLED PRIOR COMPILE and yes distro has nvidia drivers installed and yes it shows on the nvidia command thus this was selected on RTX 2070 8GB card:
+
+wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/cuda-ubuntu2404.pin
+sudo mv cuda-ubuntu2404.pin /etc/apt/preferences.d/cuda-repository-pin-600
+
+wget https://developer.download.nvidia.com/compute/cuda/13.2.0/local_installers/cuda-repo-ubuntu2404-13-2-local_13.2.0-595.45.04-1_amd64.deb
+sudo dpkg -i cuda-repo-ubuntu2404-13-2-local_13.2.0-595.45.04-1_amd64.deb
+sudo cp /var/cuda-repo-ubuntu2404-13-2-local/cuda-*-keyring.gpg /usr/share/keyrings/
+sudo apt-get update
+sudo apt-get -y install cuda-toolkit-13-2
+
+
+sudo apt update
+sudo apt install python3-venv python3-pip
+
+python3 -m venv ~/quantum_env
+source ~/quantum_env/bin/activate
+
+cd /mnt/writable/quantum/qiskit-aer-main 
+
+pip install -r requirements-dev.txt
+pip install cuquantum-cu13
+pip install custatevec-cu13
+pip install nvidia-cusolver
+pip install nvidia-cusparse
+
+THIS IS THE LOG WITH THE COMPILE COMMAND:
+
+(quantum_env) pop-os@pop-os:/mnt/writable/quantum/qiskit-aer-main$ python ./setup.py bdist_wheel -DCMAKE_CUDA_COMPILER=/usr/local/cuda/bin/nvcc -DCMAKE_CUDA_ARCHITECTURES=75 -DCMAKE_CXX_STANDARD=17 -DCMAKE_CUDA_STANDARD=17 -DAER_THRUST_BACKEND=CUDA -DAER_ENABLE_CUQUANTUM=ON -DAER_PYTHON_CUDA_ROOT=/home/pop-os/quantum_env
+/home/pop-os/quantum_env/lib/python3.12/site-packages/setuptools/dist.py:765: SetuptoolsDeprecationWarning: License classifiers are deprecated.
+!!
+
+        ********************************************************************************
+        Please consider removing the following classifiers in favor of a SPDX license expression:
+
+        License :: OSI Approved :: Apache Software License
+
+        See https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#license for details.
+        ********************************************************************************
+
+!!
+  self._finalize_license_expression()
+
+
+--------------------------------------------------------------------------------
+-- Trying 'Ninja' generator
+--------------------------------
+---------------------------
+----------------------
+-----------------
+------------
+-------
+--
+The --no-warn-unused-cli option is deprecated.  Use -Wno-unused-cli instead.
+CMake Error: CMake was unable to find a build program corresponding to "Ninja".  CMAKE_MAKE_PROGRAM is not set.  You probably need to select a different build tool.
+-- Configuring incomplete, errors occurred!
+--
+-------
+------------
+-----------------
+----------------------
+---------------------------
+--------------------------------
+-- Trying 'Ninja' generator - failure
+--------------------------------------------------------------------------------
+
+
+
+--------------------------------------------------------------------------------
+-- Trying 'Unix Makefiles' generator
+--------------------------------
+---------------------------
+----------------------
+-----------------
+------------
+-------
+--
+The --no-warn-unused-cli option is deprecated.  Use -Wno-unused-cli instead.
+-- The C compiler identification is GNU 13.3.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- The CXX compiler identification is GNU 13.3.0
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Configuring done (0.5s)
+-- Generating done (0.0s)
+-- Build files have been written to: /mnt/writable/quantum/qiskit-aer-main/_cmake_test_compile/build
+--
+-------
+------------
+-----------------
+----------------------
+---------------------------
+--------------------------------
+-- Trying 'Unix Makefiles' generator - success
+--------------------------------------------------------------------------------
+
+Configuring Project
+  Working directory:
+    /mnt/writable/quantum/qiskit-aer-main/_skbuild/linux-x86_64-3.12/cmake-build
+  Command:
+    /home/pop-os/quantum_env/lib/python3.12/site-packages/cmake/data/bin/cmake /mnt/writable/quantum/qiskit-aer-main -G 'Unix Makefiles' --no-warn-unused-cli -DCMAKE_INSTALL_PREFIX:PATH=/mnt/writable/quantum/qiskit-aer-main/_skbuild/linux-x86_64-3.12/cmake-install -DPYTHON_VERSION_STRING:STRING=3.12.3 -DSKBUILD:INTERNAL=TRUE -DCMAKE_MODULE_PATH:PATH=/home/pop-os/quantum_env/lib/python3.12/site-packages/skbuild/resources/cmake -DPYTHON_EXECUTABLE:PATH=/home/pop-os/quantum_env/bin/python -DPYTHON_INCLUDE_DIR:PATH=/usr/include/python3.12 -DPYTHON_LIBRARY:PATH=/usr/lib/x86_64-linux-gnu/libpython3.12.so -DPython_EXECUTABLE:PATH=/home/pop-os/quantum_env/bin/python -DPython_ROOT_DIR:PATH=/home/pop-os/quantum_env -DPython_FIND_REGISTRY:STRING=NEVER -DPython_INCLUDE_DIR:PATH=/usr/include/python3.12 -DPython_NumPy_INCLUDE_DIRS:PATH=/home/pop-os/quantum_env/lib/python3.12/site-packages/numpy/_core/include -DPython3_EXECUTABLE:PATH=/home/pop-os/quantum_env/bin/python -DPython3_ROOT_DIR:PATH=/home/pop-os/quantum_env -DPython3_FIND_REGISTRY:STRING=NEVER -DPython3_INCLUDE_DIR:PATH=/usr/include/python3.12 -DPython3_NumPy_INCLUDE_DIRS:PATH=/home/pop-os/quantum_env/lib/python3.12/site-packages/numpy/_core/include -DCMAKE_CUDA_COMPILER=/usr/local/cuda/bin/nvcc -DCMAKE_CUDA_ARCHITECTURES=75 -DCMAKE_CXX_STANDARD=17 -DCMAKE_CUDA_STANDARD=17 -DAER_THRUST_BACKEND=CUDA -DAER_ENABLE_CUQUANTUM=ON -DAER_PYTHON_CUDA_ROOT=/home/pop-os/quantum_env -DCMAKE_BUILD_TYPE:STRING=Release
+
+The --no-warn-unused-cli option is deprecated.  Use -Wno-unused-cli instead.
+CMake Warning (deprecated) at CMakeLists.txt:11 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+This warning is for project developers.  Use -Wno-author or -Wno-deprecated
+to suppress it.
+
+-- The CXX compiler identification is GNU 13.3.0
+-- The C compiler identification is GNU 13.3.0
+-- The CUDA compiler identification is NVIDIA 13.2.51 with host compiler GNU 13.3.0
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CUDA compiler ABI info
+-- Detecting CUDA compiler ABI info - done
+-- Check for working CUDA compiler: /usr/local/cuda/bin/nvcc - skipped
+-- Detecting CUDA compile features
+-- Detecting CUDA compile features - done
+-- Performing Test flag_supported
+-- Performing Test flag_supported - Success
+-- Performing Test flag_supported
+-- Performing Test flag_supported - Success
+-- Performing Test flag_supported
+-- Performing Test flag_supported - Success
+-- Performing Test flag_supported
+-- Performing Test flag_supported - Success
+-- Performing Test flag_supported
+-- Performing Test flag_supported - Success
+-- Performing Test flag_supported
+-- Performing Test flag_supported - Success
+-- Performing Test flag_supported
+-- Performing Test flag_supported - Success
+-- Performing Test flag_supported
+-- Performing Test flag_supported - Success
+-- Performing Test flag_supported
+-- Performing Test flag_supported - Success
+-- Performing Test flag_supported
+-- Performing Test flag_supported - Success
+-- Conan: Automatic detection of conan settings from cmake
+-- Conan: Settings= -s;build_type=Release;-s;compiler=gcc;-s;compiler.version=13;-s;compiler.libcxx=libstdc++11
+-- Conan: checking conan executable
+-- Conan: Found program /home/pop-os/quantum_env/bin/conan
+-- Conan: Version found Conan version 1.66.0
+
+-- Conan executing: /home/pop-os/quantum_env/bin/conan install . -s build_type=Release -s compiler=gcc -s compiler.version=13 -s compiler.libcxx=libstdc++11 -e=CONAN_CMAKE_PROGRAM=/home/pop-os/quantum_env/lib/python3.12/site-packages/cmake/data/bin/cmake -g=cmake --build=missing
+
+WARN: **************************************************
+WARN: *** Conan 1 is legacy and on a deprecation path **
+WARN: *********** Please upgrade to Conan 2 ************
+WARN: **************************************************
+Configuration:
+[settings]
+arch=x86_64
+arch_build=x86_64
+build_type=Release
+compiler=gcc
+compiler.libcxx=libstdc++11
+compiler.version=13
+os=Linux
+os_build=Linux
+[options]
+[build_requires]
+[env]
+CONAN_CMAKE_PROGRAM=/home/pop-os/quantum_env/lib/python3.12/site-packages/cmake/data/bin/cmake
+conanfile.txt: Installing package
+Requirements
+    fmt/10.2.1 from 'conancenter' - Cache
+    nlohmann_json/3.11.3 from 'conancenter' - Cache
+    spdlog/1.14.1 from 'conancenter' - Cache
+Packages
+    fmt/10.2.1:4b5e5b92c6145ab396a7221e72a513c036e78eeb - Cache
+    nlohmann_json/3.11.3:5ab84d6acfe1f23c4fae0ab88f26e3a396351ac9 - Cache
+    spdlog/1.14.1:cfa8e219997c629c822fef752990c50212d1bfed - Cache
+
+Installing (downloading, building) binaries...
+fmt/10.2.1: Already installed!
+nlohmann_json/3.11.3: Already installed!
+spdlog/1.14.1: Already installed!
+conanfile.txt: WARN:
+     ************************************************
+     The 'cmake' generator is deprecated.
+     Please update your code and remove it.
+     *************************************************
+
+conanfile.txt: Generator cmake created conanbuildinfo.cmake
+conanfile.txt: Generator txt created conanbuildinfo.txt
+conanfile.txt: Aggregating env generators
+conanfile.txt: Generated conaninfo.txt
+conanfile.txt: Generated graphinfo
+WARN: Revisions are disabled. Using Conan without revisions enabled is deprecated
+WARN: **************************************************
+WARN: *** Conan 1 is legacy and on a deprecation path **
+WARN: *********** Please upgrade to Conan 2 ************
+
+WARN: **************************************************
+-- Conan: Loading conanbuildinfo.cmake
+-- Conan: Adjusting output directories
+-- Conan: Using cmake targets configuration
+-- Library spdlog found /home/pop-os/.conan/data/spdlog/1.14.1/_/_/package/cfa8e219997c629c822fef752990c50212d1bfed/lib/libspdlog.a
+-- Library fmt found /home/pop-os/.conan/data/fmt/10.2.1/_/_/package/4b5e5b92c6145ab396a7221e72a513c036e78eeb/lib/libfmt.a
+-- Conan: Adjusting language standard
+-- Current conanbuildinfo.cmake directory: /mnt/writable/quantum/qiskit-aer-main/_skbuild/linux-x86_64-3.12/cmake-build
+-- Conan: Compiler GCC>=5, checking major version 13
+-- Conan: Checking correct version: 13
+-- Looking for OpenMP support...
+-- OpenMP found!
+-- OpenMP_CXX_FLAGS = -fopenmp
+-- OpenMP_EXE_LINKER_FLAGS =
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE
+-- Looking for OpenBLAS library...
+-- BLAS library found: /usr/lib/x86_64-linux-gnu/libopenblas.so
+-- Performing Test flag_supported
+-- Performing Test flag_supported - Success
+-- Thrust library: Looking for CUDA backend...
+CMake Warning (policy) at CMakeLists.txt:277 (find_package):
+  Policy CMP0146 is not set: The FindCUDA module is removed.  Run "cmake
+  --help-policy CMP0146" for policy details.  Use the cmake_policy command to
+  set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-author or -Wno-policy to
+suppress it.
+
+-- Found CUDA: /usr/local/cuda (found version "13.2")
+-- Thrust library: CUDA found!
+-- CMAKE_CUDA_ARCHITECTURES = 75
+-- Found Python: /home/pop-os/quantum_env/bin/python (found version "3.12.3") found components: Interpreter
+-- PYTHON_SITE_PATH = /home/pop-os/quantum_env/lib/python3.12/site-packages
+CMake Warning (policy) at cmake/FindPybind11.cmake:1 (find_package):
+  Policy CMP0148 is not set: The FindPythonInterp and FindPythonLibs modules
+  are removed.  Run "cmake --help-policy CMP0148" for policy details.  Use
+  the cmake_policy command to set the policy and suppress this warning.
+Call Stack (most recent call first):
+  qiskit_aer/backends/wrappers/CMakeLists.txt:2 (find_package)
+This warning is for project developers.  Use -Wno-author or -Wno-policy to
+suppress it.
+
+-- Found PythonLibs: /usr/lib/x86_64-linux-gnu/libpython3.12.so (found version "3.12.3")
+-- /usr/include/python3.12
+-- PYTHON EXECUTABLE: /home/pop-os/quantum_env/bin/python
+-- PYCOMM RAW: /home/pop-os/quantum_env/lib/python3.12/site-packages/pybind11/include
+-- PYBIND INCLUDES: /home/pop-os/quantum_env/lib/python3.12/site-packages/pybind11/include
+-- Configuring done (7.4s)
+-- Generating done (0.0s)
+-- Build files have been written to: /mnt/writable/quantum/qiskit-aer-main/_skbuild/linux-x86_64-3.12/cmake-build
+[ 33%] Building CUDA object qiskit_aer/backends/wrappers/CMakeFiles/controller_wrappers.dir/bindings.cc.o
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/matrix_product_state/svd.cpp(627): warning #68-D: integer conversion resulted in a change of sign
+      lwork = -1;
+              ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/matrix_product_state/svd.cpp(627): warning #68-D: integer conversion resulted in a change of sign
+      lwork = -1;
+              ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/matrix_product_state/matrix_product_state_tensor.hpp(537): warning #177-D: variable "omp_limit" was declared but never referenced
+    uint_t omp_limit = left_rows * right_columns;
+           ^
+
+/mnt/writable/quantum/qiskit-aer-main/src/framework/pybind_json.hpp: In function ‘void std::to_json(json_t&, const pybind11::handle&)’:
+/mnt/writable/quantum/qiskit-aer-main/src/framework/pybind_json.hpp:262:53: warning: ‘pybind11::handle pybind11::detail::object_api<Derived>::get_type() const [with Derived = pybind11::handle]’ is deprecated: Call py::type::handle_of(h) or py::type::of(h) instead of h.get_type() [-Wdeprecated-declarations]
+  262 |     auto type_str = std::string(py::str(obj.get_type()));
+      |                                         ~~~~~~~~~~~~^~
+/home/pop-os/quantum_env/lib/python3.12/site-packages/pybind11/include/pybind11/pytypes.h:216:1: note: declared here
+  216 |     handle get_type() const;
+      | ^   ~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/framework/pybind_json.hpp:282:117: warning: ‘pybind11::handle pybind11::detail::object_api<Derived>::get_type() const [with Derived = pybind11::handle]’ is deprecated: Call py::type::handle_of(h) or py::type::of(h) instead of h.get_type() [-Wdeprecated-declarations]
+  282 |       throw std::runtime_error(
+      |                                                                                                                     ^
+/home/pop-os/quantum_env/lib/python3.12/site-packages/pybind11/include/pybind11/pytypes.h:2647:1: note: declared here
+ 2647 | handle object_api<D>::get_type() const {
+      | ^~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/statevector/chunk/thrust_kernels.hpp: At global scope:
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/statevector/chunk/thrust_kernels.hpp:276:52: warning: ‘template<class Iterator> struct thrust::_V_300200_SM_750::iterator_difference’ is deprecated: Use cuda::std::iterator_traits<>::difference_t or cuda::std::iter_difference_t instead [-Wdeprecated-declarations]
+  276 |   typedef typename thrust::iterator_difference<Iterator>::type difference_type;
+      |                                                    ^~~~~~~~~~~~~~~~~~~
+/usr/local/cuda-13.2/targets/x86_64-linux/include/cccl/thrust/iterator/iterator_traits.h:148:118: note: declared here
+  148 | terator_traits<>::difference_t or cuda::std::iter_difference_t instead")
+      |                                                                      ^~~ 
+
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp: In member function ‘void AER::TensorNetwork::RawTensorData<data_t>::release_cuTensorNet()’:
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:213:55: warning: ‘cutensornetStatus_t cutensornetDestroyNetworkDescriptor(cutensornetNetworkDescriptor_t)’ is deprecated: please use cutensornetDestroyNetwork instead [-Wdeprecated-declarations]
+  213 |     HANDLE_ERROR(cutensornetDestroyNetworkDescriptor(tn_desc_));
+      |                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~
+/home/pop-os/quantum_env/lib/python3.12/site-packages/cuquantum/include/cutensornet.h:259:1: note: declared here
+  259 | cutensornetStatus_t cutensornetDestroyNetworkDescriptor(cutensornetNetworkDescriptor_t networkDesc);
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:214:53: warning: ‘cutensornetStatus_t cutensornetDestroyContractionPlan(cutensornetContractionPlan_t)’ is deprecated: please use  instead [-Wdeprecated-declarations]
+  214 |     HANDLE_ERROR(cutensornetDestroyContractionPlan(plan_));
+      |                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+/home/pop-os/quantum_env/lib/python3.12/site-packages/cuquantum/include/cutensornet.h:884:1: note: declared here
+  884 | cutensornetStatus_t cutensornetDestroyContractionPlan(cutensornetContractionPlan_t plan);
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:220:67: warning: ‘cutensornetStatus_t cutensornetDestroyContractionAutotunePreference(cutensornetContractionAutotunePreference_t)’ is deprecated: please use cutensornetDestroyNetworkAutotunePreference instead [-Wdeprecated-declarations]
+  220 |       HANDLE_ERROR(
+      |                                                                   ^      
+/home/pop-os/quantum_env/lib/python3.12/site-packages/cuquantum/include/cutensornet.h:1040:1: note: declared here
+ 1040 | cutensornetStatus_t cutensornetDestroyContractionAutotunePreference(cutensornetContractionAutotunePreference_t autotunePreference);
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp: In member function ‘void AER::TensorNetwork::RawTensorData<data_t>::create_contraction_descriptor(AER::uint_t, std::vector<int*>&, std::vector<int>&, std::vector<long int*>&, std::vector<long int*>&, std::vector<int>&, std::vector<long int>&)’:
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:474:41: warning: ‘cutensornetStatus_t cutensornetCreateNetworkDescriptor(cutensornetHandle_t, int32_t, const int32_t*, const int64_t* const*, const int64_t* const*, const int32_t* const*, const cutensornetTensorQualifiers_t*, int32_t, const int64_t*, const int64_t*, const int32_t*, cudaDataType_t, cutensornetComputeType_t, void**)’ is deprecated: please use cutensornetCreateNetwork instead [-Wdeprecated-declarations]
+  474 |   err = cutensornetCreateNetworkDescriptor(
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~                                                                                                                                                                                                
+/home/pop-os/quantum_env/lib/python3.12/site-packages/cuquantum/include/cutensornet.h:181:1: note: declared here
+  181 | cutensornetStatus_t cutensornetCreateNetworkDescriptor(const cutensornetHandle_t handle,
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp: In member function ‘void AER::TensorNetwork::RawTensorData<data_t>::create_contraction_plan(bool)’:
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:573:39: warning: ‘cutensornetStatus_t cutensornetCreateContractionPlan(cutensornetHandle_t, cutensornetNetworkDescriptor_t, cutensornetContractionOptimizerInfo_t, cutensornetWorkspaceDescriptor_t, void**)’ is deprecated: please use cutensornetNetworkPrepareContraction instead [-Wdeprecated-declarations]
+  573 |   err = cutensornetCreateContractionPlan(hTensorNet_, tn_desc_, optimizer_info_,
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/pop-os/quantum_env/lib/python3.12/site-packages/cuquantum/include/cutensornet.h:855:1: note: declared here
+  855 | cutensornetStatus_t cutensornetCreateContractionPlan(const cutensornetHandle_t handle,
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:584:53: warning: ‘cutensornetStatus_t cutensornetCreateContractionAutotunePreference(cutensornetHandle_t, void**)’ is deprecated: please use cutensornetCreateNetworkAutotunePreference instead [-Wdeprecated-declarations]
+  584 |     err = cutensornetCreateContractionAutotunePreference(hTensorNet_,
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~    
+/home/pop-os/quantum_env/lib/python3.12/site-packages/cuquantum/include/cutensornet.h:944:1: note: declared here
+  944 | cutensornetStatus_t cutensornetCreateContractionAutotunePreference(const cutensornetHandle_t handle,
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:591:59: warning: ‘cutensornetStatus_t cutensornetContractionAutotunePreferenceSetAttribute(cutensornetHandle_t, cutensornetContractionAutotunePreference_t, cutensornetContractionAutotunePreferenceAttributes_t, const void*, size_t)’ is deprecated: please use cutensornetNetworkAutotunePreferenceSetAttribute instead [-Wdeprecated-declarations]
+  591 |     err = cutensornetContractionAutotunePreferenceSetAttribute(
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~                                                                                           
+/home/pop-os/quantum_env/lib/python3.12/site-packages/cuquantum/include/cutensornet.h:1010:1: note: declared here
+ 1010 | cutensornetContractionAutotunePreferenceSetAttribute(const cutensornetHandle_t handle,
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp: In member function ‘void AER::TensorNetwork::RawTensorData<data_t>::accumulate_output(const AER::TensorNetwork::RawTensorData<data_t>&)’:
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:674:79: warning: ‘using thrust::_V_300200_SM_750::plus = struct cuda::std::__4::plus<thrust::_V_300200_SM_750::complex<T> >’ is deprecated: Use cuda::std::plus instead [-Wdeprecated-declarations]
+  674 |     thrust::plus<thrust::complex<data_t>> op;
+      |                                                                               ^
+/usr/local/cuda-13.2/targets/x86_64-linux/include/cccl/thrust/functional.h:65:33: note: declared here
+   65 | template <class T = void>
+      |                                 ^
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:686:79: warning: ‘using thrust::_V_300200_SM_750::plus = struct cuda::std::__4::plus<thrust::_V_300200_SM_750::complex<T> >’ is deprecated: Use cuda::std::plus instead [-Wdeprecated-declarations]
+  686 |     thrust::plus<thrust::complex<data_t>> op;
+      |                                                                               ^
+/usr/local/cuda-13.2/targets/x86_64-linux/include/cccl/thrust/functional.h:65:33: note: declared here
+   65 | template <class T = void>
+      |                                 ^
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp: In member function ‘double AER::TensorNetwork::RawTensorData<data_t>::trace_output(AER::uint_t)’:
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:709:79: warning: ‘using thrust::_V_300200_SM_750::plus = struct cuda::std::__4::plus<thrust::_V_300200_SM_750::complex<T> >’ is deprecated: Use cuda::std::plus instead [-Wdeprecated-declarations]
+  709 |   thrust::plus<thrust::complex<data_t>> op;
+      |                                                                               ^
+/usr/local/cuda-13.2/targets/x86_64-linux/include/cccl/thrust/functional.h:65:33: note: declared here
+   65 | template <class T = void>
+      |                                 ^
+In file included from tmpxft_000037b4_00000000-6_bindings.cudafe1.stub.c:1:
+/tmp/tmpxft_000037b4_00000000-6_bindings.cudafe1.stub.c: At global scope:
+/tmp/tmpxft_000037b4_00000000-6_bindings.cudafe1.stub.c:1388:741: warning: ‘using thrust::_V_300200_SM_750::plus = struct cuda::std::__4::plus<thrust::_V_300200_SM_750::complex<double> >’ is deprecated: Use cuda::std::plus instead [-Wdeprecated-declarations]
+ 1388 | namespace AER{
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     ^
+/usr/local/cuda-13.2/targets/x86_64-linux/include/cccl/thrust/functional.h:65:33: note: declared here
+   65 | template <class T = void>
+      |                                 ^
+/tmp/tmpxft_000037b4_00000000-6_bindings.cudafe1.stub.c:1394:742: warning: ‘using thrust::_V_300200_SM_750::plus = struct cuda::std::__4::plus<thrust::_V_300200_SM_750::complex<double> >’ is deprecated: Use cuda::std::plus instead [-Wdeprecated-declarations]
+ 1394 | namespace QV{
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ^
+/usr/local/cuda-13.2/targets/x86_64-linux/include/cccl/thrust/functional.h:65:33: note: declared here
+   65 | template <class T = void>
+      |                                 ^
+/tmp/tmpxft_000037b4_00000000-6_bindings.cudafe1.stub.c:1400:735: warning: ‘using thrust::_V_300200_SM_750::plus = struct cuda::std::__4::plus<thrust::_V_300200_SM_750::complex<double> >’ is deprecated: Use cuda::std::plus instead [-Wdeprecated-declarations]
+ 1400 | namespace Chunk{
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ^
+/usr/local/cuda-13.2/targets/x86_64-linux/include/cccl/thrust/functional.h:65:33: note: declared here
+   65 | template <class T = void>
+      |                                 ^
+/tmp/tmpxft_000037b4_00000000-6_bindings.cudafe1.stub.c:1406:736: warning: ‘using thrust::_V_300200_SM_750::plus = struct cuda::std::__4::plus<thrust::_V_300200_SM_750::complex<double> >’ is deprecated: Use cuda::std::plus instead [-Wdeprecated-declarations]
+ 1406 | template<> __specialization_static void __wrapper__device_stub_dev_apply_function_with_cache<float, ::AER::QV::Chunk::BatchedDiagonalMatrixMultNxN<float> >(  _ZN3AER2QV5Chunk28BatchedDiagonalMatrixMultNxNIfEE &__cuda_0,_ZN3AER2QV6uint_tE &__cuda_1){__device_stub__ZN3AER2QV5Chunk29dev_apply_function_with_cacheIfNS1_28BatchedDiagonalMatrixMultNxNIfEEEEvT0_m( ( _ZN3AER2QV5Chunk28BatchedDiagonalMatrixMultNxNIfEE &)__cuda_0,(_ZN3AER2QV6uint_tE &)__cuda_1);}}}}
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ^
+/usr/local/cuda-13.2/targets/x86_64-linux/include/cccl/thrust/functional.h:65:33: note: declared here
+   65 | template <class T = void>
+      |                                 ^
+/tmp/tmpxft_000037b4_00000000-6_bindings.cudafe1.stub.c:1412:738: warning: ‘using thrust::_V_300200_SM_750::plus = struct cuda::std::__4::plus<thrust::_V_300200_SM_750::complex<float> >’ is deprecated: Use cuda::std::plus instead [-Wdeprecated-declarations]
+ 1412 | static void __device_stub__ZN3AER2QV5Chunk29dev_apply_function_with_cacheIfNS1_7CX_funcIfEEEEvT0_m(  _ZN3AER2QV5Chunk7CX_funcIfEE&__par0,  _ZN3AER2QV6uint_tE __par1) {  __cudaLaunchPrologue(2); __cudaSetupArg(__par0, 0UL); __cudaSetupArgSimple(__par1, 104UL); __cudaLaunch(((char *)((void ( *)( _ZN3AER2QV5Chunk7CX_funcIfEE, _ZN3AER2QV6uint_tE))AER::QV::Chunk::dev_apply_function_with_cache<float,  ::AER::QV::Chunk::CX_func<float> > ))); }
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  ^
+/usr/local/cuda-13.2/targets/x86_64-linux/include/cccl/thrust/functional.h:65:33: note: declared here
+   65 | template <class T = void>
+      |                                 ^
+/tmp/tmpxft_000037b4_00000000-6_bindings.cudafe1.stub.c:1418:739: warning: ‘using thrust::_V_300200_SM_750::plus = struct cuda::std::__4::plus<thrust::_V_300200_SM_750::complex<float> >’ is deprecated: Use cuda::std::plus instead [-Wdeprecated-declarations]
+ 1418 | namespace AER{
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   ^
+/usr/local/cuda-13.2/targets/x86_64-linux/include/cccl/thrust/functional.h:65:33: note: declared here
+   65 | template <class T = void>
+      |                                 ^
+/tmp/tmpxft_000037b4_00000000-6_bindings.cudafe1.stub.c:1424:732: warning: ‘using thrust::_V_300200_SM_750::plus = struct cuda::std::__4::plus<thrust::_V_300200_SM_750::complex<float> >’ is deprecated: Use cuda::std::plus instead [-Wdeprecated-declarations]
+ 1424 | namespace QV{
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ^
+/usr/local/cuda-13.2/targets/x86_64-linux/include/cccl/thrust/functional.h:65:33: note: declared here
+   65 | template <class T = void>
+      |                                 ^
+/tmp/tmpxft_000037b4_00000000-6_bindings.cudafe1.stub.c:1430:733: warning: ‘using thrust::_V_300200_SM_750::plus = struct cuda::std::__4::plus<thrust::_V_300200_SM_750::complex<float> >’ is deprecated: Use cuda::std::plus instead [-Wdeprecated-declarations]
+ 1430 | namespace Chunk{
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             ^
+/usr/local/cuda-13.2/targets/x86_64-linux/include/cccl/thrust/functional.h:65:33: note: declared here
+   65 | template <class T = void>
+      |                                 ^
+/tmp/tmpxft_000037b4_00000000-6_bindings.cudafe1.stub.c:1442:3183: warning: ‘using thrust::_V_300200_SM_750::plus = struct cuda::std::__4::plus<thrust::_V_300200_SM_750::complex<double> >’ is deprecated: Use cuda::std::plus instead [-Wdeprecated-declarations]
+ 1442 | static void __device_stub__ZN3AER2QV5Chunk29dev_apply_function_with_cacheIfNS1_10CSwap_funcIfEEEEvT0_m(  _ZN3AER2QV5Chunk10CSwap_funcIfEE&__par0,  _ZN3AER2QV6uint_tE __par1) {  __cudaLaunchPrologue(2); __cudaSetupArg(__par0, 0UL); __cudaSetupArgSimple(__par1, 128UL); __cudaLaunch(((char *)((void ( *)( _ZN3AER2QV5Chunk10CSwap_funcIfEE, _ZN3AER2QV6uint_tE))AER::QV::Chunk::dev_apply_function_with_cache<float,  ::AER::QV::Chunk::CSwap_func<float> > ))); }
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ^                                                 
+/usr/local/cuda-13.2/targets/x86_64-linux/include/cccl/thrust/functional.h:65:33: note: declared here
+   65 | template <class T = void>
+      |                                 ^
+/tmp/tmpxft_000037b4_00000000-6_bindings.cudafe1.stub.c:1448:3186: warning: ‘using thrust::_V_300200_SM_750::plus = struct cuda::std::__4::plus<thrust::_V_300200_SM_750::complex<double> >’ is deprecated: Use cuda::std::plus instead [-Wdeprecated-declarations]
+ 1448 | namespace AER{
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  ^                                              
+/usr/local/cuda-13.2/targets/x86_64-linux/include/cccl/thrust/functional.h:65:33: note: declared here
+   65 | template <class T = void>
+      |                                 ^
+/tmp/tmpxft_000037b4_00000000-6_bindings.cudafe1.stub.c:1454:2323: warning: ‘using thrust::_V_300200_SM_750::plus = struct cuda::std::__4::plus<thrust::_V_300200_SM_750::complex<double> >’ is deprecated: Use cuda::std::plus instead [-Wdeprecated-declarations]
+ 1454 | namespace QV{
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   ^                  
+/usr/local/cuda-13.2/targets/x86_64-linux/include/cccl/thrust/functional.h:65:33: note: declared here
+   65 | template <class T = void>
+      |                                 ^
+/tmp/tmpxft_000037b4_00000000-6_bindings.cudafe1.stub.c:1460:2326: warning: ‘using thrust::_V_300200_SM_750::plus = struct cuda::std::__4::plus<thrust::_V_300200_SM_750::complex<double> >’ is deprecated: Use cuda::std::plus instead [-Wdeprecated-declarations]
+ 1460 | namespace Chunk{
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ^               
+/usr/local/cuda-13.2/targets/x86_64-linux/include/cccl/thrust/functional.h:65:33: note: declared here
+   65 | template <class T = void>
+      |                                 ^
+/tmp/tmpxft_000037b4_00000000-6_bindings.cudafe1.stub.c:1472:3160: warning: ‘using thrust::_V_300200_SM_750::plus = struct cuda::std::__4::plus<thrust::_V_300200_SM_750::complex<float> >’ is deprecated: Use cuda::std::plus instead [-Wdeprecated-declarations]
+ 1472 | static void __device_stub__ZN3AER2QV5Chunk30dev_apply_function_sum_complexIfNS1_23probability_1qubit_funcIfEEEEvPN6thrust16_V_300200_SM_7507complexIdEET0_mmb(  _ZN6thrust16_V_300200_SM_7507complexIdEE *__par0,   _ZN3AER2QV5Chunk23probability_1qubit_funcIfEE&__par1,  _ZN3AER2QV6uint_tE __par2,  _ZN3AER2QV6uint_tE __par3,  bool __par4) {  __cudaLaunchPrologue(5); __cudaSetupArgSimple(__par0, 0UL); __cudaSetupArg(__par1, 8UL); __cudaSetupArgSimple(__par2, 88UL); __cudaSetupArgSimple(__par3, 96UL); __cudaSetupArgSimple(__par4, 104UL); __cudaLaunch(((char *)((void ( *)( _ZN6thrust16_V_300200_SM_7507complexIdEE *,  _ZN3AER2QV5Chunk23probability_1qubit_funcIfEE, _ZN3AER2QV6uint_tE, _ZN3AER2QV6uint_tE, bool))AER::QV::Chunk::dev_apply_function_sum_complex<float,  ::AER::QV::Chunk::probability_1qubit_func<float> > ))); }
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ^
+/usr/local/cuda-13.2/targets/x86_64-linux/include/cccl/thrust/functional.h:65:33: note: declared here
+   65 | template <class T = void>
+      |                                 ^
+/tmp/tmpxft_000037b4_00000000-6_bindings.cudafe1.stub.c:1478:3163: warning: ‘using thrust::_V_300200_SM_750::plus = struct cuda::std::__4::plus<thrust::_V_300200_SM_750::complex<float> >’ is deprecated: Use cuda::std::plus instead [-Wdeprecated-declarations]
+ 1478 | namespace AER{
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           ^
+/usr/local/cuda-13.2/targets/x86_64-linux/include/cccl/thrust/functional.h:65:33: note: declared here
+   65 | template <class T = void>
+      |                                 ^
+/tmp/tmpxft_000037b4_00000000-6_bindings.cudafe1.stub.c:1484:2307: warning: ‘using thrust::_V_300200_SM_750::plus = struct cuda::std::__4::plus<thrust::_V_300200_SM_750::complex<float> >’ is deprecated: Use cuda::std::plus instead [-Wdeprecated-declarations]
+ 1484 | namespace QV{
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   ^                                  
+/usr/local/cuda-13.2/targets/x86_64-linux/include/cccl/thrust/functional.h:65:33: note: declared here
+   65 | template <class T = void>
+      |                                 ^
+/tmp/tmpxft_000037b4_00000000-6_bindings.cudafe1.stub.c:1490:2310: warning: ‘using thrust::_V_300200_SM_750::plus = struct cuda::std::__4::plus<thrust::_V_300200_SM_750::complex<float> >’ is deprecated: Use cuda::std::plus instead [-Wdeprecated-declarations]
+ 1490 | namespace Chunk{
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ^                               
+/usr/local/cuda-13.2/targets/x86_64-linux/include/cccl/thrust/functional.h:65:33: note: declared here
+   65 | template <class T = void>
+      |                                 ^
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp: In instantiation of ‘void AER::TensorNetwork::RawTensorData<data_t>::release_cuTensorNet() [with data_t = float]’:
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:184:1:   required from ‘AER::TensorNetwork::RawTensorData<data_t>::~RawTensorData() [with data_t = float]’
+/usr/include/c++/13/bits/stl_construct.h:151:16:   required from ‘constexpr void std::_Destroy(_Tp*) [with _Tp = AER::TensorNetwork::RawTensorData<float>]’
+/usr/include/c++/13/bits/stl_construct.h:163:14:   required from ‘static void std::_Destroy_aux<<anonymous> >::__destroy(_ForwardIterator, _ForwardIterator) [with _ForwardIterator = AER::TensorNetwork::RawTensorData<float>*; bool <anonymous> = false]’
+/usr/include/c++/13/bits/stl_construct.h:195:79:   required from ‘void std::_Destroy(_ForwardIterator, _ForwardIterator) [with _ForwardIterator = AER::TensorNetwork::RawTensorData<float>*]’
+/usr/include/c++/13/bits/alloc_traits.h:948:14:   required from ‘void std::_Destroy(_ForwardIterator, _ForwardIterator, allocator<_T2>&) [with _ForwardIterator = AER::TensorNetwork::RawTensorData<float>*; _Tp = AER::TensorNetwork::RawTensorData<float>]’
+/usr/include/c++/13/bits/stl_vector.h:735:14:   required from ‘std::vector<_Tp, _Alloc>::~vector() [with _Tp = AER::TensorNetwork::RawTensorData<float>; _Alloc = std::allocator<AER::TensorNetwork::RawTensorData<float> >]’
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:898:76:   required from ‘AER::TensorNetwork::TensorNetContractor_cuTensorNet<data_t>::TensorNetContractor_cuTensorNet() [with data_t = float]’
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net.hpp:1120:15:   required from ‘std::vector<double> AER::TensorNetwork::TensorNet<data_t>::probabilities(const AER::reg_t&) const [with data_t = float; AER::reg_t = std::vector<long unsigned int>]’
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net.hpp:1094:1:   required from here
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:213:55: warning: ‘cutensornetStatus_t cutensornetDestroyNetworkDescriptor(cutensornetNetworkDescriptor_t)’ is deprecated: please use cutensornetDestroyNetwork instead [-Wdeprecated-declarations]
+  213 |     HANDLE_ERROR(cutensornetDestroyNetworkDescriptor(tn_desc_));
+      |                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~
+/home/pop-os/quantum_env/lib/python3.12/site-packages/cuquantum/include/cutensornet.h:259:1: note: declared here
+  259 | cutensornetStatus_t cutensornetDestroyNetworkDescriptor(cutensornetNetworkDescriptor_t networkDesc);
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:213:55: warning: ‘cutensornetStatus_t cutensornetDestroyNetworkDescriptor(cutensornetNetworkDescriptor_t)’ is deprecated: please use cutensornetDestroyNetwork instead [-Wdeprecated-declarations]
+  213 |     HANDLE_ERROR(cutensornetDestroyNetworkDescriptor(tn_desc_));
+      |                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~
+/home/pop-os/quantum_env/lib/python3.12/site-packages/cuquantum/include/cutensornet.h:259:1: note: declared here
+  259 | cutensornetStatus_t cutensornetDestroyNetworkDescriptor(cutensornetNetworkDescriptor_t networkDesc);
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:214:53: warning: ‘cutensornetStatus_t cutensornetDestroyContractionPlan(cutensornetContractionPlan_t)’ is deprecated: please use  instead [-Wdeprecated-declarations]
+  214 |     HANDLE_ERROR(cutensornetDestroyContractionPlan(plan_));
+      |                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+/home/pop-os/quantum_env/lib/python3.12/site-packages/cuquantum/include/cutensornet.h:884:1: note: declared here
+  884 | cutensornetStatus_t cutensornetDestroyContractionPlan(cutensornetContractionPlan_t plan);
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:214:53: warning: ‘cutensornetStatus_t cutensornetDestroyContractionPlan(cutensornetContractionPlan_t)’ is deprecated: please use  instead [-Wdeprecated-declarations]
+  214 |     HANDLE_ERROR(cutensornetDestroyContractionPlan(plan_));
+      |                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+/home/pop-os/quantum_env/lib/python3.12/site-packages/cuquantum/include/cutensornet.h:884:1: note: declared here
+  884 | cutensornetStatus_t cutensornetDestroyContractionPlan(cutensornetContractionPlan_t plan);
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:220:67: warning: ‘cutensornetStatus_t cutensornetDestroyContractionAutotunePreference(cutensornetContractionAutotunePreference_t)’ is deprecated: please use cutensornetDestroyNetworkAutotunePreference instead [-Wdeprecated-declarations]
+  220 |       HANDLE_ERROR(
+      |                                                                   ^      
+/home/pop-os/quantum_env/lib/python3.12/site-packages/cuquantum/include/cutensornet.h:1040:1: note: declared here
+ 1040 | cutensornetStatus_t cutensornetDestroyContractionAutotunePreference(cutensornetContractionAutotunePreference_t autotunePreference);
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:220:67: warning: ‘cutensornetStatus_t cutensornetDestroyContractionAutotunePreference(cutensornetContractionAutotunePreference_t)’ is deprecated: please use cutensornetDestroyNetworkAutotunePreference instead [-Wdeprecated-declarations]
+  220 |       HANDLE_ERROR(
+      |                                                                   ^      
+/home/pop-os/quantum_env/lib/python3.12/site-packages/cuquantum/include/cutensornet.h:1040:1: note: declared here
+ 1040 | cutensornetStatus_t cutensornetDestroyContractionAutotunePreference(cutensornetContractionAutotunePreference_t autotunePreference);
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp: In instantiation of ‘void AER::TensorNetwork::RawTensorData<data_t>::release_cuTensorNet() [with data_t = double]’:
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:184:1:   required from ‘AER::TensorNetwork::RawTensorData<data_t>::~RawTensorData() [with data_t = double]’
+/usr/include/c++/13/bits/stl_construct.h:151:16:   required from ‘constexpr void std::_Destroy(_Tp*) [with _Tp = AER::TensorNetwork::RawTensorData<double>]’
+/usr/include/c++/13/bits/stl_construct.h:163:14:   required from ‘static void std::_Destroy_aux<<anonymous> >::__destroy(_ForwardIterator, _ForwardIterator) [with _ForwardIterator = AER::TensorNetwork::RawTensorData<double>*; bool <anonymous> = false]’
+/usr/include/c++/13/bits/stl_construct.h:195:79:   required from ‘void std::_Destroy(_ForwardIterator, _ForwardIterator) [with _ForwardIterator = AER::TensorNetwork::RawTensorData<double>*]’
+/usr/include/c++/13/bits/alloc_traits.h:948:14:   required from ‘void std::_Destroy(_ForwardIterator, _ForwardIterator, allocator<_T2>&) [with _ForwardIterator = AER::TensorNetwork::RawTensorData<double>*; _Tp = AER::TensorNetwork::RawTensorData<double>]’
+/usr/include/c++/13/bits/stl_vector.h:735:14:   required from ‘std::vector<_Tp, _Alloc>::~vector() [with _Tp = AER::TensorNetwork::RawTensorData<double>; _Alloc = std::allocator<AER::TensorNetwork::RawTensorData<double> >]’
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:898:76:   required from ‘AER::TensorNetwork::TensorNetContractor_cuTensorNet<data_t>::TensorNetContractor_cuTensorNet() [with data_t = double]’
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net.hpp:1120:15:   required from ‘std::vector<double> AER::TensorNetwork::TensorNet<data_t>::probabilities(const AER::reg_t&) const [with data_t = double; AER::reg_t = std::vector<long unsigned int>]’
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net.hpp:1094:1:   required from here
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:213:55: warning: ‘cutensornetStatus_t cutensornetDestroyNetworkDescriptor(cutensornetNetworkDescriptor_t)’ is deprecated: please use cutensornetDestroyNetwork instead [-Wdeprecated-declarations]
+  213 |     HANDLE_ERROR(cutensornetDestroyNetworkDescriptor(tn_desc_));
+      |                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~
+/home/pop-os/quantum_env/lib/python3.12/site-packages/cuquantum/include/cutensornet.h:259:1: note: declared here
+  259 | cutensornetStatus_t cutensornetDestroyNetworkDescriptor(cutensornetNetworkDescriptor_t networkDesc);
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:213:55: warning: ‘cutensornetStatus_t cutensornetDestroyNetworkDescriptor(cutensornetNetworkDescriptor_t)’ is deprecated: please use cutensornetDestroyNetwork instead [-Wdeprecated-declarations]
+  213 |     HANDLE_ERROR(cutensornetDestroyNetworkDescriptor(tn_desc_));
+      |                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~
+/home/pop-os/quantum_env/lib/python3.12/site-packages/cuquantum/include/cutensornet.h:259:1: note: declared here
+  259 | cutensornetStatus_t cutensornetDestroyNetworkDescriptor(cutensornetNetworkDescriptor_t networkDesc);
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:214:53: warning: ‘cutensornetStatus_t cutensornetDestroyContractionPlan(cutensornetContractionPlan_t)’ is deprecated: please use  instead [-Wdeprecated-declarations]
+  214 |     HANDLE_ERROR(cutensornetDestroyContractionPlan(plan_));
+      |                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+/home/pop-os/quantum_env/lib/python3.12/site-packages/cuquantum/include/cutensornet.h:884:1: note: declared here
+  884 | cutensornetStatus_t cutensornetDestroyContractionPlan(cutensornetContractionPlan_t plan);
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:214:53: warning: ‘cutensornetStatus_t cutensornetDestroyContractionPlan(cutensornetContractionPlan_t)’ is deprecated: please use  instead [-Wdeprecated-declarations]
+  214 |     HANDLE_ERROR(cutensornetDestroyContractionPlan(plan_));
+      |                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+/home/pop-os/quantum_env/lib/python3.12/site-packages/cuquantum/include/cutensornet.h:884:1: note: declared here
+  884 | cutensornetStatus_t cutensornetDestroyContractionPlan(cutensornetContractionPlan_t plan);
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:220:67: warning: ‘cutensornetStatus_t cutensornetDestroyContractionAutotunePreference(cutensornetContractionAutotunePreference_t)’ is deprecated: please use cutensornetDestroyNetworkAutotunePreference instead [-Wdeprecated-declarations]
+  220 |       HANDLE_ERROR(
+      |                                                                   ^      
+/home/pop-os/quantum_env/lib/python3.12/site-packages/cuquantum/include/cutensornet.h:1040:1: note: declared here
+ 1040 | cutensornetStatus_t cutensornetDestroyContractionAutotunePreference(cutensornetContractionAutotunePreference_t autotunePreference);
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:220:67: warning: ‘cutensornetStatus_t cutensornetDestroyContractionAutotunePreference(cutensornetContractionAutotunePreference_t)’ is deprecated: please use cutensornetDestroyNetworkAutotunePreference instead [-Wdeprecated-declarations]
+  220 |       HANDLE_ERROR(
+      |                                                                   ^      
+/home/pop-os/quantum_env/lib/python3.12/site-packages/cuquantum/include/cutensornet.h:1040:1: note: declared here
+ 1040 | cutensornetStatus_t cutensornetDestroyContractionAutotunePreference(cutensornetContractionAutotunePreference_t autotunePreference);
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp: In instantiation of ‘void AER::TensorNetwork::RawTensorData<data_t>::create_contraction_descriptor(AER::uint_t, std::vector<int*>&, std::vector<int>&, std::vector<long int*>&, std::vector<long int*>&, std::vector<int>&, std::vector<long int>&) [with data_t = double; AER::uint_t = long unsigned int]’:
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:1038:50:   required from ‘void AER::TensorNetwork::TensorNetContractor_cuTensorNet<data_t>::setup_contraction(bool) [with data_t = double]’
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:1026:1:   required from here
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:474:41: warning: ‘cutensornetStatus_t cutensornetCreateNetworkDescriptor(cutensornetHandle_t, int32_t, const int32_t*, const int64_t* const*, const int64_t* const*, const int32_t* const*, const cutensornetTensorQualifiers_t*, int32_t, const int64_t*, const int64_t*, const int32_t*, cudaDataType_t, cutensornetComputeType_t, void**)’ is deprecated: please use cutensornetCreateNetwork instead [-Wdeprecated-declarations]
+  474 |   err = cutensornetCreateNetworkDescriptor(
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~                                                                                                                                                                                                
+/home/pop-os/quantum_env/lib/python3.12/site-packages/cuquantum/include/cutensornet.h:181:1: note: declared here
+  181 | cutensornetStatus_t cutensornetCreateNetworkDescriptor(const cutensornetHandle_t handle,
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:474:41: warning: ‘cutensornetStatus_t cutensornetCreateNetworkDescriptor(cutensornetHandle_t, int32_t, const int32_t*, const int64_t* const*, const int64_t* const*, const int32_t* const*, const cutensornetTensorQualifiers_t*, int32_t, const int64_t*, const int64_t*, const int32_t*, cudaDataType_t, cutensornetComputeType_t, void**)’ is deprecated: please use cutensornetCreateNetwork instead [-Wdeprecated-declarations]
+  474 |   err = cutensornetCreateNetworkDescriptor(
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~                                                                                                                                                                                                
+/home/pop-os/quantum_env/lib/python3.12/site-packages/cuquantum/include/cutensornet.h:181:1: note: declared here
+  181 | cutensornetStatus_t cutensornetCreateNetworkDescriptor(const cutensornetHandle_t handle,
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp: In instantiation of ‘void AER::TensorNetwork::RawTensorData<data_t>::create_contraction_plan(bool) [with data_t = double]’:
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:1042:44:   required from ‘void AER::TensorNetwork::TensorNetContractor_cuTensorNet<data_t>::setup_contraction(bool) [with data_t = double]’
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:1026:1:   required from here
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:573:39: warning: ‘cutensornetStatus_t cutensornetCreateContractionPlan(cutensornetHandle_t, cutensornetNetworkDescriptor_t, cutensornetContractionOptimizerInfo_t, cutensornetWorkspaceDescriptor_t, void**)’ is deprecated: please use cutensornetNetworkPrepareContraction instead [-Wdeprecated-declarations]
+  573 |   err = cutensornetCreateContractionPlan(hTensorNet_, tn_desc_, optimizer_info_,
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/pop-os/quantum_env/lib/python3.12/site-packages/cuquantum/include/cutensornet.h:855:1: note: declared here
+  855 | cutensornetStatus_t cutensornetCreateContractionPlan(const cutensornetHandle_t handle,
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:573:39: warning: ‘cutensornetStatus_t cutensornetCreateContractionPlan(cutensornetHandle_t, cutensornetNetworkDescriptor_t, cutensornetContractionOptimizerInfo_t, cutensornetWorkspaceDescriptor_t, void**)’ is deprecated: please use cutensornetNetworkPrepareContraction instead [-Wdeprecated-declarations]
+  573 |   err = cutensornetCreateContractionPlan(hTensorNet_, tn_desc_, optimizer_info_,
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/pop-os/quantum_env/lib/python3.12/site-packages/cuquantum/include/cutensornet.h:855:1: note: declared here
+  855 | cutensornetStatus_t cutensornetCreateContractionPlan(const cutensornetHandle_t handle,
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:584:53: warning: ‘cutensornetStatus_t cutensornetCreateContractionAutotunePreference(cutensornetHandle_t, void**)’ is deprecated: please use cutensornetCreateNetworkAutotunePreference instead [-Wdeprecated-declarations]
+  584 |     err = cutensornetCreateContractionAutotunePreference(hTensorNet_,
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~    
+/home/pop-os/quantum_env/lib/python3.12/site-packages/cuquantum/include/cutensornet.h:944:1: note: declared here
+  944 | cutensornetStatus_t cutensornetCreateContractionAutotunePreference(const cutensornetHandle_t handle,
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:584:53: warning: ‘cutensornetStatus_t cutensornetCreateContractionAutotunePreference(cutensornetHandle_t, void**)’ is deprecated: please use cutensornetCreateNetworkAutotunePreference instead [-Wdeprecated-declarations]
+  584 |     err = cutensornetCreateContractionAutotunePreference(hTensorNet_,
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~    
+/home/pop-os/quantum_env/lib/python3.12/site-packages/cuquantum/include/cutensornet.h:944:1: note: declared here
+  944 | cutensornetStatus_t cutensornetCreateContractionAutotunePreference(const cutensornetHandle_t handle,
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:591:59: warning: ‘cutensornetStatus_t cutensornetContractionAutotunePreferenceSetAttribute(cutensornetHandle_t, cutensornetContractionAutotunePreference_t, cutensornetContractionAutotunePreferenceAttributes_t, const void*, size_t)’ is deprecated: please use cutensornetNetworkAutotunePreferenceSetAttribute instead [-Wdeprecated-declarations]
+  591 |     err = cutensornetContractionAutotunePreferenceSetAttribute(
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~                                                                                           
+/home/pop-os/quantum_env/lib/python3.12/site-packages/cuquantum/include/cutensornet.h:1010:1: note: declared here
+ 1010 | cutensornetContractionAutotunePreferenceSetAttribute(const cutensornetHandle_t handle,
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:591:59: warning: ‘cutensornetStatus_t cutensornetContractionAutotunePreferenceSetAttribute(cutensornetHandle_t, cutensornetContractionAutotunePreference_t, cutensornetContractionAutotunePreferenceAttributes_t, const void*, size_t)’ is deprecated: please use cutensornetNetworkAutotunePreferenceSetAttribute instead [-Wdeprecated-declarations]
+  591 |     err = cutensornetContractionAutotunePreferenceSetAttribute(
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~                                                                                           
+/home/pop-os/quantum_env/lib/python3.12/site-packages/cuquantum/include/cutensornet.h:1010:1: note: declared here
+ 1010 | cutensornetContractionAutotunePreferenceSetAttribute(const cutensornetHandle_t handle,
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:600:37: warning: ‘cutensornetStatus_t cutensornetContractionAutotune(cutensornetHandle_t, cutensornetContractionPlan_t, const void* const*, void*, cutensornetWorkspaceDescriptor_t, cutensornetContractionAutotunePreference_t, cudaStream_t)’ is deprecated: please use cutensornetNetworkAutotuneContraction instead [-Wdeprecated-declarations]
+  600 |     err = cutensornetContractionAutotune(
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~                                                                                                                 
+/home/pop-os/quantum_env/lib/python3.12/site-packages/cuquantum/include/cutensornet.h:904:1: note: declared here
+  904 | cutensornetStatus_t cutensornetContractionAutotune(const cutensornetHandle_t handle,
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:600:37: warning: ‘cutensornetStatus_t cutensornetContractionAutotune(cutensornetHandle_t, cutensornetContractionPlan_t, const void* const*, void*, cutensornetWorkspaceDescriptor_t, cutensornetContractionAutotunePreference_t, cudaStream_t)’ is deprecated: please use cutensornetNetworkAutotuneContraction instead [-Wdeprecated-declarations]
+  600 |     err = cutensornetContractionAutotune(
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~                                                                                                                 
+/home/pop-os/quantum_env/lib/python3.12/site-packages/cuquantum/include/cutensornet.h:904:1: note: declared here
+  904 | cutensornetStatus_t cutensornetContractionAutotune(const cutensornetHandle_t handle,
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp: In instantiation of ‘void AER::TensorNetwork::RawTensorData<data_t>::create_contraction_descriptor(AER::uint_t, std::vector<int*>&, std::vector<int>&, std::vector<long int*>&, std::vector<long int*>&, std::vector<int>&, std::vector<long int>&) [with data_t = float; AER::uint_t = long unsigned int]’:
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:1038:50:   required from ‘void AER::TensorNetwork::TensorNetContractor_cuTensorNet<data_t>::setup_contraction(bool) [with data_t = float]’
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:1026:1:   required from here
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:474:41: warning: ‘cutensornetStatus_t cutensornetCreateNetworkDescriptor(cutensornetHandle_t, int32_t, const int32_t*, const int64_t* const*, const int64_t* const*, const int32_t* const*, const cutensornetTensorQualifiers_t*, int32_t, const int64_t*, const int64_t*, const int32_t*, cudaDataType_t, cutensornetComputeType_t, void**)’ is deprecated: please use cutensornetCreateNetwork instead [-Wdeprecated-declarations]
+  474 |   err = cutensornetCreateNetworkDescriptor(
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~                                                                                                                                                                                                
+/home/pop-os/quantum_env/lib/python3.12/site-packages/cuquantum/include/cutensornet.h:181:1: note: declared here
+  181 | cutensornetStatus_t cutensornetCreateNetworkDescriptor(const cutensornetHandle_t handle,
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:474:41: warning: ‘cutensornetStatus_t cutensornetCreateNetworkDescriptor(cutensornetHandle_t, int32_t, const int32_t*, const int64_t* const*, const int64_t* const*, const int32_t* const*, const cutensornetTensorQualifiers_t*, int32_t, const int64_t*, const int64_t*, const int32_t*, cudaDataType_t, cutensornetComputeType_t, void**)’ is deprecated: please use cutensornetCreateNetwork instead [-Wdeprecated-declarations]
+  474 |   err = cutensornetCreateNetworkDescriptor(
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~                                                                                                                                                                                                
+/home/pop-os/quantum_env/lib/python3.12/site-packages/cuquantum/include/cutensornet.h:181:1: note: declared here
+  181 | cutensornetStatus_t cutensornetCreateNetworkDescriptor(const cutensornetHandle_t handle,
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp: In instantiation of ‘void AER::TensorNetwork::RawTensorData<data_t>::create_contraction_plan(bool) [with data_t = float]’:
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:1042:44:   required from ‘void AER::TensorNetwork::TensorNetContractor_cuTensorNet<data_t>::setup_contraction(bool) [with data_t = float]’
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:1026:1:   required from here
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:573:39: warning: ‘cutensornetStatus_t cutensornetCreateContractionPlan(cutensornetHandle_t, cutensornetNetworkDescriptor_t, cutensornetContractionOptimizerInfo_t, cutensornetWorkspaceDescriptor_t, void**)’ is deprecated: please use cutensornetNetworkPrepareContraction instead [-Wdeprecated-declarations]
+  573 |   err = cutensornetCreateContractionPlan(hTensorNet_, tn_desc_, optimizer_info_,
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/pop-os/quantum_env/lib/python3.12/site-packages/cuquantum/include/cutensornet.h:855:1: note: declared here
+  855 | cutensornetStatus_t cutensornetCreateContractionPlan(const cutensornetHandle_t handle,
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:573:39: warning: ‘cutensornetStatus_t cutensornetCreateContractionPlan(cutensornetHandle_t, cutensornetNetworkDescriptor_t, cutensornetContractionOptimizerInfo_t, cutensornetWorkspaceDescriptor_t, void**)’ is deprecated: please use cutensornetNetworkPrepareContraction instead [-Wdeprecated-declarations]
+  573 |   err = cutensornetCreateContractionPlan(hTensorNet_, tn_desc_, optimizer_info_,
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/pop-os/quantum_env/lib/python3.12/site-packages/cuquantum/include/cutensornet.h:855:1: note: declared here
+  855 | cutensornetStatus_t cutensornetCreateContractionPlan(const cutensornetHandle_t handle,
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:584:53: warning: ‘cutensornetStatus_t cutensornetCreateContractionAutotunePreference(cutensornetHandle_t, void**)’ is deprecated: please use cutensornetCreateNetworkAutotunePreference instead [-Wdeprecated-declarations]
+  584 |     err = cutensornetCreateContractionAutotunePreference(hTensorNet_,
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~    
+/home/pop-os/quantum_env/lib/python3.12/site-packages/cuquantum/include/cutensornet.h:944:1: note: declared here
+  944 | cutensornetStatus_t cutensornetCreateContractionAutotunePreference(const cutensornetHandle_t handle,
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:584:53: warning: ‘cutensornetStatus_t cutensornetCreateContractionAutotunePreference(cutensornetHandle_t, void**)’ is deprecated: please use cutensornetCreateNetworkAutotunePreference instead [-Wdeprecated-declarations]
+  584 |     err = cutensornetCreateContractionAutotunePreference(hTensorNet_,
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~    
+/home/pop-os/quantum_env/lib/python3.12/site-packages/cuquantum/include/cutensornet.h:944:1: note: declared here
+  944 | cutensornetStatus_t cutensornetCreateContractionAutotunePreference(const cutensornetHandle_t handle,
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:591:59: warning: ‘cutensornetStatus_t cutensornetContractionAutotunePreferenceSetAttribute(cutensornetHandle_t, cutensornetContractionAutotunePreference_t, cutensornetContractionAutotunePreferenceAttributes_t, const void*, size_t)’ is deprecated: please use cutensornetNetworkAutotunePreferenceSetAttribute instead [-Wdeprecated-declarations]
+  591 |     err = cutensornetContractionAutotunePreferenceSetAttribute(
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~                                                                                           
+/home/pop-os/quantum_env/lib/python3.12/site-packages/cuquantum/include/cutensornet.h:1010:1: note: declared here
+ 1010 | cutensornetContractionAutotunePreferenceSetAttribute(const cutensornetHandle_t handle,
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:591:59: warning: ‘cutensornetStatus_t cutensornetContractionAutotunePreferenceSetAttribute(cutensornetHandle_t, cutensornetContractionAutotunePreference_t, cutensornetContractionAutotunePreferenceAttributes_t, const void*, size_t)’ is deprecated: please use cutensornetNetworkAutotunePreferenceSetAttribute instead [-Wdeprecated-declarations]
+  591 |     err = cutensornetContractionAutotunePreferenceSetAttribute(
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~                                                                                           
+/home/pop-os/quantum_env/lib/python3.12/site-packages/cuquantum/include/cutensornet.h:1010:1: note: declared here
+ 1010 | cutensornetContractionAutotunePreferenceSetAttribute(const cutensornetHandle_t handle,
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:600:37: warning: ‘cutensornetStatus_t cutensornetContractionAutotune(cutensornetHandle_t, cutensornetContractionPlan_t, const void* const*, void*, cutensornetWorkspaceDescriptor_t, cutensornetContractionAutotunePreference_t, cudaStream_t)’ is deprecated: please use cutensornetNetworkAutotuneContraction instead [-Wdeprecated-declarations]
+  600 |     err = cutensornetContractionAutotune(
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~                                                                                                                 
+/home/pop-os/quantum_env/lib/python3.12/site-packages/cuquantum/include/cutensornet.h:904:1: note: declared here
+  904 | cutensornetStatus_t cutensornetContractionAutotune(const cutensornetHandle_t handle,
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:600:37: warning: ‘cutensornetStatus_t cutensornetContractionAutotune(cutensornetHandle_t, cutensornetContractionPlan_t, const void* const*, void*, cutensornetWorkspaceDescriptor_t, cutensornetContractionAutotunePreference_t, cudaStream_t)’ is deprecated: please use cutensornetNetworkAutotuneContraction instead [-Wdeprecated-declarations]
+  600 |     err = cutensornetContractionAutotune(
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~                                                                                                                 
+/home/pop-os/quantum_env/lib/python3.12/site-packages/cuquantum/include/cutensornet.h:904:1: note: declared here
+  904 | cutensornetStatus_t cutensornetContractionAutotune(const cutensornetHandle_t handle,
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp: In instantiation of ‘void AER::TensorNetwork::RawTensorData<data_t>::contract(AER::uint_t, AER::uint_t) [with data_t = double; AER::uint_t = long unsigned int]’:
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:1078:32:   required from ‘void AER::TensorNetwork::TensorNetContractor_cuTensorNet<data_t>::contract_all() [with data_t = double]’
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:1085:1:   required from ‘void AER::TensorNetwork::TensorNetContractor_cuTensorNet<data_t>::contract(std::vector<std::complex<_Tp> >&) [with data_t = double]’
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:1083:1:   required from here
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:632:32: warning: ‘cutensornetStatus_t cutensornetContractSlices(cutensornetHandle_t, cutensornetContractionPlan_t, const void* const*, void*, int32_t, cutensornetWorkspaceDescriptor_t, cutensornetSliceGroup_t, cudaStream_t)’ is deprecated: please use cutensornetNetworkContract instead [-Wdeprecated-declarations]
+  632 |   err = cutensornetContractSlices(hTensorNet_, plan_, dev_data_ptr_.data(),
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                                                                               
+/home/pop-os/quantum_env/lib/python3.12/site-packages/cuquantum/include/cutensornet.h:1139:1: note: declared here
+ 1139 | cutensornetStatus_t cutensornetContractSlices(const cutensornetHandle_t handle,
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:632:32: warning: ‘cutensornetStatus_t cutensornetContractSlices(cutensornetHandle_t, cutensornetContractionPlan_t, const void* const*, void*, int32_t, cutensornetWorkspaceDescriptor_t, cutensornetSliceGroup_t, cudaStream_t)’ is deprecated: please use cutensornetNetworkContract instead [-Wdeprecated-declarations]
+  632 |   err = cutensornetContractSlices(hTensorNet_, plan_, dev_data_ptr_.data(),
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                                                                               
+/home/pop-os/quantum_env/lib/python3.12/site-packages/cuquantum/include/cutensornet.h:1139:1: note: declared here
+ 1139 | cutensornetStatus_t cutensornetContractSlices(const cutensornetHandle_t handle,
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp: In instantiation of ‘void AER::TensorNetwork::RawTensorData<data_t>::contract(AER::uint_t, AER::uint_t) [with data_t = float; AER::uint_t = long unsigned int]’:
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:1078:32:   required from ‘void AER::TensorNetwork::TensorNetContractor_cuTensorNet<data_t>::contract_all() [with data_t = float]’
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:1085:1:   required from ‘void AER::TensorNetwork::TensorNetContractor_cuTensorNet<data_t>::contract(std::vector<std::complex<_Tp> >&) [with data_t = float]’
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:1083:1:   required from here
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:632:32: warning: ‘cutensornetStatus_t cutensornetContractSlices(cutensornetHandle_t, cutensornetContractionPlan_t, const void* const*, void*, int32_t, cutensornetWorkspaceDescriptor_t, cutensornetSliceGroup_t, cudaStream_t)’ is deprecated: please use cutensornetNetworkContract instead [-Wdeprecated-declarations]
+  632 |   err = cutensornetContractSlices(hTensorNet_, plan_, dev_data_ptr_.data(),
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                                                                               
+/home/pop-os/quantum_env/lib/python3.12/site-packages/cuquantum/include/cutensornet.h:1139:1: note: declared here
+ 1139 | cutensornetStatus_t cutensornetContractSlices(const cutensornetHandle_t handle,
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/tensor_network/tensor_net_contractor_cuTensorNet.hpp:632:32: warning: ‘cutensornetStatus_t cutensornetContractSlices(cutensornetHandle_t, cutensornetContractionPlan_t, const void* const*, void*, int32_t, cutensornetWorkspaceDescriptor_t, cutensornetSliceGroup_t, cudaStream_t)’ is deprecated: please use cutensornetNetworkContract instead [-Wdeprecated-declarations]
+  632 |   err = cutensornetContractSlices(hTensorNet_, plan_, dev_data_ptr_.data(),
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                                                                               
+/home/pop-os/quantum_env/lib/python3.12/site-packages/cuquantum/include/cutensornet.h:1139:1: note: declared here
+ 1139 | cutensornetStatus_t cutensornetContractSlices(const cutensornetHandle_t handle,
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/noise/noise_model.hpp: In function ‘AER::Noise::NoiseModel::NoiseOps AER::Noise::NoiseModel::sample_noise_at_runtime(const AER::Operations::Op&, AER::RngEngine&) const’:
+/mnt/writable/quantum/qiskit-aer-main/src/noise/noise_model.hpp:305:30: warning: ‘this’ pointer is null [-Wnonnull]
+  305 |   sample_noise_at_runtime(op, noise_before, noise_after, rng);
+      |   ~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/writable/quantum/qiskit-aer-main/src/noise/noise_model.hpp:320:6: note: in a call to non-static member function ‘void AER::Noise::NoiseModel::sample_noise_at_runtime(const AER::Operations::Op&, NoiseOps&, NoiseOps&, AER::RngEngine&) const’
+  320 | void NoiseModel::sample_noise_at_runtime(const Operations::Op &op,
+      |      ^~~~~~~~~~
+[ 66%] Building CUDA object qiskit_aer/backends/wrappers/CMakeFiles/controller_wrappers.dir/__/__/__/src/simulators/statevector/qv_avx2.cpp.o
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/statevector/qv_avx2.cpp:162:127: warning: ignoring attributes on template argument ‘__m256d’ [-Wignored-attributes]
+  162 | template <typename FloatType>
+      |                                                                                                                               ^
+/mnt/writable/quantum/qiskit-aer-main/src/simulators/statevector/qv_avx2.cpp:162:127: warning: ignoring attributes on template argument ‘__m256’ [-Wignored-attributes]
+[100%] Linking CXX shared module ../../../lib/controller_wrappers.cpython-312-x86_64-linux-gnu.so
+/usr/bin/ld: cannot find -l:libcusolver.so.11: No such file or directory
+/usr/bin/ld: cannot find -l:libcusparse.so.13: No such file or directory
+collect2: error: ld returned 1 exit status
+gmake[2]: *** [qiskit_aer/backends/wrappers/CMakeFiles/controller_wrappers.dir/build.make:122: lib/controller_wrappers.cpython-312-x86_64-linux-gnu.so] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:1030: qiskit_aer/backends/wrappers/CMakeFiles/controller_wrappers.dir/all] Error 2
+gmake: *** [Makefile:146: all] Error 2
+Traceback (most recent call last):
+  File "/home/pop-os/quantum_env/lib/python3.12/site-packages/skbuild/setuptools_wrap.py", line 669, in setup
+    cmkr.make(make_args, install_target=cmake_install_target, env=env)
+  File "/home/pop-os/quantum_env/lib/python3.12/site-packages/skbuild/cmaker.py", line 697, in make
+    self.make_impl(clargs=clargs, config=config, source_dir=source_dir, install_target=install_target, env=env)
+  File "/home/pop-os/quantum_env/lib/python3.12/site-packages/skbuild/cmaker.py", line 742, in make_impl
+    raise SKBuildError(msg)
+
+An error occurred while building with CMake.
+  Command:
+    /home/pop-os/quantum_env/lib/python3.12/site-packages/cmake/data/bin/cmake --build . --target install --config Release --
+  Install target:
+    install
+  Source directory:
+    /mnt/writable/quantum/qiskit-aer-main
+  Working directory:
+    /mnt/writable/quantum/qiskit-aer-main/_skbuild/linux-x86_64-3.12/cmake-build
+Please check the install target is valid and see CMake's output for more information.
+
+Displaying Pasted Text.txt.
+
+
+__ORIG_NOTES__:
+
 cd /media/pop-os/YOUR_USB_NAME/ 
 
 OR
