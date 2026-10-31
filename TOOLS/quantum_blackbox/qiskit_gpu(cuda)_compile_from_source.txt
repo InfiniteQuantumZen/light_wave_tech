@@ -5,8 +5,9 @@ it then fails to use gpu regardless you had every prereq installed and even the 
 to be compiled; cpu always works though.
 
 This is a log of successful gpu(cuda) compile and wheel creation:
-installing to _skbuild/linux-x86_64-3.12/setuptools/bdist.linux-x86_64/wheel
-installing it works on cpu, but not gpu... thus this process was a fancy
+_skbuild/linux-x86_64-3.12/setuptools/bdist.linux-x86_64/wheel and eventually installing with 
+pip install --force-reinstall ./qiskit-aer-main/dist/qiskit_aer-0.18.0-cp312-cp312-linux_x86_64.whl
+then it works on cpu, but not gpu... thus this process was a fancy
 workout routine to play around with linux but nothing further than that...
 
 
