@@ -1,12 +1,16 @@
 # quantum.py
 
-# 2026-10-30: 
-#  QuantumBlackBox has been migrated out of the main file into its own tool
-#  located at /TOOLS/quantum_blackbox. This functionality can be run "real-time"
-#  before actual graphics run but due to limitations in windows GPU cannot be used
-#  to calculate the vectors/wave probs; also WSL seemed to have trouble with qiskit,
-#  and also in linux it wasn't quite easy and still trying to compile from source the
-#  CUDA support that seems to be a mixed bag of success for people... thus, precalc.
+# colab works with #!pip install qiskit-aer-gpu-cu11
+# Tesla T4
+# NVIDIA-SMI 580.82.07              
+# Driver Version: 580.82.07      
+# CUDA Version: 13.0
+
+# RUNPOD WORKS RTX 3070 8GB
+# NVIDIA-SMI 595.99.02              
+# Driver Version: 595.99.02
+# CUDA Version: 13.0
+# TEMPLATE: PyTorch 2.13.0 on CUDA 13.0.0 and Ubuntu 24.04.
 
 # pip install qiskit qiskit-aer qiskit-aer-gpu
 # pip install qiskit-aer-gpu
@@ -90,12 +94,13 @@ class QuantumBlackBox:
         # Run it
         # The simulator will chew through all circuits in C++ very fast
         batch_result_list = []
-        batch_result = self.simulator.run(list_of_circuits_to_run, shots=1).result()
+        batch_result = self.simulator.run(list_of_circuits_to_run, shots=10000).result()
         for i in range(len(list_of_circuits_to_run)):
-            counts = batch_result.get_counts(i) 
-            quantum_binary_str = list(counts.keys())[0]
-            #print(f"Circuit {i} -> quantum_binary_str: {quantum_binary_str}")
-            batch_result_list.append(quantum_binary_str)
+            counts = batch_result.get_counts(i)
+            quantum_binary_str, amount = list(counts.items())[0]
+            #if amount > 1: print(f"{quantum_binary_str}: {amount}")
+            if amount > 1: print(f" {amount}")
+            batch_result_list.append((quantum_binary_str, amount))
         
         return batch_result_list
 
@@ -108,7 +113,9 @@ def chunk_generator(data, size):
     for i in range(0, len(data), size):
         yield data[i : i + size]
 
-quantum_black_box = QuantumBlackBox("../../DATA/qbit_strings_data.txt")
+#quantum_black_box = QuantumBlackBox("../../DATA/qbit_strings_data.txt")
+quantum_black_box = QuantumBlackBox("qbit_strings_data.txt")
+
 
 def filter_through_quantum_black_box(num_quantum_items=500):
     random_qbit_str_list = []
@@ -141,7 +148,8 @@ def filter_through_quantum_black_box(num_quantum_items=500):
         print(f"Quantum_Black_Box Iteration: {iters_done}/{total_iterations} | ETA: {eta_str}", end='\r', flush=True)
         # -------------------------------------
 
-        quantum_results_list.extend(quantum_black_box.get_influenced_binary_string(batch, influence_strength=0.85))
+        batch_results = quantum_black_box.get_influenced_binary_string(batch, influence_strength=0.85)
+        quantum_results_list.extend(batch_results)
 
     print(f"LEN_random_qbit_str_list: {len(random_qbit_str_list)}")
     print(f"LEN_random_qbit_str_list: {len(quantum_results_list)}")
@@ -150,7 +158,7 @@ def filter_through_quantum_black_box(num_quantum_items=500):
 
 if __name__ == '__main__':
 
-    #NUM_SESSIONS = 3
+    #NUM_SESSIONS = 1
     NUM_SESSIONS = 100
 
     # Gathering results as pairs
@@ -178,10 +186,11 @@ if __name__ == '__main__':
         src_qbit_str_list, dst_qbit_str_list = filter_through_quantum_black_box(num_quantum_items=500)
 
         # Zip them immediately and save them as pairs (dictionaries)
-        for src_val, dst_val in zip(src_qbit_str_list, dst_qbit_str_list):
+        for src_val, (dst_str, count) in zip(src_qbit_str_list, dst_qbit_str_list):
             all_quantum_pairs.append({
                 "src": src_val,
-                "dst": dst_val
+                "dst": dst_str,
+                "count": count
             })
 
     print(f"Gathered {len(all_quantum_pairs)} pairs.")
