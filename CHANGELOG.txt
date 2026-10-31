@@ -12,7 +12,10 @@ the whole (everything put out there publicly).
 NOTE ABOUT CODING: All development is done with windows notepad nothing else is needed.
 _____________________________________________________________________________________________________________________
 
-∎ 2026-10-30: UPCOMING to the next codebase release (already done but not deployed [new release]): 
+2026-11-01: Light Wave Tech v0.1.2:
+The following major changes and additions were made. This is v0.1.2 and the author is pleased with it.
+
+∎ 2026-10-30:
 - QuantumBlackBox has been migrated out of the main file into its own tool
   located at /TOOLS/quantum_blackbox. This functionality can be run "real-time"
   before actual graphics run but due to limitations in windows GPU cannot be used
@@ -20,14 +23,14 @@ ________________________________________________________________________________
   and also in linux it wasn't quite easy and still trying to compile from source the
   CUDA support that seems to be a mixed bag of success for people... thus, precalc.
 
-∎ 2026-10-29: UPCOMING to the next codebase release (already done but not deployed [new release]): 
+∎ 2026-10-29:
 - Extended SIGNAL research:
     Artificial_Life_R&D/2026-10-29_The_Butterfly_Effect_of_Intention_(Qubits).md
 
 - 32-bit_STEREO_EQ__light_wave_tech_v1.1.10.py
     class QuantumBlackBox and upgraded video selection based on that.
 
-∎ 2026-10-28: UPCOMING to the next codebase release (already done but not deployed [new release]): 
+∎ 2026-10-28:
 - Extended SIGNAL research:
     Artificial_Life_R&D/v4_Lenia_cel_automata_conv_shader
     - This folder contains v4 of the Artificial Life, now in Lenia format with 
@@ -38,17 +41,17 @@ ________________________________________________________________________________
     which transformed it to multidimensional; Lenia format of this project comes with 
     fourier transforms and convolution done directly in pytorch; neural network is feeding Lenia.
 
-∎ 2026-10-27: UPCOMING to the next codebase release (already done but not deployed [new release]): 
+∎ 2026-10-27:
 - Created a new pivot point for SIGNAL research:
     Artificial_Life_R&D/2026-10-26_game_of_life.md
     Artificial_Life_R&D/2026-10-26_Bridging_Classical_Logic_and_Quantum.md
     Artificial_Life_R&D/2026-10-27_Refactoring_Game_Of_Life_Shaders.md
 
-∎ 2026-10-25: UPCOMING to the next codebase release (already done but not deployed [new release]): 
+∎ 2026-10-25:
 - Modified shader_manager.py in preparation for v5_model neural data:
     - Added: def _log_shader_info(self, shader_base_filepath):
 
-∎ 2026-10-23: UPCOMING to the next codebase release (already done but not deployed [new release]): 
+∎ 2026-10-23:
 - Modified shader_manager.py in preparation for v5_model neural data:
 - Affected classes:
     ShaderTimelineManager
@@ -61,7 +64,7 @@ ________________________________________________________________________________
     """
     def _get_neural_singular_list(self, singular_list, neural_indices_filenames_all):
 
-∎ 2026-10-22: UPCOMING to the next codebase release (already done but not deployed [new release]): 
+∎ 2026-10-22:
 - Added this file CHANGELOG.txt
 - Added instructions: HOWTO_SETUP.txt
 
@@ -77,7 +80,7 @@ ________________________________________________________________________________
   TOOLS\shader_boilerplate\copy_contents.py
   TOOLS\shader_boilerplate\zoom_rot_flash_mask_shader_template.txt
 
-∎ 2026-10-22: Light Wave Tech v0.1.1
+∎ 2026-10-22: Light Wave Tech v0.1.1:
 - Updated elements include base code, some bug fixes in the main file with regard to video frame multicore composition, 
 improved audio, DSP and EQ sections, ROG Theta 7.1 headphone specific code alterations, new v6 NeuralTrainer code, 
 many documentation improvements, new metaphysical lore additions; tested cloning the repo and rebuilding 
