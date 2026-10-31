@@ -4,6 +4,11 @@ happen to have right components and workarounds in right order...) it can be com
 it then fails to use gpu regardless you had every prereq installed and even the code
 to be compiled; cpu always works though.
 
+This is a log of successful gpu(cuda) compile and wheel creation:
+installing to _skbuild/linux-x86_64-3.12/setuptools/bdist.linux-x86_64/wheel
+installing it works on cpu, but not gpu... thus this process was a fancy
+workout routine to play around with linux but nothing further than that...
+
 
 
 USE_THIS_TO_BUILD_notes.txt
