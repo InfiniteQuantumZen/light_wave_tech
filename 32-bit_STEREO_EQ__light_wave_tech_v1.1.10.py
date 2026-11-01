@@ -1974,7 +1974,9 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
             print("WASAPI is not available on this system.")
 
         # --- A/V SYNC COMPENSATION ---
-        # used to delay rendering GFX in the main loop 
+        # used to compensate the delay that is perceived rendering GFX 
+        # in the main loop due to the latency of the audio from hardware
+        # to the software and further to the ears (headphones)
         # the same amount as sd.default.latency but negative 
         # 0.05 = 50 milliseconds. 
         AV_SYNC_OFFSET = -0.117
