@@ -391,7 +391,6 @@ def quantum_black_box_xor_parity_check(binary_string):
     return binary_string.count('1') % 2 != 0
 
 def filter_through_quantum_black_box(available_neural_indices, num_quantum_items=500):
-
     all_combined_quantum_pairs = []
     file_paths = glob.glob("DATA/quantum_json_batches/*.json") 
 
@@ -400,32 +399,40 @@ def filter_through_quantum_black_box(available_neural_indices, num_quantum_items
             loaded_pairs = json.load(f)
             all_combined_quantum_pairs.extend(loaded_pairs)
 
-    print(f"Successfully loaded a total of {len(all_combined_quantum_pairs)} pairs!")
-
+    num_combined_quantum_pairs = len(all_combined_quantum_pairs)
+    print(f"Successfully loaded a total of {num_combined_quantum_pairs} pairs!")
     random.shuffle(all_combined_quantum_pairs)
 
+    # --- NOT NEEDED BUT PRINTS SOME EXAMPLES ---
     # 5. Use them one by one
     for pair in all_combined_quantum_pairs[:5]: 
-        current_src = pair["src"]
+        current_src = pair["src"] 
         current_dst = pair["dst"]
         print(f"Source: {current_src}, Destination: {current_dst}")
         # do something with current_src and current_dst...
+    # -------------------------------------------
 
+    selected_neural_indices = []
+    iter_num = 0
 
     # Iterate until the list is completely full
-    iter_num = 0
-    selected_neural_indices = []
-    while len(selected_neural_indices) < num_quantum_items-1 and iter_num < len(all_combined_quantum_pairs):
+    while len(selected_neural_indices) < num_quantum_items-1 and iter_num < num_combined_quantum_pairs:
         #print(f"{iter_num}/{num_quantum_items}")
-        #quantum_binary_str = quantum_results_list[iter_num]
-        quantum_binary_str = all_combined_quantum_pairs[iter_num]["dst"]
-        #print(f"quantum_binary_str: {quantum_binary_str}")
+        quantum_binary_str_src = all_combined_quantum_pairs[iter_num]["src"]
+        quantum_binary_str_dst = all_combined_quantum_pairs[iter_num]["dst"]
+        quantum_binary_dst_count = all_combined_quantum_pairs[iter_num]["count"]
 
-        q_passed = quantum_black_box_xor_parity_check(quantum_binary_str)
-        #print(f"q_passed: {q_passed}")
+        #print(f"quantum_binary_str_src: {quantum_binary_str_src}")
+        #print(f"quantum_binary_str_dst: {quantum_binary_str_dst}")
+
+        q_passed_src = quantum_black_box_xor_parity_check(quantum_binary_str_src)
+        q_passed_dst = quantum_black_box_xor_parity_check(quantum_binary_str_dst)
+        #print(f"q_passed_src: {q_passed_src}")
+        #print(f"q_passed_dst: {q_passed_dst}")
         
         # If the condition is met, fill one spot in the list
-        if q_passed:
+        if quantum_binary_dst_count > 1: #q_passed_dst:
+            #print(f"quantum_binary_dst_count: {quantum_binary_dst_count}")
             if available_neural_indices:
                 # Pop an unused index and append it to our main list
                 new_item = available_neural_indices.pop()
@@ -550,12 +557,6 @@ BASS_COLOR  = MAGENTA # (255, 50, 50) # Red
 SNARE_COLOR = (50, 255, 50) # Green
 HIHAT_COLOR = CYAN # (50, 150, 255) # Blue
 audio_bar_vis_colors = [BASS_COLOR, SNARE_COLOR, HIHAT_COLOR]
-
-#THRESHOLD_BASS = 0.35
-#THRESHOLD_BASS_NEGATIVE = 0.35
-#THRESHOLD_BASS_POSITIVE = 0.45
-#THRESHOLD_SNARE = 0.40
-#THRESHOLD_HIHAT = 0.50
 
 THRESHOLD_BASS = 0.40
 THRESHOLD_BASS_NEGATIVE = 0.40
@@ -918,48 +919,9 @@ except AttributeError:
 
 SCREEN_WIDTH  = 3440
 SCREEN_HEIGHT = 1440
-#flags = pygame.DOUBLEBUF | pygame.HWSURFACE | pygame.FULLSCREEN
 flags = pygame.OPENGL | pygame.DOUBLEBUF | pygame.FULLSCREEN
 
-# Initialize the mixer specifically for 32-bit audio @48khz
-
-"""# 1. Initialize the audio hardware with your desired parameters
-stream = sd.OutputStream(
-    samplerate=48000, 
-    channels=8, 
-    dtype='float32', 
-    blocksize=512
-)
-
-# 2. Open the stream (this engages PortAudio and the hardware)
-stream.start()
-
-# 3. Read the actual hardware parameters 
-print(f"MIXER_INIT: samplerate={stream.samplerate}, "
-      f"channels={stream.channels}, "
-      f"dtype={stream.dtype}, "
-      f"blocksize={stream.blocksize}")
-
-# Cleanup when done
-stream.stop()
-stream.close()
-
-sys.exit()"""
-
 pygame.init()
-
-"""
-# 2026-08-25: MOVED TO play_video_fullscreen() 
-# to prevent memory-leak in playlist mode... 
-# now calling pygame.display.quit() after each iteration
-
-pygame.display.set_caption("MoviePy Fullscreen Player")
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), flags, vsync=1)
-screen_info = pygame.display.Info()
-actual_width, actual_height = screen_info.current_w, screen_info.current_h
-print(f"actual_width: {actual_width}")
-print(f"actual_height: {actual_height}")
-"""
 
 #______________________________________________________________________________________________________
 #___CONTROLLER_________________________
@@ -1198,16 +1160,10 @@ def load_neural_indices_json(filepath, ceiling=None):
                 # Optional: Let the user know how many indices were filtered out
                 if len(filtered_indices) < len(indices):
                     print(f"Filtered out {len(indices) - len(filtered_indices)} out-of-bounds indices.")
-                    
+
                 return filtered_indices
-            
-            return indices
-
-
-#        OLD WAS THIS
-#        with open(filepath, 'r') as f:
-#            return json.load(f)
-
+            else:
+                return indices
 
     except json.JSONDecodeError as e:
         # This triggers if the file was corrupted on the drive!
@@ -1596,7 +1552,6 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
 
         SCREEN_WIDTH  = 3440
         SCREEN_HEIGHT = 1440
-        #flags = pygame.DOUBLEBUF | pygame.HWSURFACE | pygame.FULLSCREEN
         flags = pygame.OPENGL | pygame.DOUBLEBUF | pygame.FULLSCREEN
 
         pygame.display.set_caption("Lightwave Tech")
@@ -1765,9 +1720,6 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
             console_texture_mask = main_ctx.texture((SCREEN_WIDTH, SCREEN_HEIGHT), 4)
             console_texture_mask.swizzle = 'BGRA'
         
-        # NOTE: No DEPTH_TEST is needed for Shadertoy raymarching,
-        # since it's just drawing flat pixels to the screen.
-
         #___SOME_CONFIG_STUFF___
         cached_vars = config.load_paths_from_cache()
         random.shuffle(cached_vars["neural_indices_filenames_all"])
@@ -1987,7 +1939,7 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
         #______________________________
         #___INIT/LOAD MUSIC____________
 
-        # 1. Query the WASAPI host API directly for the default output device
+        # Query the WASAPI host API directly for the default output device
         try:
             # Retrieve a tuple of all available host APIs
             all_hostapis = sd.query_hostapis()
@@ -2001,7 +1953,7 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
 
             wasapi_out_index = wasapi_info['default_output_device']
     
-            # 2. Get info on that specific device for your print statements
+            # Get info on that specific device for your print statements
             device_info = sd.query_devices(wasapi_out_index)
             device_channels = device_info['max_output_channels']
     
@@ -2012,7 +1964,6 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
             print(f"Latency     : {device_info['default_low_output_latency']*1000:.1f} ms - {device_info['default_high_output_latency']*1000:.1f} ms")
             print(f"---------------------------------")
 
-            # 3. You can either set it as the global default:
             sd.default.device = wasapi_out_index
             sd.default.latency = 0.117
 
@@ -2021,6 +1972,15 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
     
         except ValueError:
             print("WASAPI is not available on this system.")
+
+        # --- A/V SYNC COMPENSATION ---
+        # used to delay rendering GFX in the main loop 
+        # the same amount as sd.default.latency but negative 
+        # 0.05 = 50 milliseconds. 
+        AV_SYNC_OFFSET = -0.117
+        
+        #VR/Virtual Desktop
+        #AV_SYNC_OFFSET = -0.127
 
         if device_channels > 2:
             my_song_array, sample_rate, audio_len_seconds = ROG_Theta_71_SUNO_load_and_EQ(
@@ -2138,33 +2098,11 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
         #______________________________
         #___START MUSIC________________
 
-        #music_channel = my_song.play()
-        #pygame.mixer.music.play()
-        #pygame.mixer.music.set_volume(0.0)
-
         # Play the audio; this directly interfaces with WASAPI/DirectSound
         if inferred_channels > 2:
             sd.play(my_song_array, samplerate=sample_rate, mapping=[1, 2, 3, 4, 5, 6, 7, 8])
         else:
             sd.play(my_song_array, samplerate=sample_rate)
-
-        # --- A/V SYNC COMPENSATION ---
-        # 0.05 = 50 milliseconds. 
-        #AV_SYNC_OFFSET = -0.065
-        #AV_SYNC_OFFSET = -0.090
-        #AV_SYNC_OFFSET = -0.105
-        #AV_SYNC_OFFSET = -0.114
-
-        AV_SYNC_OFFSET = -0.117
-        
-        #AV_SYNC_OFFSET = -0.119
-        #AV_SYNC_OFFSET = -0.122
-
-        #AV_SYNC_OFFSET = 0.0
-
-        #VR/Virtual Desktop
-        #AV_SYNC_OFFSET = -0.127
-
 
         while running:
 
@@ -2181,8 +2119,6 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
             
             # Calculate time in milliseconds for audio sync
             audio_time_elapsed = int(((current_perf_time - start_time) + AV_SYNC_OFFSET) * 1000)
-#            audio_time_elapsed_rumble = audio_time_elapsed
-#            audio_time_elapsed_rumble = int((current_perf_time - start_time) * 1000)
             audio_time_elapsed_rumble = int(((current_perf_time - start_time) + (AV_SYNC_OFFSET/2.0)) * 1000)
 
             # --- FIX: REMOVE PER-FRAME RANDOMIZATION ---
@@ -2195,17 +2131,14 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
                 video_playback_speed = 2.2 # Fallback
             #print(f"______________ {video_playback_speed} _______")
             
-            
-            #2026-10-22: NOW OBSOLETE
-            #futures = []
-
-            # 1. Turn your 'futures' list into a dictionary to map Futures to Unique Video IDs
+            # 1. a dictionary to map futures to Unique Video IDs
             futures_map = {}
 
+            # Matrix effect videos L/R
             futures_matrix = []
             futures_resize_np_arr = []
 
-            # ADD outro
+            # ADD outro time +2500
             if audio_time_elapsed >= (audio_len*1000)+2500:
                 running = False
 
@@ -2233,7 +2166,6 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
                     #if event.key == pygame.K_KP1:
                     #if event.key == pygame.K_KP2:
  
-
             if running:
 
                 if total_frame_count % 55 == 0:
@@ -2808,8 +2740,14 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
                         console_filestream_font = console_font_4
 
                         if current_pygame_time < 6.4:
-                            helper_functions.title_intro(console_surface_1, current_pygame_time, 
-                                                         random_intro_title, SCREEN_WIDTH, SCREEN_HEIGHT) #audio_path
+                            helper_functions.title_intro(
+                                console_surface_1, 
+                                current_pygame_time, 
+                                random_intro_title, 
+                                SCREEN_WIDTH, 
+                                SCREEN_HEIGHT
+                            ) #audio_path
+
                         if current_pygame_time < 7.0:
                             console_filestream.update(chars_per_tick=5)
                             draw_console(
@@ -3099,7 +3037,11 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
                 #___VERTICAL_TEXT_RENDER_IF_1440p___
                 if video_width_left == 2560:
                     if current_time_left >= int(video_left.duration/1.5):
-                        helper_functions.render_text_vertical(combined_surface, random_text_string_3, 70, 420, 0, -90)
+                        helper_functions.render_text_vertical(
+                            combined_surface, 
+                            random_text_string_3, 
+                            70, 420, 0, -90
+                        )
 
                 #___HORIZONTAL_TEXT_RENDER___
                 if audio_time_elapsed >= 7000:
@@ -3128,7 +3070,11 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
                                     text_x = tmp_pos_x - text_pos_offset_x
                                     text_y = tmp_pos_y - text_pos_offset_y
 
-                                helper_functions.render_text_horizontal(combined_surface, f"{random_text_string_1}:{random_text_string_2}", 80, text_x, text_y, -90)
+                                helper_functions.render_text_horizontal(
+                                    combined_surface, 
+                                    f"{random_text_string_1}:{random_text_string_2}", 
+                                    80, text_x, text_y, -90
+                                )
 
                 #song_title = audio_path.split('/')[-1]
                 #song_title = song_title.split('.wav')[0]
@@ -3503,15 +3449,15 @@ def run_video_init():
     video_filenames_left = video_filenames_all_left[:]
     num_videos_left = len(video_filenames_left)
 
-    unique_top_signal_indices = load_neural_indices_json(random.choice(neural_indices_filenames_all), ceiling=num_videos_left)
+    unique_top_signal_indices = load_neural_indices_json(
+        random.choice(neural_indices_filenames_all), 
+        ceiling=num_videos_left
+    )
     print(f"PRIOR 2026-10-29_EXPERIMENT: {len(unique_top_signal_indices)}")
 
 #_______NEW_QUANTUM_EXP_2026-10-29_______
 
-    unique_top_signal_indices_rnd = [random.randint(1, num_videos_left-1) for _ in range(2000)]
-    print(f"RND 2026-10-29_EXPERIMENT: {len(unique_top_signal_indices_rnd)}")
-    available_neural_indices = list(dict.fromkeys(unique_top_signal_indices[:] + unique_top_signal_indices_rnd[:]))
-    random.shuffle(available_neural_indices)
+    available_neural_indices = list(dict.fromkeys(unique_top_signal_indices[:]))
     print(f"2026-10-29_EXPERIMENT: {len(available_neural_indices)}")
 
     # --- NEW FILLING LOGIC ---
@@ -3531,15 +3477,15 @@ def run_video_init():
     video_filenames_right = video_filenames_all_right[:]
     num_videos_right = len(video_filenames_right)
 
-    unique_top_signal_indices = load_neural_indices_json(random.choice(neural_indices_filenames_all), ceiling=num_videos_right)
+    unique_top_signal_indices = load_neural_indices_json(
+        random.choice(neural_indices_filenames_all), 
+        ceiling=num_videos_right
+    )
     print(f"PRIOR 2026-04-28_EXPERIMENT: {len(unique_top_signal_indices)}")
 
 #_______NEW_QUANTUM_EXP_2026-10-29_______
   
-    unique_top_signal_indices_rnd = [random.randint(1, num_videos_right-1) for _ in range(2000)]
-    print(f"RND 2026-10-29_EXPERIMENT: {len(unique_top_signal_indices_rnd)}")
-    available_neural_indices = list(dict.fromkeys(unique_top_signal_indices[:] + unique_top_signal_indices_rnd[:]))
-    random.shuffle(available_neural_indices)
+    available_neural_indices = list(dict.fromkeys(unique_top_signal_indices[:]))
     print(f"2026-10-29_EXPERIMENT: {len(available_neural_indices)}")
 
     # --- NEW FILLING LOGIC ---
@@ -3556,7 +3502,7 @@ def run_video_init():
     #______________________________________________________________________________________________________
     #___SELECT_200_ENTRIES_LEFT____
 
-    # Calculate the start index for the main list
+    # --- Calculate the start index for the main list ---
     max_start_index = max(0, len(video_filenames_left) - 200)
     start_index = random.randint(0, max_start_index)
     print(f"start_index: {start_index}")
@@ -3564,10 +3510,13 @@ def run_video_init():
     print(f"{len(video_filenames_left)}")
 
     #___FRESH_REPLACEMENT_POOL_FOR_STATIC___
+    # Must limit the amount of these from orig pool size (20K)
+    # to 20 items or so to not overwhelm the selection
+    # when other types of videos are in < 20K items
 
     if SHIFT_STATIC == 1:
         print(f"FRESH_BEFORE: {len(video_filenames_left_replacement)}")
-        # Filter out items in video_filenames_left
+        # --- Filter out items in video_filenames_left ---
         random.shuffle(video_filenames_left_replacement)
         video_filenames_left_replacement_src = []
         for each in video_filenames_left_replacement:
@@ -3578,7 +3527,10 @@ def run_video_init():
         print(f"FRESH_AFTER: {num_videos_replacement_src}")
 
         # --- NEW FILLING LOGIC ---
-        available_neural_indices = load_neural_indices_json(random.choice(neural_indices_filenames_all), ceiling=num_videos_replacement_src)
+        available_neural_indices = load_neural_indices_json(
+            random.choice(neural_indices_filenames_all), 
+            ceiling=num_videos_replacement_src 
+        )
         selected_neural_indices = filter_through_quantum_black_box(available_neural_indices, 500)
 
         selected_replacement_filenames = []
@@ -3656,10 +3608,10 @@ if __name__ == '__main__':
 # TRY rainbow vortex + zoom/rot
 
     EVERYTHING         = False
-    CORE_EDITION       = True
+    CORE_EDITION       = False
     SUMMER_EDITION     = False
     PSY_TRANCE_EDITION = False
-    HARDWAVE_EDITION   = False
+    HARDWAVE_EDITION   = True
     CUSTOM_EDITION     = False
 
     #audio_base_folder = config.get("audio_filepaths", {}).get("music_folder")
