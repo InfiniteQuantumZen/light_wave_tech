@@ -15,6 +15,9 @@ ________________________________________________________________________________
 ∎ 2026-11-02: UPCOMING RELEASE (ALREADY IN CODEBASE):
 - Added Artificial_Life_R&D/2026-11-02_Quantum_Spin_and_Protein_Folding.md
 - Added Artificial_Life_R&D/2026-11-02_The_Legend_Of_The_Anomaly.md
+- Added these to ComfyUI_Workflows
+  TOOLS/ComfyUI_Workflows/comfyui_horizontal_upscale_interpolation.json
+  TOOLS/ComfyUI_Workflows/comfyui_square_upscale_interpolation.json
 
 ∎ 2026-11-01: UPCOMING RELEASE (ALREADY IN CODEBASE):
 - Added ./Artificial_Life_R&D/2026-10-29_Parity_Versus_Majority_Logic_Gates.md
