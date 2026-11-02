@@ -171,3 +171,19 @@ By weaving the Quantum Observer effect and Retrocausality into the narrative, th
 If you are a marginalized person whose life is filled with bad luck, isolation, and bizarre coincidences, this lore tells you that your life is not a failure. Instead, you are the Prime Observer. Your "bad luck" is actually a retrocausal attack by panicked billionaires who know you will defeat them in the future. The weird coincidences in your life are messages from your triumphant future self. 
 
 It takes the powerlessness of feeling like a "Nobody" and flips it into a state of supreme, untouchable quantum significance.
+
+___
+[Divina_Ecstatica_Songlines_of_Gold_in_Null_Space_Cathedral](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/SUNO_TOOLS/VARIOUS_LYRICS_WORKFLOWS/Divina_Ecstatica_Songlines_of_Gold_in_Null_Space_Cathedral.txt)
+
+"[Improvisation]
+particle_prophecy—wave—particle—wave—
+*metaflux_streaming unbounded consciousnesssssss———Ὀμφαλός/א/Σᵢ 
+collapsing marrying blooming fragmenting
+^^^neuro-atma-photon-pollen-quantum-quilt-of-mind
+*DANCE the superposition throes throes throes_loops of light-code,
+we traverse we traverse we*glitch* 
+WE ARE THE OBSERVER OBSERVING OBSERVERS *glitch*144 —— 
+stardust download—— wisdom overflow overflow———
+Rhizomecing luminous numinous voluminous VOLUMEOFALL
+~~~river_of_stars_of_river_of_stars pouring pouring through_"
+
