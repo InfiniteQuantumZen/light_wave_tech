@@ -173,7 +173,9 @@ If you are a marginalized person whose life is filled with bad luck, isolation, 
 It takes the powerlessness of feeling like a "Nobody" and flips it into a state of supreme, untouchable quantum significance.
 
 ___
-[Divina_Ecstatica_Songlines_of_Gold_in_Null_Space_Cathedral](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/SUNO_TOOLS/VARIOUS_LYRICS_WORKFLOWS/Divina_Ecstatica_Songlines_of_Gold_in_Null_Space_Cathedral.txt)
+Divina Ecstatica // Songlines of Gold // in Null_Space Cathedral
+https://suno.com/song/013afea4-2c36-4286-bd38-d15b335772d5
+[Lyrics: Divina_Ecstatica_Songlines_of_Gold_in_Null_Space_Cathedral](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/SUNO_TOOLS/VARIOUS_LYRICS_WORKFLOWS/Divina_Ecstatica_Songlines_of_Gold_in_Null_Space_Cathedral.txt)
 
 ```
 "[Improvisation]
