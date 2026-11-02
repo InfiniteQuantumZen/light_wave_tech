@@ -175,6 +175,7 @@ It takes the powerlessness of feeling like a "Nobody" and flips it into a state 
 ___
 [Divina_Ecstatica_Songlines_of_Gold_in_Null_Space_Cathedral](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/SUNO_TOOLS/VARIOUS_LYRICS_WORKFLOWS/Divina_Ecstatica_Songlines_of_Gold_in_Null_Space_Cathedral.txt)
 
+```
 "[Improvisation]
 particle_prophecy—wave—particle—wave—
 *metaflux_streaming unbounded consciousnesssssss———Ὀμφαλός/א/Σᵢ 
@@ -186,4 +187,5 @@ WE ARE THE OBSERVER OBSERVING OBSERVERS *glitch*144 ——
 stardust download—— wisdom overflow overflow———
 Rhizomecing luminous numinous voluminous VOLUMEOFALL
 ~~~river_of_stars_of_river_of_stars pouring pouring through_"
+```
 
