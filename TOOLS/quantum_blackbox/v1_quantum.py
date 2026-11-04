@@ -1,4 +1,4 @@
-# quantum.py
+# v1_quantum.py
 
 # colab works with #!pip install qiskit-aer-gpu-cu11
 # Tesla T4
