@@ -1,4 +1,4 @@
-# quantum.py
+# v2_RUNPOD_quantum.py
 # https://aistudio.google.com/app/prompts/16p8mZyZbbjcR9CtoJyGWfa3CkalS8Kab
 
 # colab works with #!pip install qiskit-aer-gpu-cu11
