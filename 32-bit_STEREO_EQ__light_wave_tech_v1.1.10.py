@@ -391,48 +391,30 @@ def quantum_black_box_xor_parity_check(binary_string):
     return binary_string.count('1') % 2 != 0
 
 def filter_through_quantum_black_box(available_neural_indices, num_quantum_items=500):
-    all_combined_quantum_pairs = []
-    file_paths = glob.glob("DATA/quantum_json_batches/*.json") 
+    # 1. Load quantum numpy data
+    counts = np.load('DATA/quantum_json_batches/counts_data.npy')
 
-    for path in file_paths:
-        with open(path, "r") as f:
-            loaded_pairs = json.load(f)
-            all_combined_quantum_pairs.extend(loaded_pairs)
-
-    num_combined_quantum_pairs = len(all_combined_quantum_pairs)
-    print(f"Successfully loaded a total of {num_combined_quantum_pairs} pairs!")
-    random.shuffle(all_combined_quantum_pairs)
-
-    # --- NOT NEEDED BUT PRINTS SOME EXAMPLES ---
-    # 5. Use them one by one
-    for pair in all_combined_quantum_pairs[:5]: 
-        current_src = pair["src"] 
-        current_dst = pair["dst"]
-        print(f"Source: {current_src}, Destination: {current_dst}")
-        # do something with current_src and current_dst...
-    # -------------------------------------------
+    # 2. Get the integer indexes of strings that actually exist
+    valid_indexes = np.nonzero(counts)[0]
 
     selected_neural_indices = []
     iter_num = 0
 
     # Iterate until the list is completely full
-    while len(selected_neural_indices) < num_quantum_items-1 and iter_num < num_combined_quantum_pairs:
-        #print(f"{iter_num}/{num_quantum_items}")
-        quantum_binary_str_src = all_combined_quantum_pairs[iter_num]["src"]
-        quantum_binary_str_dst = all_combined_quantum_pairs[iter_num]["dst"]
-        quantum_binary_dst_count = all_combined_quantum_pairs[iter_num]["count"]
+    while len(selected_neural_indices) < num_quantum_items-1:
 
-        #print(f"quantum_binary_str_src: {quantum_binary_str_src}")
-        #print(f"quantum_binary_str_dst: {quantum_binary_str_dst}")
+        # 3. Make a random draw (without providing probabilities, they are treated equally)
+        drawn_quantum_index = np.random.choice(valid_indexes)
 
-        q_passed_src = quantum_black_box_xor_parity_check(quantum_binary_str_src)
-        q_passed_dst = quantum_black_box_xor_parity_check(quantum_binary_str_dst)
-        #print(f"q_passed_src: {q_passed_src}")
-        #print(f"q_passed_dst: {q_passed_dst}")
-        
-        # If the condition is met, fill one spot in the list
-        if quantum_binary_dst_count > 1: #q_passed_dst:
-            #print(f"quantum_binary_dst_count: {quantum_binary_dst_count}")
+        # 4. Convert back to string
+        drawn_quantum_count = counts[drawn_quantum_index]
+
+        #drawn_quantum_string = f"{drawn_quantum_index:024b}"
+        #print(f"Randomly picked an existing item: {drawn_quantum_string}")
+        #print(f"This item had a count of: {drawn_quantum_count}")
+
+        # 5. If the condition is met, fill one spot in the list
+        if drawn_quantum_count > 8: # threshold
             if available_neural_indices:
                 # Pop an unused index and append it to our main list
                 new_item = available_neural_indices.pop()
@@ -1873,15 +1855,19 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
         random_inject_glitch_interval_left  = 4
         random_inject_glitch_interval_right = 4
 
-        random_text_string_1 = random.choice(inspirational_words_1).upper()
-        random_text_string_2 = random.choice(inspirational_words_2).upper()
+        # --- random text inits ---
+        quantum_counts = np.load('DATA/quantum_json_batches/counts_data.npy')
+        quantum_valid_indexes = np.nonzero(quantum_counts)[0]
+
+        random_text_string_1 = random.choice(inspirational_words_combined).upper()
+        random_text_string_2 = random.choice(inspirational_words_combined).upper()
         random_text_string_3 = random.choice(inspirational_words_combined).upper()
         render_text_flag = 0
         text_pos_flag = random.randint(1, 6)
         text_pos_offset_x = random.randint(300, 700)
         text_pos_offset_y = random.randint(200, 400)
+        # ---
 
-        toggle_sound_effect = 0
         last_matrix_code_timing = 0
 
         glitch_type_left  = "vertical"
@@ -1977,7 +1963,7 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
         # used to compensate the delay that is perceived rendering GFX 
         # in the main loop due to the latency of the audio from hardware
         # to the software and further to the ears (headphones)
-        # the same amount as sd.default.latency but negative 
+        # the same amount as sd.default.latency but negative.
         # 0.05 = 50 milliseconds. 
         AV_SYNC_OFFSET = -0.117
         
@@ -2026,18 +2012,27 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
         shader_cache = shader_manager.ShaderCache(main_ctx)
         
         if playlist_index >= 0:
-            random_timeline = random.randint(1, 3)
+            random_timeline = random.randint(0, 6)
             if random_timeline == 0:
                 timeline_json_filepath = "DATA/timelines/timeline_cyan_intro.json"
                 console_color_intro = CYAN_LIGHT
             elif random_timeline == 1:
-                timeline_json_filepath = "DATA/timelines/timeline_magenta_intro.json"
+                timeline_json_filepath = "DATA/timelines/timeline_magenta_intro_v1.json"
                 console_color_intro = MAGENTA_LIGHT
             elif random_timeline == 2:
-                timeline_json_filepath = "DATA/timelines/timeline_rainbow_1_intro.json"
+                timeline_json_filepath = "DATA/timelines/timeline_rainbow_1_intro_v1.json"
                 console_color_intro = MAGENTA_LIGHT
             elif random_timeline == 3:
-                timeline_json_filepath = "DATA/timelines/timeline_rainbow_2_intro.json"
+                timeline_json_filepath = "DATA/timelines/timeline_rainbow_2_intro_v1.json"
+                console_color_intro = MAGENTA_LIGHT
+            elif random_timeline == 4:
+                timeline_json_filepath = "DATA/timelines/timeline_magenta_intro_v2.json"
+                console_color_intro = MAGENTA_LIGHT
+            elif random_timeline == 5:
+                timeline_json_filepath = "DATA/timelines/timeline_rainbow_1_intro_v2.json"
+                console_color_intro = MAGENTA_LIGHT
+            elif random_timeline == 6:
+                timeline_json_filepath = "DATA/timelines/timeline_rainbow_2_intro_v2.json"
                 console_color_intro = MAGENTA_LIGHT
         else:
             timeline_json_filepath = "DATA/timelines/v2_timeline_glitch_prod.json"
@@ -2048,6 +2043,7 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
 
         #console_color_intro = MAGENTA_LIGHT
         #timeline_json_filepath = "DATA/timelines/timeline_test.json"
+        #timeline_json_filepath = "DATA/timelines/timeline_cyan_intro.json"
         #timeline_json_filepath = "DATA/timelines/timeline_magenta_intro.json"
         #timeline_json_filepath = "DATA/timelines/timeline_rainbow_2_intro.json"
 
@@ -2493,9 +2489,20 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
                         else:
                             glitch_type_left = "vertical"
 
-                        random_text_string_1 = random.choice(inspirational_words_1).upper()
-                        random_text_string_2 = random.choice(inspirational_words_2).upper()
-                        random_text_string_3 = random.choice(inspirational_words_combined).upper()
+
+
+                        tmp_random_words = []
+                        for i in range(len(inspirational_words_combined)-1):
+                            drawn_quantum_index = np.random.choice(valid_indexes)
+                            drawn_quantum_count = counts[drawn_quantum_index]
+
+                            if drawn_quantum_count > 8:
+                                tmp_random_words.append(inspirational_words_combined[i])
+
+                        random_text_string_1 = random.choice(tmp_random_words).upper()
+                        random_text_string_2 = random.choice(tmp_random_words).upper()
+                        random_text_string_3 = random.choice(tmp_random_words).upper()
+
                         text_pos_flag = random.randint(1, 6)
                         text_pos_offset_x = random.randint(300, 600)
                         text_pos_offset_y = random.randint(200, 400)
@@ -3604,9 +3611,7 @@ if __name__ == '__main__':
     ###_____ -2 >> -1 and angle_to_apply = angle_to_apply * 0.6
     ###_____ ALSO TESTED total_frame_count % 30 but i might not have been that good
 
-# TRY FOR INTRO crack_monochrome.txt
-# TRY shining_hope_star.txt
-# TRY THIS AS INTRO tunnel_fract_003.txt (now fixed colors)
+
 # TRY rainbow vortex + zoom/rot
 
     EVERYTHING         = False
@@ -3657,6 +3662,22 @@ if __name__ == '__main__':
 
     # Shuffle the dictionaries
     random.shuffle(songs_all_random)
+
+
+    counts = np.load('DATA/quantum_json_batches/counts_data.npy')
+    valid_indexes = np.nonzero(counts)[0]
+    tmp_songs = [] 
+
+    for i in range(len(songs_all_random)-1):
+        drawn_quantum_index = np.random.choice(valid_indexes)
+        drawn_quantum_count = counts[drawn_quantum_index]
+
+        if drawn_quantum_count > 8:
+            #drawn_quantum_string = f"{drawn_quantum_index:024b}"
+            #print(f"Randomly picked an existing item: {drawn_quantum_string}")
+            #print(f"This item had a count of: {drawn_quantum_count}")
+            tmp_songs.append(songs_all_random[i])
+    songs_all_random = tmp_songs
 
     print(f"{len(songs_all_random)} items in playlist")
     #print(songs_all_random)
