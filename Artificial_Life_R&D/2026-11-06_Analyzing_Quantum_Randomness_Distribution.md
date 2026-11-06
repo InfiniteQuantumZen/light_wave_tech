@@ -1,9 +1,9 @@
 2026-11-06: Analyzing Quantum Randomness Distribution
 
 Tools used: 
-  TOOLS/quantum_blackbox/v2_RUNPOD_quantum.py
-  TOOLS/quantum_blackbox/v2_into_master_consolidation.py
-  TOOLS/quantum_blackbox/v2_analyze.py
+*   TOOLS/quantum_blackbox/v2_RUNPOD_quantum.py
+*   TOOLS/quantum_blackbox/v2_into_master_consolidation.py
+*   TOOLS/quantum_blackbox/v2_analyze.py
   
 ___
 
