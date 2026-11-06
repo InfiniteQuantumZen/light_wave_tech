@@ -12,6 +12,11 @@ the whole (everything put out there publicly).
 NOTE ABOUT CODING: All development is done with windows notepad nothing else is needed. 
 _____________________________________________________________________________________________________________________
 
+∎ 2026-11-06: UPCOMING RELEASE (ALREADY IN CODEBASE):
+- Added these:
+  TOOLS/quantum_blackbox/v2_into_master_consolidation.py
+  TOOLS/quantum_blackbox/v2_analyze.py
+
 ∎ 2026-11-03: UPCOMING RELEASE (ALREADY IN CODEBASE):
 - Added Artificial_Life_R&D/2026-11-03_Buddhist_Lens_Critiquing_Dark Matter's_Multiverse_Logic.md
 - Added Artificial_Life_R&D/2026-11-03_Quantum_Branching_and_Neural_Iteration.md
