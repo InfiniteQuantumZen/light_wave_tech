@@ -1,4 +1,4 @@
-# v2_RUNPOD_quantum.py
+# quantum.py
 # https://aistudio.google.com/app/prompts/16p8mZyZbbjcR9CtoJyGWfa3CkalS8Kab
 
 # colab works with #!pip install qiskit-aer-gpu-cu11
@@ -173,8 +173,10 @@ def run_single_session(session_id):
     Everything inside here runs in parallel with other workers.
     """
 
+    all_quantum_pairs = []
+
     qbit_str_list_grouped = filter_through_quantum_black_box(num_quantum_items=100)
-    print(f"qbit_str_list_grouped: {qbit_str_list_grouped}")
+    #print(f"qbit_str_list_grouped: {qbit_str_list_grouped}")
 
     for src_val, dst_val, count in qbit_str_list_grouped:
         all_quantum_pairs.append({
@@ -200,8 +202,8 @@ if __name__ == '__main__':
     # This ensures each worker gets a fresh, clean connection to the GPU driver.
     mp.set_start_method('spawn', force=True)
 
-    NUM_SESSIONS = 1
-    #NUM_SESSIONS = 100
+    #NUM_SESSIONS = 1
+    NUM_SESSIONS = 100
     NUM_WORKERS = 12
 
     print(f"Starting {NUM_SESSIONS} sessions using {NUM_WORKERS} parallel workers...")
