@@ -3,6 +3,392 @@
 # By using Gemini 4 Hydrogen, then issues are now fixed.
 # NEW_RUNPOD_v6_OPTIMIZED_trainer.py
 
+the user has the following neural network training code and it has served its
+purpose well, but they ended up in a situation where they just couldn't run the
+training non-stop on rented architecture more than 30 hours so they had to stop
+the training. they later came back and tried to have the same architecture and
+preferably the same "instance of the raw metal" based on the location (france)
+and the same processor and memory and gpu configuration on runpod; they resumed
+the training and run the first epoch and it turns out that something is messing
+up with the progress and the user has already asked about this several times
+from ai-systems but did not get straight and useful improvement to the code if
+need be; what is causing this full-on scramble that will hurt the training (last
+time it happened, it took 12 epochs to get to same level of train loss and
+valuation loss numbers)? what value is missing and what needs to be saved for it
+to continue as perfectly as it can? last time this happened was architecture
+change (a totally different gpus) but this time around its the same RTX
+A4500 20GB model and same thing happened? has it truly impacted the inner values
+of the neural network or is it just a reporting issue? both times these values
+jumped back to 1.0 from these 1st occurrence: train loss: 0.6814 | val
+loss 0.5639 | LR: 2.222631e-04 2nd occurrence: train loss: 0.8921 | val
+loss 0.8094 | LR: 1.827215e-04. What did "stuck" or maintained the same was
+learning rate, which adjusted accordingly in both cases and improved the model;
+but what improved if anything? and what happens now when training resumed from
+LR: 1.827215e-04 but reported loss values are back to 1.0? testing the epoch 43
+model was subjectively perceived to give somewhat better outputs than with the
+previous "hickup" at epoch 21; both of these models with their designated epoch
+numbers were almost at same train/val losses (or thereabouts they both ran
+about 12 epochs before stopping) as described earlier, but the user cannot rely
+on this as its just subjectivity and they are not ml researcher. one more thing
+worth noting: the cosine learning rate adjustment were implemented while running
+training locally on RTX 3060, which showed steady improvement and never had any
+issues because of the indentical electronic components (and each restart/resume
+was about 2 or max 3 epoch at a time because of staggering amount of clock-time
+about 9 hours per epoch); it only happened when switching to other hardware;
+what has stayed the same and seemingly improved over all these architectural
+changes is the learning rate drop from 2.894665e-04 to 1.827215e-04 where we are
+now. supplied are both the training code and full log. if it has anything to do
+with randomization and hardware level differences (since this didnt happen
+locally after countless of restarts/resumes over 3 weeks time or so), then what
+is causing this to happen? what code must be implemented to prevent this
+happening? and if some random variable change can cause this how much does it
+really and truly affect the neural networks's inner values? does it set back the
+training if indeed learning rate is progressively getting smaller and thus more
+nuance can be spot on the way to the "bottom of the valley"? initially the local
+rtx 3060 run was stopped because training seemed to get stuck on local minima
+and all numbers got agressively bad... they improved when changed to more
+powerful architecture and at the same time batch size changed; but this last
+instance even that was kept exactly the same 1024 so it's not the cause for this
+latest issue or at least seemingly so (as the user cannot know as they are not
+ml scientist).
+
+### The Short Answer
+
+**Nothing is wrong with your GPUs, RunPod's hardware, France vs. other data centers, or randomization.**  
+
+You are hitting a **silent bug in `RUNPOD_v6_OPTIMIZED_trainer.py`** that **throws away 100% of your neural network's learned weights every single time you resume from a checkpoint**, leaving the model completely uninitialized (random) while keeping the old optimizer and learning rate schedule.
+
+---
+
+### 1. What Is Causing the Scramble?
+
+Three lines in `RUNPOD_v6_OPTIMIZED_trainer.py` interact to silently break checkpoint loading:
+
+1. **Saving strips the `_orig_mod.` prefix:**
+   ```python
+   def get_clean_state_dict(model):
+       return model._orig_mod.state_dict() if hasattr(model, '_orig_mod') else model.state_dict()
+   ```
+   This saves parameter names like `input_proj.weight`, `transformer.layers.0...`, etc.
+
+2. **Compiling adds the `_orig_mod.` prefix *before* `train()` runs:**
+   In `main()`, you run:
+   ```python
+   model = torch.compile(model)
+   ```
+   Wrapping `model` with `torch.compile` moves all your layers inside a wrapper called `_orig_mod`. So `model.state_dict()` now expects names like `_orig_mod.input_proj.weight`.
+
+3. **Loading uses `strict=False`:**
+   Inside `train()`, you run:
+   ```python
+   model.load_state_dict(ckpt['model_state_dict'], strict=False)
+   ```
+   Because `ckpt['model_state_dict']` has **no** `_orig_mod.` prefix and the compiled `model` **requires** `_orig_mod.`, **zero keys match.**  
+   Normally PyTorch would crash with an error telling you the keys don't match. Because `strict=False` is there, **PyTorch silently ignores every single saved weight** and leaves `model` 100% randomly initialized.
+
+Meanwhile, right on the next lines:
+```python
+optimizer.load_state_dict(ckpt['optimizer_state_dict'])
+scheduler.load_state_dict(ckpt['scheduler_state_dict'])
+```
+Those two lines **do** succeed (they match parameters by position/count, not name). So your training resumes with:
+- **Brand-new random network weights** (like Epoch 0)
+- **Old AdamW momentum/variance buffers** left over from the deleted weights
+- **The reduced learning rate** from the old cosine schedule
+
+---
+
+### 2. Why Didn't This Happen Locally on Your RTX 3060?
+
+Look at your file names (`model_v5_training_notes_logs.txt`, `model_v5_043.pth`) vs. the RunPod script (`RUNPOD_v6_OPTIMIZED_trainer.py`).
+
+- Locally on your RTX 3060, you were running the earlier script (`v5`) without `torch.compile(model)` (notice `torch.compile`, `TF32`, `fused=True`, and `get_clean_state_dict` are the RunPod v6 optimizations). Without `torch.compile`, there is no `_orig_mod.` prefix, so `load_state_dict` matched every key and resumed cleanly over all those local restarts.
+- Every single time you resumed using `RUNPOD_v6_OPTIMIZED_trainer.py`—at **Epoch 22** (RTX 3090), **Epoch 35** (RTX A4500 #1), and **now after Epoch 43** (RTX A4500 #2)—the weights were wiped back to random. It happened on the exact same RTX A4500 GPU model this time because it happens on **every resume with this script**, regardless of hardware.
+
+---
+
+### 3. Answers to Your Specific Questions
+
+#### Is it just a reporting issue, or did it affect the neural network's inner values?
+**It wiped the inner values completely.**  
+Because your dataset is standardized (`mean = 0, std = 1`), a randomly initialized model that outputs values near `0` gets a Validation MSE Loss of around `~0.983` (roughly `1.0`). That is why your validation loss snapped right back to `0.9831` at Epoch 22, `0.9830` at Epoch 35, and `~1.0` again now:
+- **Epochs 1–21:** Trained from scratch $\rightarrow$ reached Val Loss `0.5357`
+- **Epoch 22 (Resume #1):** Wiped to random (`0.9831`) $\rightarrow$ re-trained from scratch to `0.5639` by Epoch 34
+- **Epoch 35 (Resume #2):** Wiped to random (`0.9830`) $\rightarrow$ re-trained from scratch to `0.8094` by Epoch 43
+- **Epoch 44 (Resume #3):** Wiped to random (`~1.0`) again
+
+#### Did anything improve, and what happens if you keep training from LR `1.827e-04`?
+Nothing from the previous 43 epochs of weights survived into Epoch 44. Only the decaying learning rate (`1.827e-04`) and mismatched AdamW momentum buffers remained.
+
+**Does that set training back?** Yes, severely. A smaller learning rate is meant for fine-tuning a network that is *already* near the bottom of the loss valley. When the weights are reset to a random peak (loss `~1.0`), a smaller learning rate makes it crawl down much more slowly—which is exactly why Epochs 22–30 (starting at LR `2.66e-4`) reached `0.6180` in 9 epochs, while Epochs 35–43 (starting at LR `2.18e-4`) only reached `0.8094` in 9 epochs.
+
+#### Why did Epoch 43 subjectively look okay compared to Epoch 21?
+Objectively, Epoch 21 (`0.5357` MSE) and Epoch 34 (`0.5639` MSE) had much lower prediction error than Epoch 43 (`0.8094` MSE). Subjectively, generation quality in `generate_patched` uses random seeds (`random.randint(1, 5000)`) and Gaussian noise (`temperature=0.8`), so individual sample runs can look better or worse by luck—especially on integer sequences where lower MSE can sometimes produce slightly different variance.
+
+---
+
+### 4. Urgent Warning About Your Existing Checkpoints
+
+Look at the command at the top of your script:
+```bash
+--checkpoint model_v5_043.pth --checkpoint_interval 1
+```
+Because `--checkpoint` is used for **both** loading and saving, and `--checkpoint_interval 1` saves after every epoch, **running Epoch 44 to completion will have overwritten `model_v5_043.pth`** (and `EarlyStopping` will also have overwritten `model_v5_043_best.pth`, because `early_stopper.best` resets to `None` on resume!).
+
+**Before doing anything else**, check if you still have an untouched backup of `model_v5_043.pth` (or `model_v5_043_best.pth`, or an earlier checkpoint like Epoch 21 or Epoch 34). Any checkpoint saved *at the end of a non-wiped run* still contains valid weights inside it—the `.pth` file itself wasn't corrupted when saved; it just failed to load on the next run.
+
+---
+
+### 5. What Code Must Be Changed to Fix This Properly
+
+To resume seamlessly without losing a single bit of progress:
+
+1. **Load weights BEFORE `torch.compile(model)` (or into `model._orig_mod`), and NEVER use `strict=False`.** Also strip `_orig_mod.` automatically if a checkpoint ever happens to contain it, and use `strict=True` so any mismatch fails loudly instead of silently resetting your weights.
+2. **Save and restore `best_val`, `EarlyStopping` (`best`, `counter`), and `GradScaler` state** so resuming doesn't reset early stopping or overwrite `*_best.pth` with a worse epoch.
+3. **Separate `--resume` from `--checkpoint`** (or save epoch-numbered backups) so a new run can never overwrite your last good checkpoint.
+4. **Run a 30-second validation sanity check immediately after loading** (if you don't want to wait 2.5 hours to find out if a resume worked). You can compare the instant validation loss right after loading against the `val_loss` saved in the checkpoint—they should match to 4 decimal places.
+
+Here is the corrected code for `RUNPOD_v6_OPTIMIZED_trainer.py` (with `--resume_from` optional, `strict=True`, `EarlyStopping` / `GradScaler` state preservation, and an immediate post-load validation sanity check):
+
+```python
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import Dataset, DataLoader, random_split
+import argparse
+import os
+import math
+import time
+import random
+import numpy as np
+
+torch.backends.cuda.matmul.allow_tf32 = True
+torch.backends.cudnn.allow_tf32 = True
+
+
+def get_clean_state_dict(model):
+    return model._orig_mod.state_dict() if hasattr(model, '_orig_mod') else model.state_dict()
+
+
+def strip_orig_mod_prefix(state_dict):
+    return {
+        (k[len('_orig_mod.'):] if k.startswith('_orig_mod.') else k): v
+        for k, v in state_dict.items()
+    }
+
+
+class EarlyStopping:
+    def __init__(self, patience=7, delta=0.0, path='best_model.pth', best=None, counter=0):
+        self.patience = patience
+        self.delta = delta
+        self.path = path
+        self.best = best
+        self.counter = counter
+        self.early_stop = False
+
+    def __call__(self, val_loss, model, optimizer, scheduler, scaler, epoch, mean, std):
+        if self.best is None or val_loss < self.best - self.delta:
+            self.best = val_loss
+            self.counter = 0
+            torch.save({
+                'epoch': epoch,
+                'model_state_dict': get_clean_state_dict(model),
+                'optimizer_state_dict': optimizer.state_dict(),
+                'scheduler_state_dict': scheduler.state_dict(),
+                'scaler_state_dict': scaler.state_dict(),
+                'best_val': self.best,
+                'early_stop_best': self.best,
+                'early_stop_counter': self.counter,
+                'mean': mean,
+                'std': std,
+                'val_loss': val_loss,
+            }, self.path)
+            print(f"  >>> New best model saved (val loss {val_loss:.4f})")
+        else:
+            self.counter += 1
+            print(f"  EarlyStopping counter: {self.counter}/{self.patience}")
+            if self.counter >= self.patience:
+                self.early_stop = True
+
+
+def evaluate(model, val_loader, criterion, device):
+    model.eval()
+    total_val = 0.0
+    total_iterations = len(val_loader)
+    val_start = time.time()
+    with torch.no_grad():
+        for i, (inputs, targets) in enumerate(val_loader):
+            iters_done = i + 1
+            elapsed_time = time.time() - val_start
+            eta_seconds = int((total_iterations - iters_done) * (elapsed_time / iters_done))
+            m, s = divmod(eta_seconds, 60)
+            h, m = divmod(m, 60)
+            eta_str = f"{h:02d}:{m:02d}:{s:02d}" if h > 0 else f"{m:02d}:{s:02d}"
+            print(f"Val Iteration: {iters_done}/{total_iterations} | Val ETA: {eta_str}", end='\r', flush=True)
+
+            inputs, targets = inputs.to(device), targets.to(device)
+            outputs = model(inputs)
+            loss = criterion(outputs, targets)
+            total_val += loss.item()
+    print()
+    return total_val / len(val_loader)
+
+
+def train(raw_model, train_loader, val_loader, criterion, device, epochs,
+          checkpoint_path, resume_path=None, checkpoint_interval=5,
+          mean=0.0, std=1.0, val_every=1, early_stop_patience=None,
+          base_lr=3e-4, verify_resume=True):
+
+    start_epoch = 0
+    best_val = float('inf')
+    early_stop_best = None
+    early_stop_counter = 0
+    ckpt = None
+
+    load_path = resume_path if resume_path is not None else checkpoint_path
+    if load_path and os.path.exists(load_path):
+        print(f"Loading checkpoint from: {load_path}")
+        ckpt = torch.load(load_path, map_location=device, weights_only=False)
+
+        # 1. Load into UNCOMPILED raw_model with strict=True so silent key mismatches are impossible
+        clean_weights = strip_orig_mod_prefix(ckpt['model_state_dict'])
+        raw_model.load_state_dict(clean_weights, strict=True)
+
+        start_epoch = ckpt['epoch'] + 1
+        if ckpt.get('best_val') is not None:
+            best_val = ckpt['best_val']
+        elif ckpt.get('val_loss') is not None:
+            best_val = ckpt['val_loss']
+
+        early_stop_best = ckpt.get('early_stop_best', ckpt.get('val_loss', None))
+        early_stop_counter = ckpt.get('early_stop_counter', 0)
+
+        # Warn if dataset normalization drifted
+        if 'mean' in ckpt and 'std' in ckpt:
+            if not (math.isclose(ckpt['mean'], mean, rel_tol=1e-5) and math.isclose(ckpt['std'], std, rel_tol=1e-5)):
+                print(f"  [WARNING] Dataset mean/std changed! ckpt=({ckpt['mean']:.4f}, {ckpt['std']:.4f}) vs current=({mean:.4f}, {std:.4f})")
+
+        print(f"  >>> Weights loaded cleanly (strict=True). Resuming at epoch {start_epoch + 1}/{epochs}.")
+    else:
+        print("Starting training from scratch")
+
+    # 2. Compile AFTER loading weights into raw_model
+    model = torch.compile(raw_model)
+
+    # 3. Create optimizer, scheduler, scaler AFTER compiling (or before, parameters are shared)
+    optimizer = optim.AdamW(model.parameters(), lr=base_lr, fused=True)
+    scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs)
+    scaler = torch.amp.GradScaler('cuda')
+
+    if ckpt is not None:
+        if 'optimizer_state_dict' in ckpt:
+            optimizer.load_state_dict(ckpt['optimizer_state_dict'])
+        if 'scheduler_state_dict' in ckpt:
+            scheduler.load_state_dict(ckpt['scheduler_state_dict'])
+            print(f"  >>> Restored LR schedule. Current LR: {scheduler.get_last_lr()[0]:.6e}")
+        if 'scaler_state_dict' in ckpt:
+            scaler.load_state_dict(ckpt['scaler_state_dict'])
+
+        # 4. Optional instant sanity check: verify val_loss matches checkpoint before training 1 epoch
+        if verify_resume:
+            print("Running pre-training validation sanity check on loaded weights...")
+            init_val = evaluate(model, val_loader, criterion, device)
+            saved_val = ckpt.get('val_loss')
+            print(f"  Sanity Check Val Loss: {init_val:.4f} (Checkpoint recorded: {saved_val})")
+
+    early_stopper = None
+    if early_stop_patience is not None:
+        early_stopper = EarlyStopping(
+            patience=early_stop_patience,
+            path=checkpoint_path.replace('.pth', '_best.pth'),
+            best=early_stop_best,
+            counter=early_stop_counter,
+        )
+
+    for epoch in range(start_epoch, epochs):
+        start = time.time()
+        model.train()
+        total_train = 0.0
+        total_iterations = len(train_loader)
+
+        for i, (inputs, targets) in enumerate(train_loader):
+            iters_done = i + 1
+            elapsed_time = time.time() - start
+            eta_seconds = int((total_iterations - iters_done) * (elapsed_time / iters_done))
+            m, s = divmod(eta_seconds, 60)
+            h, m = divmod(m, 60)
+            eta_str = f"{h:02d}:{m:02d}:{s:02d}" if h > 0 else f"{m:02d}:{s:02d}"
+            print(f"Iteration: {iters_done}/{total_iterations} | ETA for Epoch: {eta_str}", end='\r', flush=True)
+
+            inputs, targets = inputs.to(device), targets.to(device)
+            optimizer.zero_grad()
+
+            with torch.autocast(device_type='cuda', dtype=torch.float16):
+                outputs = model(inputs)
+                loss = criterion(outputs, targets)
+
+            scaler.scale(loss).backward()
+            scaler.unscale_(optimizer)
+            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+            scaler.step(optimizer)
+            scaler.update()
+
+            total_train += loss.item()
+
+        avg_train = total_train / len(train_loader)
+        scheduler.step()
+        current_lr = scheduler.get_last_lr()[0]
+
+        val_loss = None
+        if (epoch + 1) % val_every == 0 or (epoch + 1) == epochs:
+            val_loss = evaluate(model, val_loader, criterion, device)
+
+        print()
+        if val_loss is not None:
+            print(f"  Validation MSE Loss: {val_loss:.4f}")
+            if val_loss < best_val:
+                best_val = val_loss
+                print(f"  *** NEW BEST VAL LOSS: {val_loss:.4f} ***")
+
+        epoch_time = time.time() - start
+        print(f"Epoch {epoch+1} took {epoch_time:.1f}s")
+
+        log_line = f"Epoch {epoch+1}/{epochs} | Train loss: {avg_train:.4f}"
+        if val_loss is not None:
+            log_line += f" | Val loss: {val_loss:.4f}"
+        log_line += f" | LR: {current_lr:.6e}"
+        print(log_line)
+
+        if (epoch + 1) % checkpoint_interval == 0 or (epoch + 1) == epochs:
+            torch.save({
+                'epoch': epoch,
+                'model_state_dict': get_clean_state_dict(model),
+                'optimizer_state_dict': optimizer.state_dict(),
+                'scheduler_state_dict': scheduler.state_dict(),
+                'scaler_state_dict': scaler.state_dict(),
+                'best_val': best_val,
+                'early_stop_best': early_stopper.best if early_stopper else best_val,
+                'early_stop_counter': early_stopper.counter if early_stopper else 0,
+                'mean': mean,
+                'std': std,
+                'val_loss': val_loss,
+            }, checkpoint_path)
+            print(f"  Checkpoint saved (epoch {epoch+1}) -> {checkpoint_path}")
+
+        if early_stopper is not None and val_loss is not None:
+            early_stopper(val_loss, model, optimizer, scheduler, scaler, epoch, mean, std)
+            if early_stopper.early_stop:
+                print("Early stopping triggered!")
+                break
+```
+
+In `main()`, add `--resume` (`parser.add_argument('--resume', type=str, default=None)`), **remove `model = torch.compile(model)` and `optimizer = ...` from `main()`** (since `train()` handles them in the safe order), and pass `raw_model` into `train(...)`.
+
+### Practical Advice for Your Next Step
+1. **Check your backups first:** Find the best surviving un-overwritten checkpoint (ideally Epoch 21 `0.5357`, Epoch 34 `0.5639`, or Epoch 43 `0.8094` if you saved a copy before Epoch 44).
+2. **Use `--resume` pointing to the old file and `--checkpoint` pointing to a new file** (for example `--resume model_v5_034.pth --checkpoint model_v6_continued.pth`), so your backup is never touched.
+3. **Watch the `Sanity Check Val Loss` print at startup:** Within ~2 minutes (after compilation + validation), it will print the loaded model's validation loss. If it matches the checkpoint's recorded loss (e.g., `~0.5639` or `~0.8094`), you know with 100% certainty the weights are intact before paying for hours of GPU time. If you are restarting from the Epoch 43/44 wiped state anyway, you will actually be much better off resuming from your earlier **Epoch 21** or **Epoch 34** checkpoint if you still have either of those files—they were already at `0.53–0.56` MSE with higher learning rates left on the schedule.
+
 _________ RTX-5080 ______
 
    Validation MSE Loss: 1.0866
