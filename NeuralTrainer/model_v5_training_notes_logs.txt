@@ -3,6 +3,8 @@
 # By using Gemini 4 Hydrogen, then issues are now fixed.
 # NEW_RUNPOD_v6_OPTIMIZED_trainer.py
 
+TRAINING VALUE LOGS ARE AT THE BOTTOM OF THIS FILE.
+
 the user has the following neural network training code and it has served its
 purpose well, but they ended up in a situation where they just couldn't run the
 training non-stop on rented architecture more than 30 hours so they had to stop
