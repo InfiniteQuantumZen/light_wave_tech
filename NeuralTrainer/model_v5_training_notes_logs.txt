@@ -1,3 +1,8 @@
+# 2026-11-12 FIXED VERSION
+# Training code worked as it should but resuming didn't as expected.
+# By using Gemini 4 Hydrogen, then issues are now fixed.
+# NEW_RUNPOD_v6_OPTIMIZED_trainer.py
+
 _________ RTX-5080 ______
 
    Validation MSE Loss: 1.0866
