@@ -2,6 +2,8 @@
 
 This file contains the second part of the analysis done here: [2026-11-14_Synthesizing_Quantum_Logic_and_Philosophy.md](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/Artificial_Life_R%26D/2026-11-14_Synthesizing_Quantum_Logic_and_Philosophy.md) purposefully keeping these separate, and at the same time having had to include it somewhere (here but not there).
 
+___
+
 Here is the second part of the dataset that are from the same github repository;
 they are a selection of the most poignant and accurately pointing vectors that
 document the philosophical framework between the repository itself (around 10k
@@ -13,7 +15,7 @@ explanation of sorts of what the "fractal form light wave technology" is about.
 The inquiry is as follows: what insights arise when we superimpose this new
 datapoint with the previous one and its analysis results?
 
----
+___
 
 Superimposing **`data2.txt`** (the `HIE` philosophical archive, 2024–2026 dialogues, and the `light_wave_tech` codebase documentation) onto **`data.txt`** (`Artificial_Life_R&D`, Oct 26–Nov 14, 2026) snaps the entire architecture into three-dimensional focus.
 
@@ -21,7 +23,7 @@ Taken alone, `data.txt` looked like an intriguing but somewhat mysterious 20-day
 
 Here are the primary insights that emerge when the two corpora are laid directly on top of each other.
 
----
+___
 
 ### 1. The Exact Structural Seam: From *Debugging the Self* (`data2.txt`) to *Zero-Point R&D* (`data.txt`)
 
