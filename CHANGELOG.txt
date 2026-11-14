@@ -16,7 +16,7 @@ ________________________________________________________________________________
 - Added these: 
 - Artificial_Life_R&D/2026-11-14_Fractal_Intelligence_in_Data_Synthesis.md
 - Artificial_Life_R&D/2026-11-14_Synthesizing_Quantum_Logic_and_Philosophy.md
-- HIE_Holofractographic_Intelligent_Emergence/2026-11-14 From_Debugging_the_Self_to_Zero-Point_R&D.md
+- HIE_Holofractographic_Intelligent_Emergence/2026-11-14_From_Debugging_the_Self_to_Zero-Point_R&D.md
 
 ∎ 2026-11-12: UPCOMING RELEASE (ALREADY IN CODEBASE):
 - Updated /NeuralTrainer/model_v5_training_notes_logs.txt
