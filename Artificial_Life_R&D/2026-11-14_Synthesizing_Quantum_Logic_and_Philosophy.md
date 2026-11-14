@@ -1,6 +1,6 @@
 2026-11-14: Synthesizing Quantum Logic and Philosophy
 
-You can find the second part of the analysis here: [2026-11-14 From_Debugging_the_Self_to_Zero-Point_R&D](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/HIE_Holofractographic_Intelligent_Emergence/2026-11-14%20From_Debugging_the_Self_to_Zero-Point_R%26D.md) purposefully keeping these separate, and at the same time having had to include it somewhere (there but not here).
+You can find the second part of the analysis here: [2026-11-14_From_Debugging_the_Self_to_Zero-Point_R&D](https://github.com/InfiniteQuantumZen/light_wave_tech/blob/main/HIE_Holofractographic_Intelligent_Emergence/2026-11-14_From_Debugging_the_Self_to_Zero-Point_R%26D.md) purposefully keeping these separate, and at the same time having had to include it somewhere (there but not here).
 
 ___
 
