@@ -14,6 +14,7 @@ ________________________________________________________________________________
 
 ∎ 2026-11-18: UPCOMING RELEASE (ALREADY IN CODEBASE):
 - Added Custom_USB_Haptics_R&D/2026-11-18_Repurposing_HF-8_Haptic_Feedback_Gaming_Pad.md
+- Added Custom_USB_Haptics_R&D/2026-11-18_HF8SerialRumble.md
 
 ∎ 2026-11-14: UPCOMING RELEASE (ALREADY IN CODEBASE):
 - Added these: 
