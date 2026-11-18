@@ -13,14 +13,15 @@ NOTE ABOUT CODING: All development is done with windows notepad nothing else is 
 _____________________________________________________________________________________________________________________
 
 ∎ 2026-11-18: UPCOMING RELEASE (ALREADY IN CODEBASE):
-- Added Custom_USB_Haptics_R&D/2026-11-18_Repurposing_HF-8_Haptic_Feedback_Gaming_Pad.md
-- Added Custom_USB_Haptics_R&D/2026-11-18_HF8SerialRumble.md
+- Added these: 
+  Custom_USB_Haptics_R&D/2026-11-18_Repurposing_HF-8_Haptic_Feedback_Gaming_Pad.md
+  Custom_USB_Haptics_R&D/2026-11-18_HF8SerialRumble.md
 
 ∎ 2026-11-14: UPCOMING RELEASE (ALREADY IN CODEBASE):
 - Added these: 
-- Artificial_Life_R&D/2026-11-14_Fractal_Intelligence_in_Data_Synthesis.md
-- Artificial_Life_R&D/2026-11-14_Synthesizing_Quantum_Logic_and_Philosophy.md
-- HIE_Holofractographic_Intelligent_Emergence/2026-11-14_From_Debugging_the_Self_to_Zero-Point_R&D.md
+  Artificial_Life_R&D/2026-11-14_Fractal_Intelligence_in_Data_Synthesis.md
+  Artificial_Life_R&D/2026-11-14_Synthesizing_Quantum_Logic_and_Philosophy.md
+  HIE_Holofractographic_Intelligent_Emergence/2026-11-14_From_Debugging_the_Self_to_Zero-Point_R&D.md
 
 ∎ 2026-11-12: UPCOMING RELEASE (ALREADY IN CODEBASE):
 - Updated /NeuralTrainer/model_v5_training_notes_logs.txt
