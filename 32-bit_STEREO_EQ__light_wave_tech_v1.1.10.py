@@ -906,6 +906,123 @@ flags = pygame.OPENGL | pygame.DOUBLEBUF | pygame.FULLSCREEN
 pygame.init()
 
 #______________________________________________________________________________________________________
+#___HF8_________________________
+import serial
+import serial.tools.list_ports
+
+class HF8SerialRumble:
+    """
+    Direct USB-Serial driver for the Next Level Racing HF8 (zero SimHub required).
+    Protocol: 115200 baud, ASCII commands 'M<0-7><0-255>\\r'.
+    """
+    # Map your 3 frequency bands onto the 8 physical motors
+    BAND_MOTORS = {
+        "bass":  (0, 1, 2, 3),  # Thighs + Buttocks
+        "snare": (4, 5),        # Mid/Lower Back
+        "hihat": (6, 7),        # Shoulders / Upper Back
+
+#        "bass":  (0, 4, 6),  # Thighs + Buttocks
+#        "snare": (1, 2),        # Mid/Lower Back
+#        "hihat": (2, 2),        # Shoulders / Upper Back
+    }
+
+    def __init__(self, port="COM4"):
+        self.ser = None
+        self.forces = {"bass": 0.0, "snare": 0.0, "hihat": 0.0}
+        self.end_times = {"bass": 0.0, "snare": 0.0, "hihat": 0.0}
+        self.last_motor_vals = [-1] * 8  # Cache to avoid resending unchanged values
+
+        try:
+            self.ser = serial.Serial(
+                port=port,
+                baudrate=115200,
+                bytesize=serial.EIGHTBITS,
+                parity=serial.PARITY_NONE,
+                stopbits=serial.STOPBITS_ONE_POINT_FIVE,
+                timeout=0.05,
+                write_timeout=0.05,
+            )
+        except serial.SerialException:
+            # Fallback if a specific Windows USB-UART driver rejects 1.5 stopbits
+            try:
+                self.ser = serial.Serial(
+                    port=port,
+                    baudrate=115200,
+                    bytesize=serial.EIGHTBITS,
+                    parity=serial.PARITY_NONE,
+                    stopbits=serial.STOPBITS_ONE,
+                    timeout=0.05,
+                    write_timeout=0.05,
+                )
+            except serial.SerialException as e:
+                print(f"HF8 not connected on {port}: {e}")
+                print("Available ports:", [p.device for p in serial.tools.list_ports.comports()])
+                return
+
+        self.check_status()
+
+    def check_status(self):
+        """Queries dial scale & USB/Audio mode using 'P\\r'."""
+        if not self.ser or not self.ser.is_open:
+            return
+        self.ser.write(b"P\r")
+        resp = self.ser.read_until(b"\r").decode("ascii", errors="ignore").strip()
+        if resp:
+            print(f"HF8 Status: {resp}")
+            if ",A1" in resp:
+                print("WARNING: HF8 is in 3.5mm Audio Mode! Hold the control button 5s for USB Mode.")
+
+    def _apply_hardware(self):
+        if not self.ser or not self.ser.is_open:
+            return
+
+        buttock_boost = 1.5  # e.g., +50% intensity for motors 2 & 3
+
+        commands = []
+        for band, motors in self.BAND_MOTORS.items():
+            base_intensity = self.forces[band] * 255
+            for m in motors:
+                if m in (2, 3):
+                    intensity = int(round(base_intensity * buttock_boost))
+                else:
+                    intensity = int(round(base_intensity))
+
+                # Clamp to valid 0–255 hardware range
+                intensity = max(0, min(255, intensity))
+
+                if self.last_motor_vals[m] != intensity:
+                    commands.append(f"M{m}{intensity}\r")
+                    self.last_motor_vals[m] = intensity
+
+        if commands:
+            self.ser.write("".join(commands).encode("ascii"))
+
+    def trigger(self, band, force, duration):
+        if force <= 0.0 or duration <= 0.0:
+            return
+        self.forces[band] = max(0.0, min(1.0, force))
+        self.end_times[band] = time.time() + duration
+
+    def update(self, bass_sync=(0.0, 0.0), snare_sync=(0.0, 0.0), hihat_sync=(0.0, 0.0)):
+        now = time.time()
+
+        for band in ("bass", "snare", "hihat"):
+            if self.forces[band] > 0.0 and now >= self.end_times[band]:
+                self.forces[band] = 0.0
+
+        self.trigger("bass",  *bass_sync)
+        self.trigger("snare", *snare_sync)
+        self.trigger("hihat", *hihat_sync)
+
+        self._apply_hardware()
+
+    def stop(self):
+        self.forces = {"bass": 0.0, "snare": 0.0, "hihat": 0.0}
+        self._apply_hardware()
+        if self.ser and self.ser.is_open:
+            self.ser.close()
+
+#______________________________________________________________________________________________________
 #___CONTROLLER_________________________
 
 # --- WINDOWS API C-STRUCTS FOR XBOX RUMBLE ---
@@ -1013,10 +1130,6 @@ def Get_Rumble_Sync(anim_data_1, anim_data_2, anim_data_3,
                     prev_amplitude_bass, prev_amplitude_snare,
                     audio_time_elapsed_rumble):
 
-    THRESHOLD_BASS_RUMBLE  = 0.35
-    THRESHOLD_SNARE_RUMBLE = 0.40
-    THRESHOLD_HIHAT_RUMBLE = 0.40
-
     apply_rumble_1 = apply_rumble_2 = apply_rumble_3 = False
 
     #______________________________________________________________________________________________________
@@ -1039,7 +1152,7 @@ def Get_Rumble_Sync(anim_data_1, anim_data_2, anim_data_3,
             highest_bass_this_frame = anim_data_1[anim_data_index_1][1]
     current_amplitude_bass = highest_bass_this_frame
 
-    if current_amplitude_bass >= THRESHOLD_BASS_RUMBLE:
+    if current_amplitude_bass >= THRESHOLD_BASS:
         bass_amplitude_delta = round(current_amplitude_bass - prev_amplitude_bass, 4)
         prev_amplitude_bass = current_amplitude_bass
     else:
@@ -1052,7 +1165,7 @@ def Get_Rumble_Sync(anim_data_1, anim_data_2, anim_data_3,
             highest_snare_this_frame = anim_data_2[anim_data_index_2][1]
     current_amplitude_snare = highest_snare_this_frame
 
-    if current_amplitude_snare >= THRESHOLD_SNARE_RUMBLE:
+    if current_amplitude_snare >= THRESHOLD_SNARE:
         snare_amplitude_delta = round(current_amplitude_snare - prev_amplitude_snare, 4)
         prev_amplitude_snare = current_amplitude_snare
     else:
@@ -1067,13 +1180,13 @@ def Get_Rumble_Sync(anim_data_1, anim_data_2, anim_data_3,
 
     bass_snare_delta = abs(bass_amplitude_delta - snare_amplitude_delta)
 
-    if current_amplitude_bass >= THRESHOLD_BASS_RUMBLE:
+    if current_amplitude_bass >= THRESHOLD_BASS:
         apply_rumble_1 = True
 
-    if current_amplitude_snare >= THRESHOLD_SNARE_RUMBLE and bass_snare_delta >= 0.05:
+    if current_amplitude_snare >= THRESHOLD_SNARE and bass_snare_delta >= 0.05:
         apply_rumble_2 = True
 
-    if current_amplitude_hihat >= THRESHOLD_HIHAT_RUMBLE:
+    if current_amplitude_hihat >= THRESHOLD_HIHAT:
         apply_rumble_3 = True
 
     # 1. Initialize variables for this specific frame
@@ -1091,6 +1204,8 @@ def Get_Rumble_Sync(anim_data_1, anim_data_2, anim_data_3,
             target_left_duration = 0.05
             target_left_force = 0.2 + current_amplitude_bass
 
+    target_hf8_bass = (target_left_force, target_left_duration)
+
     # --- SNARE (Right Motor) ---
     if apply_rumble_2:
         if current_amplitude_snare > 0.6:
@@ -1100,7 +1215,10 @@ def Get_Rumble_Sync(anim_data_1, anim_data_2, anim_data_3,
             target_right_duration = 0.05
             target_right_force = 0.2 + current_amplitude_snare
 
+    target_hf8_snare = (target_right_force, target_right_duration)
+
     # --- HI-HAT (Right Motor) ---
+    target_hf8_hihat = (0.0, 0.0)
     if apply_rumble_3:
         temp_force = 0.0
         temp_duration = 0.0
@@ -1111,19 +1229,36 @@ def Get_Rumble_Sync(anim_data_1, anim_data_2, anim_data_3,
         elif current_amplitude_hihat > 0.1:
             temp_duration = 0.05
             temp_force = 0.2 + current_amplitude_hihat
+
+        target_hf8_hihat = (temp_force, temp_duration)
         
         # We use the higher value to ensure a weak hi-hat doesn't overwrite a heavy snare!
         if temp_force > target_right_force:
             target_right_force = temp_force
             target_right_duration = temp_duration
 
-    return (target_left_force, target_left_duration), \
+
+    return target_hf8_bass, target_hf8_snare, target_hf8_hihat, \
+           (target_left_force, target_left_duration), \
            (target_right_force, target_right_duration), \
            prev_amplitude_bass, prev_amplitude_snare, \
            anim_data_index_1, anim_data_index_2, anim_data_index_3
 
 #______________________________________________________________________________________________________
 #___JSON_______________________________
+
+def validate_index(idx, ceiling):
+    """
+    Checks if index is below ceiling. If not, halves it and checks again.
+    Returns the valid index, or None if it still exceeds the ceiling.
+    """
+    if idx > ceiling:
+        idx = idx // 2
+        
+    if idx <= ceiling:
+        return idx
+    else:
+        return None
 
 def load_neural_indices_json(filepath, ceiling=None):
     try:
@@ -1133,6 +1268,23 @@ def load_neural_indices_json(filepath, ceiling=None):
         # 2026-10-10: ADDED THIS TO ACCOUNT FOR 120K INDEX RANGE
         with open(filepath, 'r') as f:
             indices = json.load(f)
+
+            """# If a ceiling is provided, filter the list
+            if ceiling is not None:
+                filtered_indices = []
+                for idx in indices:
+                    valid_idx = validate_index(idx, ceiling)
+                    if valid_idx is not None:
+                        filtered_indices.append(valid_idx)
+                
+                # Optional: Let the user know how many indices were filtered out
+                if len(filtered_indices) < len(indices):
+                    print(f"Filtered out {len(indices) - len(filtered_indices)} out-of-bounds indices.")
+
+                return filtered_indices
+            else:
+                return indices"""
+
             
             # If a ceiling is provided, filter the list
             if ceiling is not None:
@@ -2088,6 +2240,8 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
         # Initialize our non-blocking rumble manager
         rumble_1 = XboxControllerRumble(controller_id=0)
         rumble_2 = XboxControllerRumble(controller_id=1)
+        hf8_seat = HF8SerialRumble()
+        hf8_seat.check_status()
 
         executor = ThreadPoolExecutor(max_workers=4)
         start_time = time.perf_counter()
@@ -2117,7 +2271,7 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
             
             # Calculate time in milliseconds for audio sync
             audio_time_elapsed = int(((current_perf_time - start_time) + AV_SYNC_OFFSET) * 1000)
-            audio_time_elapsed_rumble = int(((current_perf_time - start_time) + (AV_SYNC_OFFSET/2.0)) * 1000)
+            audio_time_elapsed_rumble = int(((current_perf_time - start_time) + (AV_SYNC_OFFSET/1.7)) * 1000)
 
             # --- FIX: REMOVE PER-FRAME RANDOMIZATION ---
             # video_playback_speed = random.uniform(1.9, 2.5) 
@@ -2489,12 +2643,10 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
                         else:
                             glitch_type_left = "vertical"
 
-
-
                         tmp_random_words = []
                         for i in range(len(inspirational_words_combined)-1):
-                            drawn_quantum_index = np.random.choice(valid_indexes)
-                            drawn_quantum_count = counts[drawn_quantum_index]
+                            drawn_quantum_index = np.random.choice(quantum_valid_indexes)
+                            drawn_quantum_count = quantum_counts[drawn_quantum_index]
 
                             if drawn_quantum_count > 8:
                                 tmp_random_words.append(inspirational_words_combined[i])
@@ -3143,6 +3295,7 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
                 #______________________________________________________________________________________________________
                 #___APPLY_CONTROLLER_RUMBLE___(vibrotactile)
 
+                rumble_hf8_bass, rumble_hf8_snare, rumble_hf8_hihat, \
                 rumble_left_sync, rumble_right_sync, \
                 prev_amplitude_bass_rumble, prev_amplitude_snare_rumble, \
                 anim_data_index_1_rumble, anim_data_index_2_rumble, anim_data_index_3_rumble = Get_Rumble_Sync(
@@ -3165,6 +3318,8 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
 
                     rumble_2.rumble_left(force=1.0, duration=0.08)
                     rumble_2.rumble_right(force=1.0, duration=0.08)
+
+                    hf8_seat.update(bass_sync=(1.0, 0.08), snare_sync=(1.0, 0.08), hihat_sync=(1.0, 0.08)) 
                 else:
                     if target_left_force > 0.0:
                         rumble_1.rumble_left(force=target_left_force, duration=target_left_duration)
@@ -3173,6 +3328,8 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
                     if target_right_force > 0.0:
                         rumble_1.rumble_right(force=target_right_force, duration=target_right_duration)
                         rumble_2.rumble_right(force=target_right_force, duration=target_right_duration)
+                    
+                    hf8_seat.update(bass_sync=rumble_hf8_bass, snare_sync=rumble_hf8_snare, hihat_sync=rumble_hf8_hihat) 
 
                 # 3. Always run update to handle shutting them down when timers expire
                 rumble_1.update()
@@ -3388,6 +3545,7 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
         print(f"AVG_FPS: {avg_fps}")
         print(f"  skipped_frames: {int(skipped_frames/1000)}")
 
+        hf8_seat.stop()
         sd.stop()               # Instantly stops hardware playback
         del my_song_array       # Free up RAM
 
@@ -3623,10 +3781,10 @@ if __name__ == '__main__':
 
     #audio_base_folder = config.get("audio_filepaths", {}).get("music_folder")
     
-    # DUE TO THE LACK OF STORAGE 3 PLACES
-    audio_base_folder_1 = "H:/SUNO_32-BIT_AUDIO" # CORE + CUSTOM
-    audio_base_folder_2 = "C:/SUNO_32-BIT_AUDIO" # SUMMER
-    audio_base_folder_3 = "F:/SUNO_32-BIT_AUDIO" # HARDWAVE + PSY_TRANCE
+    # DUE TO THE LACK OF STORAGE 3 PLACES | 2026-11-21: MOVED ALL TO G:/
+    audio_base_folder_1 = "G:/SUNO_32-BIT_AUDIO" # CORE + CUSTOM
+    audio_base_folder_2 = "G:/SUNO_32-BIT_AUDIO" # SUMMER
+    audio_base_folder_3 = "G:/SUNO_32-BIT_AUDIO" # HARDWAVE + PSY_TRANCE
 
     audio_sync_data_base_folder = config.get("audio_filepaths", {}).get("sync_folder")
 
@@ -3664,7 +3822,7 @@ if __name__ == '__main__':
     random.shuffle(songs_all_random)
 
 
-    counts = np.load('DATA/quantum_json_batches/counts_data.npy')
+    """counts = np.load('DATA/quantum_json_batches/counts_data.npy')
     valid_indexes = np.nonzero(counts)[0]
     tmp_songs = [] 
 
@@ -3677,13 +3835,17 @@ if __name__ == '__main__':
             #print(f"Randomly picked an existing item: {drawn_quantum_string}")
             #print(f"This item had a count of: {drawn_quantum_count}")
             tmp_songs.append(songs_all_random[i])
-    songs_all_random = tmp_songs
+    songs_all_random = tmp_songs"""
 
     print(f"{len(songs_all_random)} items in playlist")
     #print(songs_all_random)
     #sys.exit()
 
     for i, song_data in enumerate(songs_all_random):
+        if i == NUM_SESSIONS:
+            print("End of playlist reached. Exiting playlist...")
+            break  # <--- This immediately stops the 'for' loop
+
 #        video_filenames_left, video_filenames_right = run_video_init()
         video_filenames_left, video_filenames_right = session_precalc_data[i]
 
@@ -3705,10 +3867,6 @@ if __name__ == '__main__':
         
         # Check if the user pressed 'x'
         if kill_playlist == True:
-            print("Kill command received. Exiting playlist gracefully...")
-            break  # <--- This immediately stops the 'for' loop
-
-        if i == NUM_SESSIONS:
             print("Kill command received. Exiting playlist gracefully...")
             break  # <--- This immediately stops the 'for' loop
 
