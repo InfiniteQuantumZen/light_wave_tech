@@ -12,43 +12,46 @@ the whole (everything put out there publicly).
 NOTE ABOUT CODING: All development is done with windows notepad nothing else is needed. 
 _____________________________________________________________________________________________________________________
 
-∎ 2026-11-21: UPCOMING RELEASE (ALREADY IN CODEBASE):
+∎∎∎ 2026-11-01: Light Wave Tech v0.1.3:
+The following major changes and additions were made. This is v0.1.2 and the author is pleased with it.
+
+∎ 2026-11-21:
 - Integrated class HF8SerialRumble into the main file: 32-bit_STEREO_EQ__light_wave_tech_v1.1.10.py
 - Added TOOLS/mini_audio_player/v4_32-bit_pygame_mini_audio_player.py with the same integration
 
-∎ 2026-11-18: UPCOMING RELEASE (ALREADY IN CODEBASE):
+∎ 2026-11-18:
 - Added these: 
   Custom_USB_Haptics_R&D/2026-11-18_Repurposing_HF-8_Haptic_Feedback_Gaming_Pad.md
   Custom_USB_Haptics_R&D/2026-11-18_HF8SerialRumble.md
 
-∎ 2026-11-14: UPCOMING RELEASE (ALREADY IN CODEBASE):
+∎ 2026-11-14:
 - Added these: 
   Artificial_Life_R&D/2026-11-14_Fractal_Intelligence_in_Data_Synthesis.md
   Artificial_Life_R&D/2026-11-14_Synthesizing_Quantum_Logic_and_Philosophy.md
   HIE_Holofractographic_Intelligent_Emergence/2026-11-14_From_Debugging_the_Self_to_Zero-Point_R&D.md
 
-∎ 2026-11-12: UPCOMING RELEASE (ALREADY IN CODEBASE):
+∎ 2026-11-12:
 - Updated /NeuralTrainer/model_v5_training_notes_logs.txt
 - Added fixed version /NeuralTrainer/NEW_RUNPOD_v6_OPTIMIZED_trainer.py
 
-∎ 2026-11-06: UPCOMING RELEASE (ALREADY IN CODEBASE):
+∎ 2026-11-06:
 - Added these:
   TOOLS/quantum_blackbox/v2_into_master_consolidation.py
   TOOLS/quantum_blackbox/v2_analyze.py
 - Added Artificial_Life_R&D/2026-11-06_Analyzing_Quantum_Randomness_Distribution.md
 
-∎ 2026-11-03: UPCOMING RELEASE (ALREADY IN CODEBASE):
+∎ 2026-11-03:
 - Added Artificial_Life_R&D/2026-11-03_Buddhist_Lens_Critiquing_Dark Matter's_Multiverse_Logic.md
 - Added Artificial_Life_R&D/2026-11-03_Quantum_Branching_and_Neural_Iteration.md
 
-∎ 2026-11-02: UPCOMING RELEASE (ALREADY IN CODEBASE):
+∎ 2026-11-02:
 - Added Artificial_Life_R&D/2026-11-02_Quantum_Spin_and_Protein_Folding.md
 - Added Artificial_Life_R&D/2026-11-02_The_Legend_Of_The_Anomaly.md
 - Added these to ComfyUI_Workflows
   TOOLS/ComfyUI_Workflows/comfyui_horizontal_upscale_interpolation.json
   TOOLS/ComfyUI_Workflows/comfyui_square_upscale_interpolation.json
 
-∎ 2026-11-01: UPCOMING RELEASE (ALREADY IN CODEBASE):
+∎ 2026-11-01:
 - Added Artificial_Life_R&D/2026-10-29_Parity_Versus_Majority_Logic_Gates.md
 - Added Artificial_Life_R&D/2026-10-30_Quantum_Circuit_Data_Processing_Mechanics.md
 
@@ -57,7 +60,7 @@ ________________________________________________________________________________
   easily comprehensible format that would bring out the intention of the message to the 
   forefront by applying coherent modern wording and grammar to the data.
 
-∎ 2026-11-01: Light Wave Tech v0.1.2:
+∎∎∎ 2026-11-01: Light Wave Tech v0.1.2:
 The following major changes and additions were made. This is v0.1.2 and the author is pleased with it.
 
 ∎ 2026-10-30:
@@ -125,7 +128,7 @@ The following major changes and additions were made. This is v0.1.2 and the auth
   TOOLS\shader_boilerplate\copy_contents.py
   TOOLS\shader_boilerplate\zoom_rot_flash_mask_shader_template.txt
 
-∎ 2026-10-22: Light Wave Tech v0.1.1:
+∎∎∎ 2026-10-22: Light Wave Tech v0.1.1:
 - Updated elements include base code, some bug fixes in the main file with regard to video frame multicore composition, 
 improved audio, DSP and EQ sections, ROG Theta 7.1 headphone specific code alterations, new v6 NeuralTrainer code, 
 many documentation improvements, new metaphysical lore additions; tested cloning the repo and rebuilding 
