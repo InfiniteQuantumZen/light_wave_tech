@@ -12,6 +12,10 @@ the whole (everything put out there publicly).
 NOTE ABOUT CODING: All development is done with windows notepad nothing else is needed. 
 _____________________________________________________________________________________________________________________
 
+∎ 2026-11-21: UPCOMING RELEASE (ALREADY IN CODEBASE):
+- Integrated class HF8SerialRumble into the main file: 32-bit_STEREO_EQ__light_wave_tech_v1.1.10.py
+- Added TOOLS/mini_audio_player/v4_32-bit_pygame_mini_audio_player.py with the same integration
+
 ∎ 2026-11-18: UPCOMING RELEASE (ALREADY IN CODEBASE):
 - Added these: 
   Custom_USB_Haptics_R&D/2026-11-18_Repurposing_HF-8_Haptic_Feedback_Gaming_Pad.md
