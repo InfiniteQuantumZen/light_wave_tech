@@ -907,12 +907,17 @@ pygame.init()
 
 #______________________________________________________________________________________________________
 #___HF8_________________________
+import re
 import serial
 import serial.tools.list_ports
 
 class HF8SerialRumble:
     """
-    Direct USB-Serial driver for the Next Level Racing HF8 (zero SimHub required).
+    Direct USB-Serial driver for the Next Level Racing HF8.
+    Supports:
+      - HF8SerialRumble()                 -> Auto-detect via USB scan + 'P\\r' handshake
+      - HF8SerialRumble(port="COM4")      -> Open specific COM port directly
+      - HF8SerialRumble(vid=0x..., pid=0x...) -> Filter strictly to a specific USB chip
     Protocol: 115200 baud, ASCII commands 'M<0-7><0-255>\\r'.
     """
     # Map your 3 frequency bands onto the 8 physical motors
@@ -920,82 +925,117 @@ class HF8SerialRumble:
         "bass":  (0, 1, 2, 3),  # Thighs + Buttocks
         "snare": (4, 5),        # Mid/Lower Back
         "hihat": (6, 7),        # Shoulders / Upper Back
-
-#        "bass":  (0, 4, 6),  # Thighs + Buttocks
-#        "snare": (1, 2),        # Mid/Lower Back
-#        "hihat": (2, 2),        # Shoulders / Upper Back
     }
 
     def __init__(self, port="COM4"):
         self.ser = None
+        self.port = None
+        self.is_connected = False
+
         self.forces = {"bass": 0.0, "snare": 0.0, "hihat": 0.0}
         self.end_times = {"bass": 0.0, "snare": 0.0, "hihat": 0.0}
         self.last_motor_vals = [-1] * 8  # Cache to avoid resending unchanged values
 
-        try:
-            self.ser = serial.Serial(
-                port=port,
-                baudrate=115200,
-                bytesize=serial.EIGHTBITS,
-                parity=serial.PARITY_NONE,
-                stopbits=serial.STOPBITS_ONE_POINT_FIVE,
-                timeout=0.05,
-                write_timeout=0.05,
-            )
-        except serial.SerialException:
-            # Fallback if a specific Windows USB-UART driver rejects 1.5 stopbits
+        if port and port.upper() != "AUTO":
+            self._connect_direct(port)
+        else:
+            self._auto_detect(vid=vid, pid=pid)
+
+    def _open_port(self, port_name, timeout=0.15):
+        """
+        Opens a COM port with 1.5 stopbits (falling back to 1 stopbit if driver rejects 1.5).
+        """
+        for stopbits in (serial.STOPBITS_ONE_POINT_FIVE, serial.STOPBITS_ONE):
             try:
-                self.ser = serial.Serial(
-                    port=port,
+                return serial.Serial(
+                    port=port_name,
                     baudrate=115200,
                     bytesize=serial.EIGHTBITS,
                     parity=serial.PARITY_NONE,
-                    stopbits=serial.STOPBITS_ONE,
-                    timeout=0.05,
+                    stopbits=stopbits,
+                    timeout=timeout,
                     write_timeout=0.05,
                 )
-            except serial.SerialException as e:
-                print(f"HF8 not connected on {port}: {e}")
-                print("Available ports:", [p.device for p in serial.tools.list_ports.comports()])
-                return
+            except serial.SerialException:
+                continue
+        return None
 
-        self.check_status()
+    def _probe_hf8(self, ser):
+        """Sends 'P\\r' and returns the status string if it matches 'E<num>,A<0|1>'."""
+        try:
+            ser.reset_input_buffer()
+            ser.write(b"P\r")
+            resp = ser.read_until(b"\r").decode("ascii", errors="ignore").strip()
+            if re.fullmatch(r"E\d+,\s*A[01]", resp):
+                return resp
+        except serial.SerialException:
+            pass
+        return None
 
-    def check_status(self):
-        """Queries dial scale & USB/Audio mode using 'P\\r'."""
-        if not self.ser or not self.ser.is_open:
+    def _connect_direct(self, port_name):
+        ser = self._open_port(port_name)
+        if ser is None:
+            print(f"HF8: Could not open {port_name}.")
             return
-        self.ser.write(b"P\r")
-        resp = self.ser.read_until(b"\r").decode("ascii", errors="ignore").strip()
-        if resp:
-            print(f"HF8 Status: {resp}")
-            if ",A1" in resp:
-                print("WARNING: HF8 is in 3.5mm Audio Mode! Hold the control button 5s for USB Mode.")
+
+        status = self._probe_hf8(ser)
+        self.ser = ser
+        self.port = port_name
+        self.is_connected = True
+        print(f"HF8 connected on {port_name} | Status: {status or 'No reply (check power/mode)'}")
+        if status and ",A1" in status:
+            print("WARNING: HF8 is in 3.5mm Audio Mode! Short/hold button for USB Mode.")
+
+    def _auto_detect(self, vid=None, pid=None):
+        candidates = []
+        for p in serial.tools.list_ports.comports():
+            hwid = (p.hwid or "").upper()
+            # Skip legacy motherboard ports & Bluetooth virtual COM ports (which hang on open)
+            if "USB" not in hwid or "BTHENUM" in hwid:
+                continue
+            if vid is not None and p.vid != vid:
+                continue
+            if pid is not None and p.pid != pid:
+                continue
+            candidates.append(p)
+
+        for p in candidates:
+            ser = self._open_port(p.device, timeout=0.15)
+            if ser is None:
+                continue  # Port busy (e.g. used by SimHub/HFS) or inaccessible
+
+            status = self._probe_hf8(ser)
+            if status:
+                self.ser = ser
+                self.port = p.device
+                self.is_connected = True
+                print(f"HF8 auto-detected on {p.device} ({p.description}) | Status: {status}")
+                if ",A1" in status:
+                    print("WARNING: HF8 is in 3.5mm Audio Mode! Switch to USB Mode.")
+                return
+            else:
+                ser.close()
+
+        print("HF8 not detected (check 12V power brick & USB cable). Continuing without HF8.")
 
     def _apply_hardware(self):
-        if not self.ser or not self.ser.is_open:
+        if not self.is_connected or not self.ser or not self.ser.is_open:
             return
-
-        buttock_boost = 1.5  # e.g., +50% intensity for motors 2 & 3
 
         commands = []
         for band, motors in self.BAND_MOTORS.items():
-            base_intensity = self.forces[band] * 255
+            intensity = int(round(self.forces[band] * 255))
             for m in motors:
-                if m in (2, 3):
-                    intensity = int(round(base_intensity * buttock_boost))
-                else:
-                    intensity = int(round(base_intensity))
-
-                # Clamp to valid 0–255 hardware range
-                intensity = max(0, min(255, intensity))
-
                 if self.last_motor_vals[m] != intensity:
                     commands.append(f"M{m}{intensity}\r")
                     self.last_motor_vals[m] = intensity
 
         if commands:
-            self.ser.write("".join(commands).encode("ascii"))
+            try:
+                self.ser.write("".join(commands).encode("ascii"))
+            except serial.SerialException:
+                print("HF8 disconnected!")
+                self.is_connected = False
 
     def trigger(self, band, force, duration):
         if force <= 0.0 or duration <= 0.0:
@@ -1017,10 +1057,17 @@ class HF8SerialRumble:
         self._apply_hardware()
 
     def stop(self):
+        """Zeros all motors without closing the COM port (good between playlist songs)."""
         self.forces = {"bass": 0.0, "snare": 0.0, "hihat": 0.0}
+        self.end_times = {"bass": 0.0, "snare": 0.0, "hihat": 0.0}
         self._apply_hardware()
+
+    def close(self):
+        """Zeros motors and releases the COM port back to Windows."""
+        self.stop()
         if self.ser and self.ser.is_open:
             self.ser.close()
+        self.is_connected = False
 
 #______________________________________________________________________________________________________
 #___CONTROLLER_________________________
@@ -1269,7 +1316,7 @@ def load_neural_indices_json(filepath, ceiling=None):
         with open(filepath, 'r') as f:
             indices = json.load(f)
 
-            """# If a ceiling is provided, filter the list
+            # If a ceiling is provided, filter the list
             if ceiling is not None:
                 filtered_indices = []
                 for idx in indices:
@@ -1283,10 +1330,10 @@ def load_neural_indices_json(filepath, ceiling=None):
 
                 return filtered_indices
             else:
-                return indices"""
+                return indices
 
             
-            # If a ceiling is provided, filter the list
+            """# If a ceiling is provided, filter the list
             if ceiling is not None:
                 # Keep only the indices that are within the valid range
                 filtered_indices = [idx for idx in indices if idx < ceiling]
@@ -1297,7 +1344,7 @@ def load_neural_indices_json(filepath, ceiling=None):
 
                 return filtered_indices
             else:
-                return indices
+                return indices"""
 
     except json.JSONDecodeError as e:
         # This triggers if the file was corrupted on the drive!
@@ -2103,7 +2150,15 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
             print(f"---------------------------------")
 
             sd.default.device = wasapi_out_index
-            sd.default.latency = 0.117
+            # ADJUST THIS BASED ON THE low_output_latency
+            # AFTER POWER PLUG WAS OFF FROM THE MOTHERBOARD 2026-11-21
+            # THIS NEEDED TO BE ADJUSTED TO 0.120 based on:
+            #   Device Name : Headphones (Realtek USB Audio)
+            #   Host API    : Windows WASAPI (20)
+            #   Latency     : 3.0 ms - 10.0 ms
+
+            #sd.default.latency = 0.117
+            sd.default.latency = 0.120
 
             #VR/Virtual Desktop
             #sd.default.latency = 0.127
@@ -2117,7 +2172,8 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
         # to the software and further to the ears (headphones)
         # the same amount as sd.default.latency but negative.
         # 0.05 = 50 milliseconds. 
-        AV_SYNC_OFFSET = -0.117
+        #AV_SYNC_OFFSET = -0.117
+        AV_SYNC_OFFSET = -0.120
         
         #VR/Virtual Desktop
         #AV_SYNC_OFFSET = -0.127
@@ -2216,32 +2272,26 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
         )
 
 # USE THIS TO DEBUG
-#        timeline_manager = shader_manager.ShaderTimelineManager(
-#            DEBUG,
-#            config_shader_path_glsl,
-#            main_ctx,
-#            SCREEN_WIDTH,
-#            SCREEN_HEIGHT,
-#            audio_path,
-#            timeline_json_filepath,
-#            "DEBUG/debug_resolved_timeline_9c69432d-1db1-4678-838e-9fc61683565f.json",
-#            False,
-#            shader_cache,
-#            video_playback_speeds,
-#            video_durations
-#        )
+        """timeline_manager = shader_manager.ShaderTimelineManager(
+            DEBUG,
+            config_shader_path_glsl,
+            main_ctx,
+            SCREEN_WIDTH,
+            SCREEN_HEIGHT,
+            audio_path,
+            "DEBUG/debug_resolved_timeline_90735696-7cdb-4249-aa5c-c1da87702fce.json",
+            neural_indices_filenames_all,
+            False,
+            shader_cache,
+            video_playback_speeds,
+            video_durations
+        )"""
 
 
         song_rating_manager = SongRatingManager()
 
         #______________________________________________________________________________________________________
         #___MAIN_LOOP__________________
-
-        # Initialize our non-blocking rumble manager
-        rumble_1 = XboxControllerRumble(controller_id=0)
-        rumble_2 = XboxControllerRumble(controller_id=1)
-        hf8_seat = HF8SerialRumble()
-        hf8_seat.check_status()
 
         executor = ThreadPoolExecutor(max_workers=4)
         start_time = time.perf_counter()
@@ -3313,27 +3363,27 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
 
                 # 2. Finally, apply the requested rumbles!
                 if target_left_force > 0.7 and target_right_force > 0.7:
-                    rumble_1.rumble_left(force=1.0, duration=0.08)
-                    rumble_1.rumble_right(force=1.0, duration=0.08)
+                    xbox_rumble_1.rumble_left(force=1.0, duration=0.08)
+                    xbox_rumble_1.rumble_right(force=1.0, duration=0.08)
 
-                    rumble_2.rumble_left(force=1.0, duration=0.08)
-                    rumble_2.rumble_right(force=1.0, duration=0.08)
+                    xbox_rumble_2.rumble_left(force=1.0, duration=0.08)
+                    xbox_rumble_2.rumble_right(force=1.0, duration=0.08)
 
                     hf8_seat.update(bass_sync=(1.0, 0.08), snare_sync=(1.0, 0.08), hihat_sync=(1.0, 0.08)) 
                 else:
                     if target_left_force > 0.0:
-                        rumble_1.rumble_left(force=target_left_force, duration=target_left_duration)
-                        rumble_2.rumble_left(force=target_left_force, duration=target_left_duration)
+                        xbox_rumble_1.rumble_left(force=target_left_force, duration=target_left_duration)
+                        xbox_rumble_2.rumble_left(force=target_left_force, duration=target_left_duration)
 
                     if target_right_force > 0.0:
-                        rumble_1.rumble_right(force=target_right_force, duration=target_right_duration)
-                        rumble_2.rumble_right(force=target_right_force, duration=target_right_duration)
+                        xbox_rumble_1.rumble_right(force=target_right_force, duration=target_right_duration)
+                        xbox_rumble_2.rumble_right(force=target_right_force, duration=target_right_duration)
                     
                     hf8_seat.update(bass_sync=rumble_hf8_bass, snare_sync=rumble_hf8_snare, hihat_sync=rumble_hf8_hihat) 
 
                 # 3. Always run update to handle shutting them down when timers expire
-                rumble_1.update()
-                rumble_2.update()
+                xbox_rumble_1.update()
+                xbox_rumble_2.update()
 
                 #______________________________________________________________________________________________________
 
@@ -3728,6 +3778,11 @@ def run_video_init():
 
 if __name__ == '__main__':
 
+    # Initialize our non-blocking rumble managers
+    xbox_rumble_1 = XboxControllerRumble(controller_id=0)
+    xbox_rumble_2 = XboxControllerRumble(controller_id=1)
+    hf8_seat = HF8SerialRumble()
+
     
     """audio_base_folder = config.get("audio_filepaths", {}).get("music_folder")
     audio_sync_data_base_folder = config.get("audio_filepaths", {}).get("sync_folder")
@@ -3755,7 +3810,7 @@ if __name__ == '__main__':
 
 ####____PLAYLIST____####
 
-    NUM_SESSIONS = 3
+    NUM_SESSIONS = 10
     #NUM_SESSIONS = 1
 
     session_precalc_data = []
@@ -3773,10 +3828,10 @@ if __name__ == '__main__':
 # TRY rainbow vortex + zoom/rot
 
     EVERYTHING         = False
-    CORE_EDITION       = False
+    CORE_EDITION       = True
     SUMMER_EDITION     = False
     PSY_TRANCE_EDITION = False
-    HARDWAVE_EDITION   = True
+    HARDWAVE_EDITION   = False
     CUSTOM_EDITION     = False
 
     #audio_base_folder = config.get("audio_filepaths", {}).get("music_folder")
