@@ -26,15 +26,19 @@ import scipy.signal
 import os
 
 
-
 #______________________________________________________________________________________________________
 #___HF8_________________________
+import re
 import serial
 import serial.tools.list_ports
 
 class HF8SerialRumble:
     """
-    Direct USB-Serial driver for the Next Level Racing HF8 (zero SimHub required).
+    Direct USB-Serial driver for the Next Level Racing HF8.
+    Supports:
+      - HF8SerialRumble()                 -> Auto-detect via USB scan + 'P\\r' handshake
+      - HF8SerialRumble(port="COM4")      -> Open specific COM port directly
+      - HF8SerialRumble(vid=0x..., pid=0x...) -> Filter strictly to a specific USB chip
     Protocol: 115200 baud, ASCII commands 'M<0-7><0-255>\\r'.
     """
     # Map your 3 frequency bands onto the 8 physical motors
@@ -46,52 +50,97 @@ class HF8SerialRumble:
 
     def __init__(self, port="COM4"):
         self.ser = None
+        self.port = None
+        self.is_connected = False
+
         self.forces = {"bass": 0.0, "snare": 0.0, "hihat": 0.0}
         self.end_times = {"bass": 0.0, "snare": 0.0, "hihat": 0.0}
         self.last_motor_vals = [-1] * 8  # Cache to avoid resending unchanged values
 
-        try:
-            self.ser = serial.Serial(
-                port=port,
-                baudrate=115200,
-                bytesize=serial.EIGHTBITS,
-                parity=serial.PARITY_NONE,
-                stopbits=serial.STOPBITS_ONE_POINT_FIVE,
-                timeout=0.05,
-                write_timeout=0.05,
-            )
-        except serial.SerialException:
-            # Fallback if a specific Windows USB-UART driver rejects 1.5 stopbits
+        if port and port.upper() != "AUTO":
+            self._connect_direct(port)
+        else:
+            self._auto_detect(vid=vid, pid=pid)
+
+    def _open_port(self, port_name, timeout=0.15):
+        """
+        Opens a COM port with 1.5 stopbits (falling back to 1 stopbit if driver rejects 1.5).
+        """
+        for stopbits in (serial.STOPBITS_ONE_POINT_FIVE, serial.STOPBITS_ONE):
             try:
-                self.ser = serial.Serial(
-                    port=port,
+                return serial.Serial(
+                    port=port_name,
                     baudrate=115200,
                     bytesize=serial.EIGHTBITS,
                     parity=serial.PARITY_NONE,
-                    stopbits=serial.STOPBITS_ONE,
-                    timeout=0.05,
+                    stopbits=stopbits,
+                    timeout=timeout,
                     write_timeout=0.05,
                 )
-            except serial.SerialException as e:
-                print(f"HF8 not connected on {port}: {e}")
-                print("Available ports:", [p.device for p in serial.tools.list_ports.comports()])
-                return
+            except serial.SerialException:
+                continue
+        return None
 
-        self.check_status()
+    def _probe_hf8(self, ser):
+        """Sends 'P\\r' and returns the status string if it matches 'E<num>,A<0|1>'."""
+        try:
+            ser.reset_input_buffer()
+            ser.write(b"P\r")
+            resp = ser.read_until(b"\r").decode("ascii", errors="ignore").strip()
+            if re.fullmatch(r"E\d+,\s*A[01]", resp):
+                return resp
+        except serial.SerialException:
+            pass
+        return None
 
-    def check_status(self):
-        """Queries dial scale & USB/Audio mode using 'P\\r'."""
-        if not self.ser or not self.ser.is_open:
+    def _connect_direct(self, port_name):
+        ser = self._open_port(port_name)
+        if ser is None:
+            print(f"HF8: Could not open {port_name}.")
             return
-        self.ser.write(b"P\r")
-        resp = self.ser.read_until(b"\r").decode("ascii", errors="ignore").strip()
-        if resp:
-            print(f"HF8 Status: {resp}")
-            if ",A1" in resp:
-                print("WARNING: HF8 is in 3.5mm Audio Mode! Hold the control button 5s for USB Mode.")
+
+        status = self._probe_hf8(ser)
+        self.ser = ser
+        self.port = port_name
+        self.is_connected = True
+        print(f"HF8 connected on {port_name} | Status: {status or 'No reply (check power/mode)'}")
+        if status and ",A1" in status:
+            print("WARNING: HF8 is in 3.5mm Audio Mode! Short/hold button for USB Mode.")
+
+    def _auto_detect(self, vid=None, pid=None):
+        candidates = []
+        for p in serial.tools.list_ports.comports():
+            hwid = (p.hwid or "").upper()
+            # Skip legacy motherboard ports & Bluetooth virtual COM ports (which hang on open)
+            if "USB" not in hwid or "BTHENUM" in hwid:
+                continue
+            if vid is not None and p.vid != vid:
+                continue
+            if pid is not None and p.pid != pid:
+                continue
+            candidates.append(p)
+
+        for p in candidates:
+            ser = self._open_port(p.device, timeout=0.15)
+            if ser is None:
+                continue  # Port busy (e.g. used by SimHub/HFS) or inaccessible
+
+            status = self._probe_hf8(ser)
+            if status:
+                self.ser = ser
+                self.port = p.device
+                self.is_connected = True
+                print(f"HF8 auto-detected on {p.device} ({p.description}) | Status: {status}")
+                if ",A1" in status:
+                    print("WARNING: HF8 is in 3.5mm Audio Mode! Switch to USB Mode.")
+                return
+            else:
+                ser.close()
+
+        print("HF8 not detected (check 12V power brick & USB cable). Continuing without HF8.")
 
     def _apply_hardware(self):
-        if not self.ser or not self.ser.is_open:
+        if not self.is_connected or not self.ser or not self.ser.is_open:
             return
 
         commands = []
@@ -103,7 +152,11 @@ class HF8SerialRumble:
                     self.last_motor_vals[m] = intensity
 
         if commands:
-            self.ser.write("".join(commands).encode("ascii"))
+            try:
+                self.ser.write("".join(commands).encode("ascii"))
+            except serial.SerialException:
+                print("HF8 disconnected!")
+                self.is_connected = False
 
     def trigger(self, band, force, duration):
         if force <= 0.0 or duration <= 0.0:
@@ -125,10 +178,17 @@ class HF8SerialRumble:
         self._apply_hardware()
 
     def stop(self):
+        """Zeros all motors without closing the COM port (good between playlist songs)."""
         self.forces = {"bass": 0.0, "snare": 0.0, "hihat": 0.0}
+        self.end_times = {"bass": 0.0, "snare": 0.0, "hihat": 0.0}
         self._apply_hardware()
+
+    def close(self):
+        """Zeros motors and releases the COM port back to Windows."""
+        self.stop()
         if self.ser and self.ser.is_open:
             self.ser.close()
+        self.is_connected = False
 #______________________________________________________________________________________________________
 
 
@@ -761,8 +821,10 @@ except ValueError:
     print("WASAPI is not available on this system.")
 
 hf8_seat = HF8SerialRumble()
-hf8_seat.check_status()
 
+# Initialize our non-blocking rumble manager
+xbox_rumble_1 = XboxControllerRumble(controller_id=0)
+xbox_rumble_2 = XboxControllerRumble(controller_id=1)
 
 if PLAYLIST:
     for i, song_data in enumerate(songs_all_random):
@@ -805,20 +867,16 @@ if PLAYLIST:
             )
         else:
             # JBL
-            my_song_array, sample_rate, audio_len_seconds = SUNO_load_and_EQ(playlist_type, audio_path, bass_db=9.5, mid_db=0.5, treble_db=2.7)
+            #my_song_array, sample_rate, audio_len_seconds = SUNO_load_and_EQ(playlist_type, audio_path, bass_db=9.5, mid_db=0.5, treble_db=2.7)
 
             # AKG
-            #my_song_array, sample_rate, audio_len_seconds = SUNO_load_and_EQ(playlist_type, audio_path, bass_db=7.8, mid_db=1.8, treble_db=3.5)
+            my_song_array, sample_rate, audio_len_seconds = SUNO_load_and_EQ(playlist_type, audio_path, bass_db=7.8, mid_db=1.8, treble_db=3.5)
 
         inferred_channels = my_song_array.shape[1] if my_song_array.ndim > 1 else 1
         inferred_dtype = my_song_array.dtype.name
         print(f"Audio Sample Rate : {sample_rate} Hz (Requested)")
         print(f"Audio Channels    : {inferred_channels}")
         print(f"Audio Format      : {inferred_dtype}")
-
-        # Initialize our non-blocking rumble manager
-        rumble_1 = XboxControllerRumble(controller_id=0)
-        rumble_2 = XboxControllerRumble(controller_id=1)
     
         # Play the audio; this directly interfaces with WASAPI/DirectSound
         if inferred_channels > 2:
@@ -877,27 +935,27 @@ if PLAYLIST:
 
             # 2. Finally, apply the requested rumbles!
             if target_left_force > 0.7 and target_right_force > 0.7:
-                rumble_1.rumble_left(force=1.0, duration=0.08)
-                rumble_1.rumble_right(force=1.0, duration=0.08)
+                xbox_rumble_1.rumble_left(force=1.0, duration=0.08)
+                xbox_rumble_1.rumble_right(force=1.0, duration=0.08)
 
-                rumble_2.rumble_left(force=1.0, duration=0.08)
-                rumble_2.rumble_right(force=1.0, duration=0.08)
+                xbox_rumble_2.rumble_left(force=1.0, duration=0.08)
+                xbox_rumble_2.rumble_right(force=1.0, duration=0.08)
  
                 hf8_seat.update(bass_sync=(1.0, 0.08), snare_sync=(1.0, 0.08), hihat_sync=(1.0, 0.08)) 
             else:
                 if target_left_force > 0.0:
-                    rumble_1.rumble_left(force=target_left_force, duration=target_left_duration)
-                    rumble_2.rumble_left(force=target_left_force, duration=target_left_duration)
+                    xbox_rumble_1.rumble_left(force=target_left_force, duration=target_left_duration)
+                    xbox_rumble_2.rumble_left(force=target_left_force, duration=target_left_duration)
 
                 if target_right_force > 0.0:
-                    rumble_1.rumble_right(force=target_right_force, duration=target_right_duration)
-                    rumble_2.rumble_right(force=target_right_force, duration=target_right_duration)
+                    xbox_rumble_1.rumble_right(force=target_right_force, duration=target_right_duration)
+                    xbox_rumble_2.rumble_right(force=target_right_force, duration=target_right_duration)
 
                 hf8_seat.update(bass_sync=rumble_hf8_bass, snare_sync=rumble_hf8_snare, hihat_sync=rumble_hf8_hihat) 
 
             # 3. Always run update to handle shutting them down when timers expire
-            rumble_1.update()
-            rumble_2.update()
+            xbox_rumble_1.update()
+            xbox_rumble_2.update()
 
             # 3. CRITICAL: Prevent the while-loop from maxing out your CPU!
             time.sleep(0.01)
@@ -909,6 +967,8 @@ if PLAYLIST:
         hf8_seat.stop()
         sd.stop()               # Instantly stops hardware playback
         del my_song_array       # Free up RAM
+
+    hf8_seat.close()
 
 else:
 
@@ -942,20 +1002,16 @@ else:
         )
     else:
         # JBL
-        my_song_array, sample_rate, audio_len_seconds = SUNO_load_and_EQ(playlist_type, audio_path, bass_db=9.5, mid_db=0.5, treble_db=2.7)
+        #my_song_array, sample_rate, audio_len_seconds = SUNO_load_and_EQ(playlist_type, audio_path, bass_db=9.5, mid_db=0.5, treble_db=2.7)
 
         # AKG
-        #my_song_array, sample_rate, audio_len_seconds = SUNO_load_and_EQ(playlist_type, audio_path, bass_db=7.8, mid_db=1.8, treble_db=3.5)
+        my_song_array, sample_rate, audio_len_seconds = SUNO_load_and_EQ(playlist_type, audio_path, bass_db=7.8, mid_db=1.8, treble_db=3.5)
 
     inferred_channels = my_song_array.shape[1] if my_song_array.ndim > 1 else 1
     inferred_dtype = my_song_array.dtype.name
     print(f"Audio Sample Rate : {sample_rate} Hz (Requested)")
     print(f"Audio Channels    : {inferred_channels}")
     print(f"Audio Format      : {inferred_dtype}")
-
-    # Initialize our non-blocking rumble manager
-    rumble_1 = XboxControllerRumble(controller_id=0)
-    rumble_2 = XboxControllerRumble(controller_id=1)
     
     # Play the audio; this directly interfaces with WASAPI/DirectSound
     if inferred_channels > 2:
@@ -1014,30 +1070,31 @@ else:
 
         # 2. Finally, apply the requested rumbles!
         if target_left_force > 0.7 and target_right_force > 0.7:
-            rumble_1.rumble_left(force=1.0, duration=0.08)
-            rumble_1.rumble_right(force=1.0, duration=0.08)
+            xbox_rumble_1.rumble_left(force=1.0, duration=0.08)
+            xbox_rumble_1.rumble_right(force=1.0, duration=0.08)
 
-            rumble_2.rumble_left(force=1.0, duration=0.08)
-            rumble_2.rumble_right(force=1.0, duration=0.08)
+            xbox_rumble_2.rumble_left(force=1.0, duration=0.08)
+            xbox_rumble_2.rumble_right(force=1.0, duration=0.08)
  
             hf8_seat.update(bass_sync=(1.0, 0.08), snare_sync=(1.0, 0.08), hihat_sync=(1.0, 0.08)) 
         else:
             if target_left_force > 0.0:
-                rumble_1.rumble_left(force=target_left_force, duration=target_left_duration)
-                rumble_2.rumble_left(force=target_left_force, duration=target_left_duration)
+                xbox_rumble_1.rumble_left(force=target_left_force, duration=target_left_duration)
+                xbox_rumble_2.rumble_left(force=target_left_force, duration=target_left_duration)
 
             if target_right_force > 0.0:
-                rumble_1.rumble_right(force=target_right_force, duration=target_right_duration)
-                rumble_2.rumble_right(force=target_right_force, duration=target_right_duration)
+                xbox_rumble_1.rumble_right(force=target_right_force, duration=target_right_duration)
+                xbox_rumble_2.rumble_right(force=target_right_force, duration=target_right_duration)
 
             hf8_seat.update(bass_sync=rumble_hf8_bass, snare_sync=rumble_hf8_snare, hihat_sync=rumble_hf8_hihat) 
 
         # 3. Always run update to handle shutting them down when timers expire
-        rumble_1.update()
-        rumble_2.update()
+        xbox_rumble_1.update()
+        xbox_rumble_2.update()
 
     # 5. Cleanly shut down the mixer when done
     hf8_seat.stop()
+    hf8_seat.close()
     sd.stop()               # Instantly stops hardware playback
     del my_song_array       # Free up RAM
 
