@@ -2321,7 +2321,8 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
             
             # Calculate time in milliseconds for audio sync
             audio_time_elapsed = int(((current_perf_time - start_time) + AV_SYNC_OFFSET) * 1000)
-            audio_time_elapsed_rumble = int(((current_perf_time - start_time) + (AV_SYNC_OFFSET/1.7)) * 1000)
+#            audio_time_elapsed_rumble = int(((current_perf_time - start_time) + (AV_SYNC_OFFSET/1.7)) * 1000)
+            audio_time_elapsed_rumble = int(((current_perf_time - start_time) + (AV_SYNC_OFFSET/2.5)) * 1000)
 
             # --- FIX: REMOVE PER-FRAME RANDOMIZATION ---
             # video_playback_speed = random.uniform(1.9, 2.5) 
@@ -3827,8 +3828,8 @@ if __name__ == '__main__':
 
 # TRY rainbow vortex + zoom/rot
 
-    EVERYTHING         = False
-    CORE_EDITION       = True
+    EVERYTHING         = True
+    CORE_EDITION       = False
     SUMMER_EDITION     = False
     PSY_TRANCE_EDITION = False
     HARDWAVE_EDITION   = False
@@ -3847,8 +3848,8 @@ if __name__ == '__main__':
 
     # 1. Map editions to their corresponding lists, types, and base folders.
     playlist_configs = [
-#        (CORE_EDITION,       SUNO_AUDIO_CORE,       "CORE",       audio_base_folder_1),
-        (CORE_EDITION,       songs_supagood,       "CORE",       audio_base_folder_1),
+        (CORE_EDITION,       SUNO_AUDIO_CORE,       "CORE",       audio_base_folder_1),
+#        (CORE_EDITION,       songs_supagood,       "CORE",       audio_base_folder_1),
         (SUMMER_EDITION,     SUNO_AUDIO_SUMMER,     "SUMMER",     audio_base_folder_2),
         (PSY_TRANCE_EDITION, SUNO_AUDIO_PSY_TRANCE, "PSY_TRANCE", audio_base_folder_3),
         (HARDWAVE_EDITION,   SUNO_AUDIO_HARDWAVE,   "HARDWAVE",   audio_base_folder_3),
