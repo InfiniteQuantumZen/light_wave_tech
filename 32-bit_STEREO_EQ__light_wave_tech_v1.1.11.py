@@ -1,6 +1,4 @@
 # light_wave_tech_v1.1.11.py
-# Now having sd streaming enabling more accurate sync
-# AudioMasterClock class
 
 """
 INSTALLATION/SETUP NOTES:
@@ -257,7 +255,8 @@ def ROG_Theta_71_SUNO_load_and_EQ(playlist_type, audio_path, target_lufs=-13.0, 
         stereo_widener = StereoWidenerBroadband(treble_sig, fs, decorr_type, beta_init)
         treble_sig = stereo_widener.process()
  
-        # NOT_SURE_IF_THIS_BRINGS_ANYTHING_EXTRA_SINCE_EQ_ALREADY
+        # 2026-11-22: added 0.20 was befoire 0.15
+        beta_init = 0.20 # >> V5 | V6: 0.07-0.10 IF NEED BE
         stereo_widener = StereoWidenerBroadband(mid_sig, fs, decorr_type, beta_init)
         mid_sig = stereo_widener.process()
     
@@ -2198,8 +2197,6 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
             #   Latency     : 3.0 ms - 10.0 ms
             # Analyzing Audio and Haptic Latency https://aistudio.google.com/prompts/1HvIJpT_ePCbvkq8NOJgp-7z-LLlWI8Rd
 
-            #sd.default.latency = 0.117
-            #sd.default.latency = 0.120
             sd.default.latency = 0.125
 
             #VR/Virtual Desktop
@@ -2207,19 +2204,6 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
     
         except ValueError:
             print("WASAPI is not available on this system.")
-
-        # --- A/V SYNC COMPENSATION ---
-        # used to compensate the delay that is perceived rendering GFX 
-        # in the main loop due to the latency of the audio from hardware
-        # to the software and further to the ears (headphones)
-        # the same amount as sd.default.latency but negative.
-        # 0.05 = 50 milliseconds. 
-        #AV_SYNC_OFFSET = -0.117
-        #AV_SYNC_OFFSET = -0.120
-        AV_SYNC_OFFSET = -0.125
-        
-        #VR/Virtual Desktop
-        #AV_SYNC_OFFSET = -0.127
 
         if device_channels > 2:
             my_song_array, sample_rate, audio_len_seconds = ROG_Theta_71_SUNO_load_and_EQ(
@@ -2343,8 +2327,7 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
 
         # Play the audio; this directly interfaces with WASAPI/DirectSound
         if inferred_channels > 2:
-            #sd.play(my_song_array, samplerate=sample_rate, mapping=[1, 2, 3, 4, 5, 6, 7, 8])
-
+            AV_SYNC_OFFSET = 0.025 # 2026-11-22: THIS IS GOOD (TEST WITH VIBRATION)
             master_clock = AudioMasterClock(my_song_array, sample_rate)
             stream = sd.OutputStream(
                 samplerate=sample_rate, 
@@ -2353,7 +2336,7 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
                 latency=0.125
             )
         else:
-#            sd.play(my_song_array, samplerate=sample_rate)
+            AV_SYNC_OFFSET = 0.015 # 2026-11-23: THIS IS GOOD (TEST WITHOUT VIBRATION)
             master_clock = AudioMasterClock(my_song_array, sample_rate)
             stream = sd.OutputStream(
                 samplerate=sample_rate, 
@@ -2366,11 +2349,11 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
         hardware_latency = stream.latency
         fine_tune_offset = 0.000 
         total_av_offset = hardware_latency - fine_tune_offset
-        AV_SYNC_OFFSET = -total_av_offset
-        print(f":::::: {AV_SYNC_OFFSET}")
+        log_AV_SYNC_OFFSET = -total_av_offset
+        print(f":::::: {log_AV_SYNC_OFFSET}")
         log_file = "LOG_SD_LATENCY.txt"
         with open(log_file, "a", encoding="utf-8") as f:
-            f.write(f"{AV_SYNC_OFFSET}\n")
+            f.write(f"{log_AV_SYNC_OFFSET}\n")
         # --- log end ---
 
         # perf_time is used to advance video frames
@@ -2392,8 +2375,8 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
                 current_pygame_time = master_clock.get_dac_time(stream)
             
                 # Calculate time in milliseconds for audio sync
-                audio_time_elapsed = int((master_clock.get_dac_time(stream) - 0.011) * 1000)
-                audio_time_elapsed_rumble = int((master_clock.get_dac_time(stream) +  0.070) * 1000)
+                audio_time_elapsed = int((master_clock.get_dac_time(stream) - AV_SYNC_OFFSET) * 1000)
+                audio_time_elapsed_rumble = int((master_clock.get_dac_time(stream) + 0.070) * 1000)
 
                 # --- FIX: REMOVE PER-FRAME RANDOMIZATION ---
                 # video_playback_speed = random.uniform(1.9, 2.5) 
@@ -3909,8 +3892,8 @@ if __name__ == '__main__':
     EVERYTHING         = False
     CORE_EDITION       = False
     SUMMER_EDITION     = False
-    PSY_TRANCE_EDITION = True
-    HARDWAVE_EDITION   = False
+    PSY_TRANCE_EDITION = False
+    HARDWAVE_EDITION   = True
     CUSTOM_EDITION     = False
 
     #audio_base_folder = config.get("audio_filepaths", {}).get("music_folder")
