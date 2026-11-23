@@ -1,4 +1,7 @@
 # light_wave_tech_v1.1.11.py
+#
+# Now having sd streaming enabling more accurate sync
+# AudioMasterClock class
 
 """
 INSTALLATION/SETUP NOTES:
