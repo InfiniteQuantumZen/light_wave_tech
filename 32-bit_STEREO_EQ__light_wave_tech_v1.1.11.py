@@ -2129,7 +2129,8 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
 
         print(f"audio_len: {audio_len}")
         audio_time_elapsed = 0
-        audio_time_elapsed_rumble = 0
+        audio_time_elapsed_rumble_xbox = 0
+        audio_time_elapsed_rumble_hf8 = 0
 
         audio_base_filename = audio_path.replace("\\", "/")
         audio_base_filename = audio_base_filename.split("/")
@@ -2154,14 +2155,17 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
         anim_max_index_3 = len(anim_data_3) - 1
 
         # Separate index values for the rumble (vibrotactile)
-        # because they don't need AV_SYNC_OFFSET compensation
-        anim_data_index_1_rumble = 0
-        anim_data_index_2_rumble = 0
-        anim_data_index_3_rumble = 0
-        anim_max_index_1_rumble = anim_max_index_1
-        anim_max_index_2_rumble = anim_max_index_2
-        anim_max_index_3_rumble = anim_max_index_3
-        prev_amplitude_bass_rumble = prev_amplitude_snare_rumble = 0
+        prev_amplitude_bass_rumble_xbox = prev_amplitude_snare_rumble_xbox = 0
+        anim_data_index_1_rumble_xbox = anim_data_index_2_rumble_xbox = anim_data_index_3_rumble_xbox = 0
+        anim_max_index_1_rumble_xbox = anim_max_index_1
+        anim_max_index_2_rumble_xbox = anim_max_index_2
+        anim_max_index_3_rumble_xbox = anim_max_index_3
+
+        prev_amplitude_bass_rumble_hf8 = prev_amplitude_snare_rumble_hf8 = 0
+        anim_data_index_1_rumble_hf8 = anim_data_index_2_rumble_hf8 = anim_data_index_3_rumble_hf8 = 0
+        anim_max_index_1_rumble_hf8 = anim_max_index_1
+        anim_max_index_2_rumble_hf8 = anim_max_index_2
+        anim_max_index_3_rumble_hf8 = anim_max_index_3
 
         #______________________________
         #___INIT/LOAD MUSIC____________
@@ -2375,11 +2379,13 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
 
                 # --- Use the tracked time for sync ---
                 # Calculate time in seconds for timeline_manager
-                current_pygame_time = master_clock.get_dac_time(stream)
+                master_clock_cycle = master_clock.get_dac_time(stream)
+                current_pygame_time = master_clock_cycle
             
                 # Calculate time in milliseconds for audio sync
-                audio_time_elapsed = int((master_clock.get_dac_time(stream) - AV_SYNC_OFFSET) * 1000)
-                audio_time_elapsed_rumble = int((master_clock.get_dac_time(stream) + 0.070) * 1000)
+                audio_time_elapsed = int((master_clock_cycle - AV_SYNC_OFFSET) * 1000)
+                audio_time_elapsed_rumble_xbox = int((master_clock_cycle + 0.025) * 1000)
+                audio_time_elapsed_rumble_hf8  = int((master_clock_cycle + 0.030) * 1000)
 
                 # --- FIX: REMOVE PER-FRAME RANDOMIZATION ---
                 # video_playback_speed = random.uniform(1.9, 2.5) 
@@ -3403,21 +3409,32 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
                     #______________________________________________________________________________________________________
                     #___APPLY_CONTROLLER_RUMBLE___(vibrotactile)
 
-                    rumble_hf8_bass, rumble_hf8_snare, rumble_hf8_hihat, \
-                    rumble_left_sync, rumble_right_sync, \
-                    prev_amplitude_bass_rumble, prev_amplitude_snare_rumble, \
-                    anim_data_index_1_rumble, anim_data_index_2_rumble, anim_data_index_3_rumble = Get_Rumble_Sync(
+                    _, _, _, rumble_xbox_left_sync, rumble_xbox_right_sync, \
+                    prev_amplitude_bass_rumble_xbox, prev_amplitude_snare_rumble_xbox, \
+                    anim_data_index_1_rumble_xbox, anim_data_index_2_rumble_xbox, \
+                    anim_data_index_3_rumble_xbox = Get_Rumble_Sync(
                         anim_data_1, anim_data_2, anim_data_3, 
-                        anim_data_index_1_rumble, anim_data_index_2_rumble, anim_data_index_3_rumble,
-                        anim_max_index_1_rumble, anim_max_index_2_rumble, anim_max_index_3_rumble,
-                        prev_amplitude_bass_rumble, prev_amplitude_snare_rumble,
-                        audio_time_elapsed_rumble
+                        anim_data_index_1_rumble_xbox, anim_data_index_2_rumble_xbox, anim_data_index_3_rumble_xbox,
+                        anim_max_index_1_rumble_xbox, anim_max_index_2_rumble_xbox, anim_max_index_3_rumble_xbox,
+                        prev_amplitude_bass_rumble_xbox, prev_amplitude_snare_rumble_xbox,
+                        audio_time_elapsed_rumble_xbox
                     )
 
-                    target_left_force, target_left_duration = rumble_left_sync
-                    target_right_force, target_right_duration = rumble_right_sync
-                    #print(f"rumble_left_sync: {rumble_left_sync}")
-                    #print(f"rumble_right_sync: {rumble_right_sync}")
+                    rumble_hf8_bass, rumble_hf8_snare, rumble_hf8_hihat, _, _, \
+                    prev_amplitude_bass_rumble_hf8, prev_amplitude_snare_rumble_hf8, \
+                    anim_data_index_1_rumble_hf8, anim_data_index_2_rumble_hf8, \
+                    anim_data_index_3_rumble_hf8 = Get_Rumble_Sync(
+                        anim_data_1, anim_data_2, anim_data_3, 
+                        anim_data_index_1_rumble_hf8, anim_data_index_2_rumble_hf8, anim_data_index_3_rumble_hf8,
+                        anim_max_index_1_rumble_hf8, anim_max_index_2_rumble_hf8, anim_max_index_3_rumble_hf8,
+                        prev_amplitude_bass_rumble_hf8, prev_amplitude_snare_rumble_hf8,
+                        audio_time_elapsed_rumble_hf8
+                    )
+
+                    target_left_force, target_left_duration = rumble_xbox_left_sync
+                    target_right_force, target_right_duration = rumble_xbox_right_sync
+                    #print(f"rumble_left_sync: {rumble_xbox_left_sync}")
+                    #print(f"rumble_right_sync: {rumble_xbox_right_sync}")
 
                     # 2. Finally, apply the requested rumbles!
                     if target_left_force > 0.7 and target_right_force > 0.7:
