@@ -35,16 +35,7 @@ conda activate light_wave_tech
 IMPROVEMENT(S) / NOTES:
 -----------------------
 
-1.) IF SOMEDAY INTEREST ARISES: RTX_2070 FRAMETIME STUTTERING:
-https://aistudio.google.com/app/prompts/1xbN7o_yQlDu5zltZ7yHcbmWY8T-ZMTC3
-  CPU COMPOSITION TO GPU
-  ^^^^^^^^^^^^^^^^^^^^^^
-  * 2026-10-10: THIS IS OF NO CONCERN ANYMORE 
-  * WORKS JUST FINE ON AMD Ryzen 5 7600X ESPECIALLY 
-  * NOW WHEN BIOS RETURNED TO 105W FROM 65W ECO-mode
-  * ALSO NESTED MULTI-THREADING NOW IN USE + np.swapaxes >> cv2.transpose
-
-2.) IF "black screen" in some shader effect, most likely time issue
+1.) IF "black screen" in some shader effect, most likely time issue
 in such case add this for replacement: float localTime = mod(iTime, 6.0);
 
 # >>> GPU COMPOSITION michael. AI STUDIO
@@ -577,15 +568,15 @@ SNARE_COLOR = (50, 255, 50) # Green
 HIHAT_COLOR = CYAN # (50, 150, 255) # Blue
 audio_bar_vis_colors = [BASS_COLOR, SNARE_COLOR, HIHAT_COLOR]
 
-THRESHOLD_BASS = 0.41
-THRESHOLD_BASS_NEGATIVE = 0.41
+THRESHOLD_BASS = 0.397
+THRESHOLD_BASS_NEGATIVE = 0.397
 THRESHOLD_BASS_POSITIVE = 0.50
-THRESHOLD_SNARE = 0.41
-THRESHOLD_HIHAT = 0.41
+THRESHOLD_SNARE = 0.397
+THRESHOLD_HIHAT = 0.397
 
-THRESHOLD_BASS_RUMBLE = 0.41
-THRESHOLD_SNARE_RUMBLE = 0.41
-THRESHOLD_HIHAT_RUMBLE = 0.41
+THRESHOLD_BASS_RUMBLE = 0.397
+THRESHOLD_SNARE_RUMBLE = 0.397
+THRESHOLD_HIHAT_RUMBLE = 0.397
 
 ENABLE_OBS_MODE_EFFECT = 1
 DEBUG = False
@@ -746,28 +737,43 @@ def get_audio_len_mp3(mp3_path):
     duration_seconds = int(audio.info.length)
     return duration_seconds
 
-def load_animation_data(filepath):
+def load_animation_data(filepath, gain=None, target_rms=None, max_gain=5.0, clip_max=None):
     print(f"Loading data from {filepath}...")
     
     # 1. Read the CSV into a pandas DataFrame
-    # Note: If your CSV DOES NOT have headers (as mentioned in the original 2nd function), 
-    # change this to: pd.read_csv(filepath, header=None, names=['Time_ms', 'Bass_Amplitude'])
     df = pd.read_csv(filepath)
     
     # 2. Round the time to the nearest whole number and convert to integer
     df['Time_ms'] = df['Time_ms'].round().astype(int)
     
-    # 3. Group by the integer milliseconds and take the average of the amplitude
-    # This prevents errors from having multiple data points at the exact same millisecond
-    #df = df.groupby('Time_ms', as_index=False)['Bass_Amplitude'].mean()
+    # 3. Group by integer milliseconds.
+    # Note: Keep .max() here if your beat-sync thresholds were tuned using .max()!
+    # (You can compute the track's RMS either before or after grouping; before grouping
+    # or using a separate mean-grouped copy gives the most consistent power reading.)
+    if target_rms is not None and gain is None:
+        mean_series = df.groupby('Time_ms')['Bass_Amplitude'].mean().to_numpy(dtype=float)
+        file_rms = float(np.sqrt(np.mean(mean_series ** 2))) if len(mean_series) > 0 else 0.0
+        
+        if file_rms > 0 and file_rms < target_rms:
+            gain = min(target_rms / file_rms, max_gain) # max_gain prevents amplifying pure silence
+        else:
+            gain = 1.0
+        print(f"Auto-scaling: File RMS={file_rms:.5f}, Target RMS={target_rms:.5f} -> Gain={gain:.3f}x")
+
     df = df.groupby('Time_ms', as_index=False)['Bass_Amplitude'].max()
-    
-    # 4. Convert the cleaned DataFrame back into a list of tuples: [(time, amplitude), ...]
-    # index=False prevents the row index from being included
-    # name=None ensures it returns standard Python tuples instead of pandas namedtuples
+
+    # 4. Apply amplification
+    if gain is not None and gain != 1.0:
+        df['Bass_Amplitude'] = df['Bass_Amplitude'] * gain
+        
+        # Optional: Clamp if your downstream effect expects a strict ceiling (e.g., 1.0 or 255)
+        if clip_max is not None:
+            df['Bass_Amplitude'] = df['Bass_Amplitude'].clip(upper=clip_max)
+
+    # 5. Convert back into a list of tuples: [(time, amplitude), ...]
     data = list(df.itertuples(index=False, name=None))
     
-    print("Import successful. Data grouped and converted to a list of tuples.")
+    print("Import successful. Data grouped, scaled, and converted to a list of tuples.")
     return data
 
 def audio_bar_visualizer(surface, x, y, values):
@@ -2140,17 +2146,17 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
         print(f"audio_base_filename = {audio_base_filename}")
 
         anim_data_bass_filepath  = f"{audio_sync_data_base_folder}/{audio_base_filename}_bass_keyframes.csv"
-        anim_data_1 = load_animation_data(anim_data_bass_filepath)
+        anim_data_1 = load_animation_data(anim_data_bass_filepath, target_rms=0.33, clip_max=1.0)
         anim_data_index_1 = 0
         anim_max_index_1 = len(anim_data_1) - 1
 
         anim_data_snare_filepath = f"{audio_sync_data_base_folder}/{audio_base_filename}_snare_keyframes.csv"
-        anim_data_2 = load_animation_data(anim_data_snare_filepath)
+        anim_data_2 = load_animation_data(anim_data_snare_filepath, target_rms=0.43, clip_max=1.0)
         anim_data_index_2 = 0
         anim_max_index_2 = len(anim_data_2) - 1
 
         anim_data_hihat_filepath = f"{audio_sync_data_base_folder}/{audio_base_filename}_hihat_keyframes.csv"
-        anim_data_3 = load_animation_data(anim_data_hihat_filepath)
+        anim_data_3 = load_animation_data(anim_data_hihat_filepath, target_rms=0.33, clip_max=1.0)
         anim_data_index_3 = 0
         anim_max_index_3 = len(anim_data_3) - 1
 
@@ -2334,7 +2340,7 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
 
         # Play the audio; this directly interfaces with WASAPI/DirectSound
         if inferred_channels > 2:
-            AV_SYNC_OFFSET = 0.025 # 2026-11-22: THIS IS GOOD (TEST WITH VIBRATION)
+            AV_SYNC_OFFSET = 0.015 # 2026-11-22: THIS IS GOOD (TEST WITH VIBRATION)
             master_clock = AudioMasterClock(my_song_array, sample_rate)
             stream = sd.OutputStream(
                 samplerate=sample_rate, 
@@ -3910,10 +3916,10 @@ if __name__ == '__main__':
 # TRY rainbow vortex + zoom/rot
 
     EVERYTHING         = False
-    CORE_EDITION       = False
+    CORE_EDITION       = True
     SUMMER_EDITION     = False
     PSY_TRANCE_EDITION = False
-    HARDWAVE_EDITION   = True
+    HARDWAVE_EDITION   = False
     CUSTOM_EDITION     = False
 
     #audio_base_folder = config.get("audio_filepaths", {}).get("music_folder")
