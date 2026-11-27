@@ -17,9 +17,10 @@ ________________________________________________________________________________
   with regard to sync and commented/documented some code.
 
 - Added asset_usage_analyzer.py which used in shader_manager.py and also on analysis.
+  shader_manager was also updated to accompany outro_texture and some enable_effect flags.
 
 - Updated helper_functions.intro_countdown to serve a real purpose: "loading audio" 
-which takes some amount of time when applying stereo widening and EQ.
+  which takes some amount of time when applying stereo widening and EQ.
   1. Start the heavy audio processing in the background 
      ThreadPoolExecutor is used to spin up SUNO_load_and_EQ
   2. Run the OpenGL loading screen on the MAIN thread 
