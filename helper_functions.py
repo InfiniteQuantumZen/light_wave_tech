@@ -15,6 +15,7 @@ import numpy as np
 import moderngl
 import random
 import pygame
+import math
 import time
 import cv2
 
@@ -132,92 +133,129 @@ def safe_close_clip(clip):
         except Exception as e:
             pass
 
-def intro_countdown(ctx: moderngl.Context, screen_w, screen_h):
-    try:
-        intro_surface = pygame.Surface((screen_w, screen_h), flags=pygame.SRCALPHA)
-        #intro_prog, intro_vao = shader_manager.load_shadertoy(ctx, "DATA/shaders/music_video/v2/surface_passthrough.txt")
+def intro_countdown(ctx: moderngl.Context, screen_w, screen_h, is_done=None, min_seconds=2.0, countdown_seconds=3.0):
+    start_time = time.perf_counter()
 
-        timeout_val = 300
+    intro_surface = pygame.Surface((screen_w, screen_h), flags=pygame.SRCALPHA)
 
-        random_intro_shader = random.randint(0, 2)
-        if random_intro_shader == 0:
-            shader_filepath = "DATA/shaders/music_video/v2/surface_passthrough_with_supercluster.txt"
-        elif random_intro_shader == 1:
-            shader_filepath = "DATA/shaders/music_video/v2/surface_passthrough_with_normalize_glitchy_fx.txt"
-            timeout_val = 150
-        elif random_intro_shader == 2:
-            shader_filepath = "DATA/shaders/music_video/v2/surface_passthrough_with_dimethyltryptamin_2.txt"
+    shader_paths = [
+        "DATA/shaders/music_video/v2/surface_passthrough_with_supercluster.txt",
+        "DATA/shaders/music_video/v2/surface_passthrough_with_normalize_glitchy_fx.txt",
+        "DATA/shaders/music_video/v2/surface_passthrough_with_dimethyltryptamin_2.txt",
+        "DATA/shaders/music_video/v2/surface_passthrough_with_tunnel_fract_003.txt",
+        "DATA/shaders/music_video/v2/surface_passthrough_with_ethereal_magma.txt",
+    ]
+    shader_filepath = random.choice(shader_paths)
 
-#        elif random_intro_shader == 1:
-#            shader_filepath = "DATA/shaders/music_video/v2/surface_passthrough_with_window.txt"
-#            #needs this: "material_2": "DATA/textures/gray_noise_256x256.png",
+    intro_prog, intro_vao = shader_manager.load_shadertoy(ctx, shader_filepath)
 
+    if 'iResolution' in intro_prog:
+        intro_prog['iResolution'].value = (screen_w, screen_h, 1.0)
+    if 'iChannel0' in intro_prog:
+        intro_prog['iChannel0'].value = 0
 
-        #timeout_val = 150
-        #shader_filepath = "DATA/shaders/music_video/v2/surface_passthrough_with_supercluster.txt"
-        #shader_filepath = "DATA/shaders/music_video/v2/surface_passthrough_with_normalize_glitchy_fx.txt"
-        #shader_filepath = "DATA/shaders/music_video/v2/surface_passthrough_with_dimethyltryptamin_2.txt"
-        #shader_filepath = "DATA/shaders/music_video/v2/surface_passthrough_with_window.txt"
+    render_texture = ctx.texture((screen_w, screen_h), 4)
+    render_texture.swizzle = 'BGRA'
 
-        intro_prog, intro_vao = shader_manager.load_shadertoy(ctx, shader_filepath)
+    large_font_1 = pygame.font.SysFont("Hyper heliX", 140)
+    large_font_2 = pygame.font.SysFont("Arial", 120)
 
-        if 'iResolution' in intro_prog:
-            intro_prog['iResolution'].value = (screen_w, screen_h, 1.0)
-        if 'iChannel0' in intro_prog:
-            intro_prog['iChannel0'].value = 0
+    # Pre-render all static surfaces once (fast 60 FPS pulsing/fading)
+    loading_text_1 = large_font_1.render("LOAD1NG", True, (255, 255, 255))
+    loading_text_2 = large_font_1.render(" AUD1O", True, (255, 255, 255))
+    dot_surfaces = [
+        large_font_2.render(".", True, (255, 255, 255)),
+        large_font_2.render("..", True, (255, 255, 255)),
+        large_font_2.render("...", True, (255, 255, 255)),
+    ]
 
-        render_texture = ctx.texture((screen_w, screen_h), 4)
-        render_texture.swizzle = 'BGRA'
+    transmission_text_1 = large_font_1.render("TRANSM1SSI0N", True, (255, 255, 255))
+    transmission_text_2 = large_font_1.render("  BEG1NS ", True, (255, 255, 255))
+    transmission_text_3 = large_font_1.render("     1N:", True, (255, 255, 255))
+    digit_surfaces = {
+        3: large_font_2.render("3", True, (255, 255, 255)),
+        2: large_font_2.render("2", True, (255, 255, 255)),
+        1: large_font_2.render("1", True, (255, 255, 255)),
+    }
+
+    fade_out_seconds = min(0.6, countdown_seconds * 0.25)
+    countdown_start = None
+    clock = pygame.time.Clock()
+    keep_running = True
+
+    while True:
+        # Keep OS window responsive; allow X button without letting ESC skip loading
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                keep_running = False
+
+        if not keep_running:
+            break
+
+        elapsed_time = time.perf_counter() - start_time
+
+        if 'iTime' in intro_prog:
+            intro_prog['iTime'].value = elapsed_time
+
+        # Transition from LOADING -> COUNTDOWN as soon as audio is ready
+        if countdown_start is None:
+            audio_ready = (is_done is None) or is_done()
+            if elapsed_time >= min_seconds and audio_ready:
+                countdown_start = elapsed_time
+
+        intro_surface.fill(BLACK)
+
+        if countdown_start is None:
+            # --- PHASE 1: Pulsing "LOAD1NG AUD1O..." ---
+            # Smooth sine pulse between alpha 70 and 255
+            pulse = 0.5 + 0.5 * math.sin(elapsed_time * 4.0)
+            alpha = int(70 + pulse * 185)
+
+            dots = dot_surfaces[int(elapsed_time * 2.0) % 3]
+
+            for surf in (loading_text_1, loading_text_2, dots):
+                surf.set_alpha(alpha)
+
+            intro_surface.blit(loading_text_1, ((screen_w // 2) - 330, 520))
+            intro_surface.blit(loading_text_2, ((screen_w // 2) - 310, 640))
+            intro_surface.blit(dots, ((screen_w // 2) + 210, 650))
+
+        else:
+            # --- PHASE 2: Quick "3 - 2 - 1" + fade-out ---
+            cd_elapsed = elapsed_time - countdown_start
+            if cd_elapsed >= countdown_seconds:
+                break
+
+            remaining = countdown_seconds - cd_elapsed
+            digit = max(1, min(3, math.ceil((remaining / countdown_seconds) * 3.0)))
+
+            # Hold full brightness until the final fade_out_seconds
+            if remaining < fade_out_seconds:
+                alpha = int(255 * max(0.0, remaining / fade_out_seconds))
+            else:
+                alpha = 255
+
+            digit_surf = digit_surfaces[digit]
+            for surf in (transmission_text_1, transmission_text_2, transmission_text_3, digit_surf):
+                surf.set_alpha(alpha)
+
+            intro_surface.blit(transmission_text_1, ((screen_w // 2) - 510, 510))
+            intro_surface.blit(transmission_text_2, ((screen_w // 2) - 410, 610))
+            intro_surface.blit(transmission_text_3, ((screen_w // 2) - 410, 710))
+            intro_surface.blit(digit_surf, ((screen_w // 2) + 180, 720))
+
+        render_texture.write(intro_surface.get_view('1'))
         render_texture.use(location=0)
+        intro_vao.render(moderngl.TRIANGLE_STRIP)
+        pygame.display.flip()
 
-        large_font_1 = pygame.font.SysFont("Hyper heliX", 140)
-        large_font_2 = pygame.font.SysFont("Arial", 120)
+        clock.tick(60)
 
-        current_time = 0
-        clock = pygame.time.Clock()
-        running = True
+    render_texture.release()
+    intro_prog.release()
+    intro_vao.release()
 
-        while running:
-
-            if 'iTime' in intro_prog: intro_prog['iTime'].value = current_time/50.0
-
-            if int(current_time) == timeout_val:
-                running = False
-
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        running = False
-
-            if running:
-                intro_surface.fill(BLACK)
-
-                transmission_text_1 = large_font_1.render(f"TRANSM1SSI0N", True, (255, 255, 255))
-                transmission_text_2 = large_font_1.render(f"  BEG1NS ", True, (255, 255, 255))
-                transmission_text_3 = large_font_1.render(f"     1N:", True, (255, 255, 255))
-
-                intro_surface.blit(transmission_text_1, ((screen_w//2)-510, 470+40))
-                intro_surface.blit(transmission_text_2, ((screen_w//2)-410, 570+40))
-                intro_surface.blit(transmission_text_3, ((screen_w//2)-410, 670+40))
-
-                time_left = f"{(timeout_val-1)-int(current_time):03d}"
-                countdown_text = large_font_2.render(f"{time_left}", True, (255, 255, 255))
-                intro_surface.blit(countdown_text, ((screen_w//2)+100, 720))
-
-                render_texture.write(intro_surface.get_view('1'))
-                intro_vao.render(moderngl.TRIANGLE_STRIP)
-                pygame.display.flip()
-                current_time += 1
-
-            clock.tick(60)
-
-        intro_prog.release()
-        intro_vao.release()
-
-    except Exception as e:
-        print(f"An error occurred: {e}")
+    return keep_running
 
 def title_intro(surface, current_time, audio_path, screen_w, screen_h): #, current_audio_file_idx=0, num_audio_files=0):
     large_font = get_sysfont("Arial", 120)
@@ -21463,42 +21501,4 @@ random_poem_sequences = [
     """,
 
 ]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
