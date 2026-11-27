@@ -24,6 +24,8 @@ except Exception as e:
     traceback.print_exc()
 """
 
+import asset_usage_analyzer
+
 import os
 import sys
 import json
@@ -86,6 +88,8 @@ def load_shadertoy(ctx, filepath):
         uniform sampler2D iChannel20;
         uniform sampler2D iChannel21;
 
+        uniform sampler2D outroTexture;
+
         uniform vec3 iChannelResolution[4];
 
         // Amplitudes for the 3 frequencies (Bass, Snare, Hihat)
@@ -98,6 +102,11 @@ def load_shadertoy(ctx, filepath):
         uniform vec2 u_offset;       // Captures your offset_x and offset_y shake
         uniform vec2 u_pixel_offset; // Exact Pygame offset_x, offset_y (e.g., 50.0, 50.0)
         uniform vec2 u_target_size;  // Exact width/height of the surface being rotated
+
+        // Custom enable/disable options
+        uniform bool u_enable_effect_1;
+        uniform bool u_enable_effect_2;
+        uniform bool u_enable_outro;
 
         // --- INJECTED SHADERTOY CODE START ---
         // SHADERTOY_CODE_HERE
@@ -944,6 +953,17 @@ class ShaderTimelineManager:
                 if 'iResolution' in program:
                     program['iResolution'].value = (self.width, self.height, 1.0)
 
+                enable_effect_1 = random.randint(0, 1)
+                enable_effect_2 = random.randint(0, 1)
+                print(f"enable_effect_1: {enable_effect_1}")
+                print(f"enable_effect_2: {enable_effect_2}")
+
+                if 'u_enable_effect_1' in program:
+                    program['u_enable_effect_1'].value = enable_effect_1
+
+                if 'u_enable_effect_2' in program:
+                    program['u_enable_effect_2'].value = enable_effect_2
+
                 # Assuming iChannel0, iChannel1, iChannel2, iChannel3, for textures 0, 1, 2, 3                
                 for i in range(4):
                     channel_name = f'iChannel{i}'
@@ -955,6 +975,12 @@ class ShaderTimelineManager:
 
                 if 'iChannel21' in program:
                     program['iChannel21'].value = 21
+
+                # --- outro texture for non-video shaders ---
+                if 'outroTexture' in program:
+                    program['outroTexture'].value = 30
+                outro_texture = self.shader_cache.get_or_load_texture("DATA/textures/v2_anuttara_1440p.png")
+                # ---
 
                 # OVERWRITE iChannel3 [material_4] with default musical score, named audio_path
                 #    USE_CASE: Music Video Prod
@@ -1000,7 +1026,10 @@ class ShaderTimelineManager:
                     'vao_A': vao_A,           # NEW
                     'ping_pong': ping_pong,   # NEW
                     'textures': textures,
-                    'iFrame': 0               # NEW: Track local frames for the effect
+                    'iFrame': 0,              # NEW: Track local frames for the effect
+                    'enable_effect_1': enable_effect_1, # Custom effect flag in shader
+                    'enable_effect_2': enable_effect_2,  # Custom effect flag in shader
+                    'outro_texture': outro_texture
                 })
 
             except Exception as e:
@@ -1009,7 +1038,7 @@ class ShaderTimelineManager:
 
     def update(self, current_time: float, audio_amp_top: tuple, audio_amp_bottom: tuple, \
                audio_sync_data: dict, angle_deg: float, pivot: tuple, pixel_offset: tuple, \
-               target_size: tuple, render_texture: moderngl.Texture | None, \
+               target_size: tuple, enable_outro: bool, render_texture: moderngl.Texture | None, \
                console_texture: list | None):
         """
         Executes frame updates. It checks timing on pre-loaded resources,
@@ -1022,24 +1051,30 @@ class ShaderTimelineManager:
             duration = effect_data['effect_duration']
             end_time = start_time + duration
 
+            #print(f"effect['enable_effect_1']: {effect['enable_effect_1']}")
+            #print(f"effect['enable_effect_2']: {effect['enable_effect_2']}")
+
             # Match the testbed timing check logic
             if start_time <= current_time <= end_time:
                 if self.debug:
                     print(f"Current Time = {current_time:.2f}/{end_time}: Effect '{effect_data['name']}'")
                
-                self.render_effect(effect, current_time, start_time, end_time, audio_amp_top, \
-                                   audio_amp_bottom, audio_sync_data, angle_deg, pivot, \
-                                   pixel_offset, target_size, render_texture, console_texture)
+                self.render_effect(
+                    effect, current_time, start_time, end_time,
+                    audio_amp_top, audio_amp_bottom, audio_sync_data,
+                    angle_deg, pivot, pixel_offset, target_size,
+                    enable_outro, render_texture, console_texture
+                )
                 
                 # Optional: break if you only want ONE active timeline shader running at a time.
                 # Remove this break if you want to support overlapping concurrent shaders.
                 break
 
-
     def render_effect(self, effect: dict, current_time: float, start_time: float, end_time: float, \
                       audio_amp_top: tuple, audio_amp_bottom: tuple, audio_sync_data: dict, \
                       angle_deg: float, pivot: tuple, pixel_offset: tuple, target_size: tuple, \
-                      render_texture: moderngl.Texture | None, console_texture: list | None):
+                      enable_outro: bool, render_texture: moderngl.Texture | None, \
+                      console_texture: list | None):
         """
         Executes uniform bindings and draw operations for the active effect.
         """
@@ -1050,6 +1085,9 @@ class ShaderTimelineManager:
         vao_A = effect['vao_A']
         ping_pong = effect['ping_pong']
         textures = effect['textures']
+        enable_effect_1 = effect['enable_effect_1']
+        enable_effect_2 = effect['enable_effect_2']
+        outro_texture = effect['outro_texture']
 
         # Advance the local frame counter
         iFrame = effect['iFrame']
@@ -1075,6 +1113,16 @@ class ShaderTimelineManager:
             if 'u_pivot' in prog: prog['u_pivot'].value = pivot
             if 'u_pixel_offset' in prog: prog['u_pixel_offset'].value = pixel_offset
             if 'u_target_size' in prog: prog['u_target_size'].value = target_size
+
+            # --- Custom enable/disable options
+            if 'u_enable_effect_1' in prog: prog['u_enable_effect_1'].value = enable_effect_1
+            if 'u_enable_effect_2' in prog: prog['u_enable_effect_2'].value = enable_effect_2
+            if 'u_enable_outro' in prog: prog['u_enable_outro'].value = enable_outro
+
+            #print(f"enable_effect_1: {enable_effect_1}")
+            #print(f"enable_effect_2: {enable_effect_2}")
+            #print(f"enable_outro: {enable_outro}")
+            #sys.exit()
 
             # --- Map the audio sync values ---
             if 'iMusicSync0' in prog: prog['iMusicSync0'].value = audio_sync_data.get('sync_value_1', 0.0)
@@ -1132,6 +1180,9 @@ class ShaderTimelineManager:
             if console_texture is not None:
                 console_texture[0].use(location=20)
                 console_texture[1].use(location=21)
+
+            if outro_texture is not None:
+                outro_texture.use(location=30)
 
             # Bind inputs for Main Image
             if ping_pong:
@@ -1206,6 +1257,23 @@ class TimelineEffectGenerator:
     2026-10-23: neural indice-based approach
     REPLACING _replenish_singular(self): random.shuffle
     """
+
+    def _validate_index(self, idx, ceiling):
+        """
+        Checks if index is below ceiling. If not, halves it and checks again.
+        Returns the valid index, or None if it still exceeds the ceiling.
+        """
+        while idx > ceiling-1:
+            if idx == 0:
+                break 
+            idx = idx // 2
+        
+        if idx <= ceiling:
+            #print(f"idx: {idx}")
+            return idx
+        else:
+            return None
+
     def _get_neural_singular_list(self, singular_list, neural_indices_filenames_all):
         print(f"TimelineEffectGenerator::_get_neural_singular_list: len(singular_list): {len(singular_list)}")
 
@@ -1216,8 +1284,24 @@ class TimelineEffectGenerator:
 
                 with open(filepath, 'r') as f:
                     indices = json.load(f)
-            
+
                     # If a ceiling is provided, filter the list
+                    if ceiling is not None:
+                        filtered_indices = []
+                        for idx in indices:
+                            valid_idx = self._validate_index(idx, ceiling)
+                            if valid_idx is not None:
+                                filtered_indices.append(valid_idx)
+                
+                        # Optional: Let the user know how many indices were filtered out
+                        if len(filtered_indices) < len(indices):
+                            print(f"Filtered out {len(indices) - len(filtered_indices)} out-of-bounds indices.")
+
+                        return filtered_indices
+                    else:
+                        return indices
+            
+                    """# If a ceiling is provided, filter the list
                     if ceiling is not None:
                         # Keep only the indices that are within the valid range
                         filtered_indices = [idx for idx in indices if idx < ceiling]
@@ -1226,8 +1310,9 @@ class TimelineEffectGenerator:
                             print(f"Filtered out {len(indices) - len(filtered_indices)} out-of-bounds indices.")
                     
                         return filtered_indices
-            
-                    return indices
+                    else:
+                        return indices"""
+
             except json.JSONDecodeError as e:
                 # This triggers if the file was corrupted on the drive!
                 print(f"CORRUPTION DETECTED: The file {filepath} is not valid JSON.")
@@ -1237,26 +1322,50 @@ class TimelineEffectGenerator:
                 print("File not found.")
                 return None
 
-        # Iterate 20 times for enough variation
-        unique_top_signal_indices = []
+        # --- Keep only least used shaders for variety ---
+        analyzer = asset_usage_analyzer.AssetUsageAnalyzer("LOG_SHADERS.txt", exclude=asset_usage_analyzer.exclude_list)
+        least_used = analyzer.get_least_used(method="midpoint", inclusive=True)
+        
+        random.shuffle(singular_list)
+        shader_singular_list = []
+        for item in singular_list:
+            if item in least_used:
+                shader_singular_list.append(item)
+        random.shuffle(shader_singular_list)
+        print(f"LEN_singular_list: {len(singular_list)} >> {len(shader_singular_list)}")
+
+        # --- Fill the list to be used ---
+        selected_shader_filenames = shader_singular_list[:]
+
+
+
+
+
+        # --- Neural indices: iterate 20 times for enough variation ---
+        """unique_top_signal_indices = []
         for i in range(20):
             tmp_data = load_neural_indices_json(
                 random.choice(neural_indices_filenames_all),
-                ceiling=len(singular_list)
+                ceiling=len(shader_singular_list)
             )
             unique_top_signal_indices.extend(tmp_data)
 
         print(f"_get_neural_singular_list:: ORIG LEN: {len(unique_top_signal_indices)}")
-
         unique_top_signal_indices = list(dict.fromkeys(unique_top_signal_indices[:]))
         random.shuffle(unique_top_signal_indices)
         print(f"_get_neural_singular_list: UNIQUE LEN: {len(unique_top_signal_indices)}")
 
-        random.shuffle(singular_list)
+        # --- Fill the list to be used ---
+        selected_shader_filenames = []
+        for index in unique_top_signal_indices:
+            selected_shader_filenames.append(shader_singular_list[index])
+            print(f"index: {index} > {shader_singular_list[index]}")"""
+
+        """random.shuffle(singular_list)
         selected_shader_filenames = []
         for index in unique_top_signal_indices:
             selected_shader_filenames.append(singular_list[index])
-            print(f"index: {index} > {singular_list[index]}")
+            print(f"index: {index} > {singular_list[index]}")"""
 
         return selected_shader_filenames
 
