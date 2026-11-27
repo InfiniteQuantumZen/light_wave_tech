@@ -14,7 +14,9 @@ ________________________________________________________________________________
 
 ∎ 2026-11-28:
 - Modified recently added 32-bit_STEREO_EQ__light_wave_tech_v1.1.11.py 
-  with regard to sync and commented/documented some code.
+  with regard to sync (both xbox controller and hf8) + commented/documented some code.
+    # --- 2026-11-27: /DATA/audio_sync_data/analyze.py was used to find target_rms values across
+    # ~950 songs (as a whole) and bass/snare/hihat separately; improves especially SUNO v5 sync.
 
 - Added asset_usage_analyzer.py which is used in shader_manager.py and also on analysis.
   shader_manager was also updated to accompany outro_texture and some enable/disable flags
