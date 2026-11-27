@@ -1755,7 +1755,6 @@ def video_loader_worker_left(filenames, video_queue):
         try:
             # Drop MoviePy, use the OpenCV wrapper
             clip = FastVideoClip(fname) 
-            #video_queue.put(clip)
             video_queue.put((fname, clip)) 
         except Exception as e:
             print(f"[ERROR] Failed to load {fname}: {e}")
@@ -1767,7 +1766,6 @@ def video_loader_worker_right(filenames, video_queue):
         try:
             # Drop MoviePy, use the OpenCV wrapper
             clip = FastVideoClip(fname) 
-            #video_queue.put(clip)
             video_queue.put((fname, clip)) 
         except Exception as e:
             print(f"[ERROR] Failed to load {fname}: {e}")
@@ -1779,7 +1777,6 @@ def video_loader_worker_triune(filenames, video_queue):
         try:
             # Drop MoviePy, use the OpenCV wrapper
             clip = FastVideoClip(fname) 
-            #video_queue.put(clip)
             video_queue.put((fname, clip)) 
         except Exception as e:
             print(f"[ERROR] Failed to load {fname}: {e}")
@@ -2166,6 +2163,7 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
 
         # --- 2026-11-27: /DATA/audio_sync_data/analyze.py was used to find target_rms values across
         # ~950 songs (as a whole) and bass/snare/hihat separately; improves especially SUNO v5 sync
+        # ---
         anim_data_bass_filepath  = f"{audio_sync_data_base_folder}/{audio_base_filename}_bass_keyframes.csv"
         anim_data_1 = load_animation_data(anim_data_bass_filepath, target_rms=0.33, clip_max=1.0)
         anim_data_index_1 = 0
@@ -2240,13 +2238,32 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
             print("WASAPI is not available on this system.")
 
         if device_channels > 2:
-            my_song_array, sample_rate, audio_len_seconds = ROG_Theta_71_SUNO_load_and_EQ(
-                playlist_type, 
-                audio_path, 
-                bass_db=1.7, 
-                mid_db=1.7, 
-                treble_db=1.7
-            )
+            #my_song_array, sample_rate, audio_len_seconds = ROG_Theta_71_SUNO_load_and_EQ(playlist_type, audio_path, bass_db=1.7, mid_db=1.7, treble_db=1.7)
+
+            # 1. Start the heavy audio processing in the background
+            with ThreadPoolExecutor(max_workers=1) as executor:
+                audio_future = executor.submit(
+                    ROG_Theta_71_SUNO_load_and_EQ,
+                    playlist_type, 
+                    audio_path, 
+                    bass_db=1.7, 
+                    mid_db=1.7, 
+                    treble_db=1.7
+                )
+
+                # 2. Run the OpenGL loading screen on the MAIN thread until audio_future.done() is True
+                should_continue = helper_functions.intro_countdown(
+                    main_ctx, SCREEN_WIDTH, SCREEN_HEIGHT, is_done=audio_future.done
+                )
+
+                if not should_continue:
+                    # User closed the window during the loading screen
+                    executor.shutdown(wait=False, cancel_futures=True)
+                    raise SystemExit
+
+                # 3. Audio is already finished (or just finishing); grab the result.
+                #    If ROG_Theta_71_SUNO_load_and_EQ crashed, .result() will raise that exception here.
+                my_song_array, sample_rate, audio_len_seconds = audio_future.result()
         else:
             #my_song_array, sample_rate, audio_len_seconds = SUNO_load_and_EQ(playlist_type, audio_path, bass_db=9.5, mid_db=0.0, treble_db=2.5)
 
@@ -2254,7 +2271,32 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
             #my_song_array, sample_rate, audio_len_seconds = SUNO_load_and_EQ(playlist_type, audio_path, bass_db=9.5, mid_db=0.5, treble_db=2.7)
 
             # AKG
-            my_song_array, sample_rate, audio_len_seconds = SUNO_load_and_EQ(playlist_type, audio_path, bass_db=7.8, mid_db=1.8, treble_db=3.5)
+            #my_song_array, sample_rate, audio_len_seconds = SUNO_load_and_EQ(playlist_type, audio_path, bass_db=7.8, mid_db=1.8, treble_db=3.5)
+
+            # 1. Start the heavy audio processing in the background
+            with ThreadPoolExecutor(max_workers=1) as executor:
+                audio_future = executor.submit(
+                    SUNO_load_and_EQ,
+                    playlist_type,
+                    audio_path,
+                    bass_db=7.8,
+                    mid_db=1.8,
+                    treble_db=3.5,
+                )
+
+                # 2. Run the OpenGL loading screen on the MAIN thread until audio_future.done() is True
+                should_continue = helper_functions.intro_countdown(
+                    main_ctx, SCREEN_WIDTH, SCREEN_HEIGHT, is_done=audio_future.done
+                )
+
+                if not should_continue:
+                    # User closed the window during the loading screen
+                    executor.shutdown(wait=False, cancel_futures=True)
+                    raise SystemExit
+
+                # 3. Audio is already finished (or just finishing); grab the result.
+                #    If SUNO_load_and_EQ crashed, .result() will raise that exception here.
+                my_song_array, sample_rate, audio_len_seconds = audio_future.result()
 
             ## DIFFERENT APPROACH
             #my_song_array, sample_rate, audio_len_seconds = SUNO_load_and_EQ(playlist_type, audio_path, bass_db=0.0, mid_db=-6.0, treble_db=-4.3)
@@ -2270,10 +2312,6 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
 
         random_intro_title = Get_Random_Intro_Title()
         print(f"random_intro_title: {random_intro_title}")
-
-        #helper_functions.song_title_intro(main_ctx, SCREEN_WIDTH, SCREEN_HEIGHT, audio_path, current_audio_file_idx=0, num_audio_files=0)
-        helper_functions.intro_countdown(main_ctx, SCREEN_WIDTH, SCREEN_HEIGHT)
-        #sys.exit()
         #print(f"============DOODODODODODODODO: {len(console_stdout.get_buffer_contents())}")
 
         #______________________________
@@ -3045,7 +3083,7 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
                                 helper_functions.title_intro(
                                     console_surface_1, 
                                     current_pygame_time, 
-                                    random_intro_title, 
+                                    audio_path, #random_intro_title, 
                                     SCREEN_WIDTH, 
                                     SCREEN_HEIGHT
                                 ) #audio_path
@@ -3893,7 +3931,6 @@ if __name__ == '__main__':
     xbox_rumble_1 = XboxControllerRumble(controller_id=0)
     xbox_rumble_2 = XboxControllerRumble(controller_id=1)
     hf8_seat = HF8SerialRumble()
-
     
     """audio_base_folder = config.get("audio_filepaths", {}).get("music_folder")
     audio_sync_data_base_folder = config.get("audio_filepaths", {}).get("sync_folder")
@@ -3929,7 +3966,7 @@ if __name__ == '__main__':
 #       bw_vortex.txt
 
 
-    NUM_SESSIONS = 1
+    NUM_SESSIONS = 4
     #NUM_SESSIONS = 1
 
     session_precalc_data = []
