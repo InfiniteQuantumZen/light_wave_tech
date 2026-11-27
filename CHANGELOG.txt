@@ -12,7 +12,22 @@ the whole (everything put out there publicly).
 NOTE ABOUT CODING: All development is done with windows notepad nothing else is needed. 
 _____________________________________________________________________________________________________________________
 
-2026-11-22:
+∎ 2026-11-28:
+- Modified recently added 32-bit_STEREO_EQ__light_wave_tech_v1.1.11.py 
+  with regard to sync and commented/documented some code.
+
+- Added asset_usage_analyzer.py which used in shader_manager.py and also on analysis.
+
+- Updated helper_functions.intro_countdown to serve a real purpose: "loading audio" 
+which takes some amount of time when applying stereo widening and EQ.
+  1. Start the heavy audio processing in the background 
+     ThreadPoolExecutor is used to spin up SUNO_load_and_EQ
+  2. Run the OpenGL loading screen on the MAIN thread 
+     until audio_future.done() is True
+  3. Audio is already finished (or just finishing); grab the result:
+     my_song_array, sample_rate, audio_len_seconds = audio_future.result()
+
+∎ 2026-11-22:
 - Added 32-bit_STEREO_EQ__light_wave_tech_v1.1.11.py
   Now having sd streaming enabling more accurate sync
   AudioMasterClock class
