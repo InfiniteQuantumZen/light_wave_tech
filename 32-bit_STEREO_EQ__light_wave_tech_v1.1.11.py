@@ -104,7 +104,7 @@ def create_lowpass_filter(cutoff, fs, order=4):
     return b, a
 
 
-#__FOR_STEREO_WIDEN_PURPOSES::SUNO_load_and_EQ__
+#__FOR_STEREO_WIDENING_PURPOSES::SUNO_load_and_EQ__
 from stereo_widener.velvet import *
 from stereo_widener.allpass import *
 from stereo_widener.widener import *
@@ -249,7 +249,7 @@ def ROG_Theta_71_SUNO_load_and_EQ(playlist_type, audio_path, target_lufs=-13.0, 
         stereo_widener = StereoWidenerBroadband(treble_sig, fs, decorr_type, beta_init)
         treble_sig = stereo_widener.process()
  
-        # 2026-11-22: added 0.20 was befoire 0.15
+        # 2026-11-22: added 0.20 was before 0.15
         beta_init = 0.20 # >> V5 | V6: 0.07-0.10 IF NEED BE
         stereo_widener = StereoWidenerBroadband(mid_sig, fs, decorr_type, beta_init)
         mid_sig = stereo_widener.process()
@@ -410,8 +410,8 @@ class SongRatingManager:
 #  located at /TOOLS/quantum_blackbox. This functionality can be run "real-time"
 #  before actual graphics run but due to limitations in windows GPU cannot be used
 #  to calculate the vectors/wave probs; also WSL seemed to have trouble with qiskit,
-#  and also in linux it wasn't quite easy and still trying to compile from source the
-#  CUDA support that seems to be a mixed bag of success for people... thus, precalc.
+#  and likewise in linux it wasn't quite easy to compile from source the CUDA support 
+#  that seems to be a mixed bag of success for people... thus, precalc.
 
 def quantum_black_box_xor_parity_check(binary_string):
     """True if odd number of 1s, False if even."""
@@ -568,15 +568,16 @@ SNARE_COLOR = (50, 255, 50) # Green
 HIHAT_COLOR = CYAN # (50, 150, 255) # Blue
 audio_bar_vis_colors = [BASS_COLOR, SNARE_COLOR, HIHAT_COLOR]
 
-THRESHOLD_BASS = 0.397
-THRESHOLD_BASS_NEGATIVE = 0.397
+THRESHOLD_BASS = 0.40
+THRESHOLD_BASS_NEGATIVE = 0.40
 THRESHOLD_BASS_POSITIVE = 0.50
-THRESHOLD_SNARE = 0.397
-THRESHOLD_HIHAT = 0.397
+THRESHOLD_SNARE = 0.40
+THRESHOLD_HIHAT = 0.40
 
 THRESHOLD_BASS_RUMBLE = 0.397
 THRESHOLD_SNARE_RUMBLE = 0.397
 THRESHOLD_HIHAT_RUMBLE = 0.397
+
 
 ENABLE_OBS_MODE_EFFECT = 1
 DEBUG = False
@@ -705,6 +706,7 @@ inspirational_words_combined = (
     inspirational_words_3_higher_harmonics
 )
 
+# OLD (2026-11-27): Legacy function not currently in use
 def get_random_words():
     input_filename = f"F:/Deep_Learning_Local/subconscious_ai/grid_words.txt"
     with open(input_filename, 'r', encoding='utf-8', errors='replace') as f:
@@ -714,6 +716,9 @@ def get_random_words():
     return words
 #random_words = get_random_words()
 
+# OLD (2026-11-27): Just some function to veil the actual audio filename
+# in the purposes of song rating being "blind" but now largely obsolete
+# because alt_name is being implemented and it doesnt quite matter anymore
 def Get_Random_Intro_Title():
     input_filename = f"DATA/random_title_names.txt"
     with open(input_filename, 'r', encoding='utf-8', errors='replace') as f:
@@ -737,6 +742,9 @@ def get_audio_len_mp3(mp3_path):
     duration_seconds = int(audio.info.length)
     return duration_seconds
 
+# 2026-11-27: Added normalization for SUNO v5 and v6 to quite match 
+# each other and also to combat the variability within the v5 quality 
+# of instrument separation (or the lack thereof).
 def load_animation_data(filepath, gain=None, target_rms=None, max_gain=5.0, clip_max=None):
     print(f"Loading data from {filepath}...")
     
@@ -776,6 +784,10 @@ def load_animation_data(filepath, gain=None, target_rms=None, max_gain=5.0, clip
     print("Import successful. Data grouped, scaled, and converted to a list of tuples.")
     return data
 
+#______________________________________________________________________________________________________
+#___CONSOLE_THING_A_MAJIG______________
+
+# --- Console audio bar ---
 def audio_bar_visualizer(surface, x, y, values):
     BASS_COLOR  = (250, 34, 197) # MAGENTA # (255, 50, 50)   # Red
     SNARE_COLOR = (50, 255, 50)  # GREEN
@@ -814,10 +826,8 @@ def audio_bar_visualizer(surface, x, y, values):
         # Draw labels
         #label_x = x_pos + (bar_width - labels[i].get_width()) // 2
         #screen.blit(labels[i], (label_x, ground_y + 5))
-#______________________________________________________________________________________________________
-#___CONSOLE_THING_A_MAJIG______________
 
-# --- 1. The Output Interceptor ---
+# --- The Output Interceptor ---
 class PygameConsole:
     def __init__(self):
         self.lines = []
@@ -971,6 +981,8 @@ class HF8SerialRumble:
         "bass":  (0, 1, 2, 3),  # Thighs + Buttocks
         "snare": (4, 5),        # Mid/Lower Back
         "hihat": (6, 7),        # Shoulders / Upper Back
+
+#       "bass":  (2, 3),  # TESTING buttock_boost
     }
 
     def __init__(self, port="COM4"):
@@ -1007,7 +1019,9 @@ class HF8SerialRumble:
         return None
 
     def _probe_hf8(self, ser):
-        """Sends 'P\\r' and returns the status string if it matches 'E<num>,A<0|1>'."""
+        """
+        Sends 'P\\r' and returns the status string if it matches 'E<num>,A<0|1>'.
+        """
         try:
             ser.reset_input_buffer()
             ser.write(b"P\r")
@@ -1068,10 +1082,20 @@ class HF8SerialRumble:
         if not self.is_connected or not self.ser or not self.ser.is_open:
             return
 
+        buttock_boost = 1.5  # e.g., +50% intensity for motors 2 & 3
+
         commands = []
         for band, motors in self.BAND_MOTORS.items():
-            intensity = int(round(self.forces[band] * 255))
+            base_intensity = self.forces[band] * 255
             for m in motors:
+                if m in (2, 3):
+                    intensity = int(round(base_intensity * buttock_boost))
+                else:
+                    intensity = int(round(base_intensity))
+
+                # Clamp to valid 0–255 hardware range
+                intensity = max(0, min(255, intensity))
+
                 if self.last_motor_vals[m] != intensity:
                     commands.append(f"M{m}{intensity}\r")
                     self.last_motor_vals[m] = intensity
@@ -1103,13 +1127,17 @@ class HF8SerialRumble:
         self._apply_hardware()
 
     def stop(self):
-        """Zeros all motors without closing the COM port (good between playlist songs)."""
+        """
+        Zeros all motors without closing the COM port (good between playlist songs).
+        """
         self.forces = {"bass": 0.0, "snare": 0.0, "hihat": 0.0}
         self.end_times = {"bass": 0.0, "snare": 0.0, "hihat": 0.0}
         self._apply_hardware()
 
     def close(self):
-        """Zeros motors and releases the COM port back to Windows."""
+        """
+        Zeros motors and releases the COM port back to Windows.
+        """
         self.stop()
         if self.ser and self.ser.is_open:
             self.ser.close()
@@ -1276,7 +1304,7 @@ def Get_Rumble_Sync(anim_data_1, anim_data_2, anim_data_3,
     if current_amplitude_bass >= THRESHOLD_BASS_RUMBLE:
         apply_rumble_1 = True
 
-    if current_amplitude_snare >= THRESHOLD_SNARE_RUMBLE and bass_snare_delta >= 0.05:
+    if current_amplitude_snare >= THRESHOLD_SNARE_RUMBLE: # and bass_snare_delta >= 0.05:
         apply_rumble_2 = True
 
     if current_amplitude_hihat >= THRESHOLD_HIHAT_RUMBLE:
@@ -1379,20 +1407,6 @@ def load_neural_indices_json(filepath, ceiling=None):
                 return filtered_indices
             else:
                 return indices
-
-            
-            """# If a ceiling is provided, filter the list
-            if ceiling is not None:
-                # Keep only the indices that are within the valid range
-                filtered_indices = [idx for idx in indices if idx < ceiling]
-                
-                # Optional: Let the user know how many indices were filtered out
-                if len(filtered_indices) < len(indices):
-                    print(f"Filtered out {len(indices) - len(filtered_indices)} out-of-bounds indices.")
-
-                return filtered_indices
-            else:
-                return indices"""
 
     except json.JSONDecodeError as e:
         # This triggers if the file was corrupted on the drive!
@@ -1554,6 +1568,7 @@ def process_matrix_video(matrix_code_video, current_time_matrix_code_video, posi
     resized_np = cv2.resize(frame_np_matrix, (250, 1440), interpolation=cv2.INTER_LINEAR)
     #resized_np = cv2.resize(frame_np_matrix, (250, 1440), interpolation=cv2.INTER_NEAREST)
     
+# Unoptimized steps
 #    # 3. Swap axes for Pygame format
 #    matrix_np = np.swapaxes(resized_np, 0, 1)
 #    
@@ -1724,6 +1739,7 @@ def process_video_unified(video, current_time, actual_width, actual_height, layo
 #    return resized_np, (video_x, video_y), (resized_w, resized_h)
     return frame_np, (video_x, video_y), (resized_w, resized_h)
 
+# Part of 2026-10-03 OPTIMIZED APPROACH
 cv2.setNumThreads(0)
 resize_frame_arr_buffer_cache = {}
 def resize_frame_arr(frame_np, position, dimensions, buffer):
@@ -1802,6 +1818,7 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
         #mask_filepath_2 = "2nd_layer_circuitry_layer_1440p.png"
         mask_filepath_2 = "v2_2nd_layer_circuitry_layer_1440p.png"
         mask_image_2 = pygame.image.load(f"{mask_base_folder}/{mask_filepath_2}").convert_alpha()
+        u_enable_outro = 0 # bool value to shader
 
         #mask_filepath_3 = "console_circuitry_layer_matrix_v3_1440p_shader_ui.png"
         #mask_filepath_3 = "console_circuitry_layer_matrix_v4_1440p_shader_ui.png"
@@ -2048,7 +2065,9 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
             return
         video_width_vertical_triune_1, video_height_vertical_triune_1 = video_vertical_triune_1.size
 
-        """video_vertical_triune_2 = video_queue_triune.get()
+        """ # --- 2026-11-27: This is here (and has been) from 
+            # the very beginning... not sure if its ever needed
+        video_vertical_triune_2 = video_queue_triune.get()
         if video_vertical_triune_2 is None:
             print("Error loading initial video (TRIUNE_2).")
             return
@@ -2102,7 +2121,7 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
         random_inject_glitch_interval_left  = 4
         random_inject_glitch_interval_right = 4
 
-        # --- random text inits ---
+        # --- Random text inits ---
         quantum_counts = np.load('DATA/quantum_json_batches/counts_data.npy')
         quantum_valid_indexes = np.nonzero(quantum_counts)[0]
 
@@ -2145,6 +2164,8 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
         audio_base_filename = audio_base_filename[0]
         print(f"audio_base_filename = {audio_base_filename}")
 
+        # --- 2026-11-27: /DATA/audio_sync_data/analyze.py was used to find target_rms values across
+        # ~950 songs (as a whole) and bass/snare/hihat separately; improves especially SUNO v5 sync
         anim_data_bass_filepath  = f"{audio_sync_data_base_folder}/{audio_base_filename}_bass_keyframes.csv"
         anim_data_1 = load_animation_data(anim_data_bass_filepath, target_rms=0.33, clip_max=1.0)
         anim_data_index_1 = 0
@@ -3086,6 +3107,10 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
 
                     if audio_time_elapsed >= ((audio_len*1000)-7000):
                        combined_surface.blit(mask_image_2, (0, 0))
+                       u_enable_outro = 1
+
+                    #u_enable_outro = 1
+
 
                     """if audio_time_elapsed >= 0 and audio_time_elapsed <= 7000:
                         combined_surface.blit(mask_image_2, (0, 0))
@@ -3397,7 +3422,7 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
                     elif apply_flash_2 and apply_flash_3:
                         sync_value_3 = 0.10 + math.sqrt(max(current_amplitude_snare, current_amplitude_hihat))
                     elif apply_flash_1: # BASS
-                        sync_value_3 = 0.10 +  math.sqrt(current_amplitude_bass)
+                        sync_value_3 = 0.10 + math.sqrt(current_amplitude_bass)
                     elif apply_flash_3: # HIHAT
                         sync_value_3 = 0.10 + math.sqrt(current_amplitude_hihat)
                     elif apply_flash_2:
@@ -3444,13 +3469,14 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
 
                     # 2. Finally, apply the requested rumbles!
                     if target_left_force > 0.7 and target_right_force > 0.7:
-                        xbox_rumble_1.rumble_left(force=1.0, duration=0.08)
-                        xbox_rumble_1.rumble_right(force=1.0, duration=0.08)
+                        xbox_rumble_1.rumble_left(force=1.0, duration=0.09) #duration=0.08)
+                        xbox_rumble_1.rumble_right(force=1.0, duration=0.09) # duration=0.08)
 
-                        xbox_rumble_2.rumble_left(force=1.0, duration=0.08)
-                        xbox_rumble_2.rumble_right(force=1.0, duration=0.08)
+                        xbox_rumble_2.rumble_left(force=1.0, duration=0.09) #duration=0.08)
+                        xbox_rumble_2.rumble_right(force=1.0, duration=0.09) #duration=0.08)
 
-                        hf8_seat.update(bass_sync=(1.0, 0.08), snare_sync=(1.0, 0.08), hihat_sync=(1.0, 0.08)) 
+                        #hf8_seat.update(bass_sync=(1.0, 0.08), snare_sync=(1.0, 0.08), hihat_sync=(1.0, 0.08))
+                        hf8_seat.update(bass_sync=(1.0, 0.08), snare_sync=(1.0, 0.09), hihat_sync=(1.0, 0.09)) 
                     else:
                         if target_left_force > 0.0:
                             xbox_rumble_1.rumble_left(force=target_left_force, duration=target_left_duration)
@@ -3644,6 +3670,7 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
                         pivot=u_pivot,
                         pixel_offset=u_pixel_offset,
                         target_size=u_target_size,
+                        enable_outro=u_enable_outro,
                         render_texture=render_texture,
                         console_texture=console_textures
                     )
@@ -3677,15 +3704,11 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
         print(f"  skipped_frames: {int(skipped_frames/1000)}")
 
         hf8_seat.stop()
-#        sd.stop()               # Instantly stops hardware playback
-#        del my_song_array       # Free up RAM
 
         # Stop asking the callback for data and let it finish its current cycle
-        stream.stop() 
-        # Close the connection to WASAPI/PortAudio completely
-        stream.close()
-        del my_song_array       # Free up RAM
-
+        stream.stop()
+        stream.close()    # Close the connection to WASAPI/PortAudio completely
+        del my_song_array # Free up RAM by deleting song audio data
 
         safe_close_clip(video_left)
         safe_close_clip(video_right)
@@ -3898,7 +3921,15 @@ if __name__ == '__main__':
 
 ####____PLAYLIST____####
 
-    NUM_SESSIONS = 10
+#### >>>>> 2026-11-26:
+#use in intro
+#       some_continuum.txt
+#	light_tunnel_252.txt
+#	gaz_shader_77
+#       bw_vortex.txt
+
+
+    NUM_SESSIONS = 1
     #NUM_SESSIONS = 1
 
     session_precalc_data = []
@@ -3981,7 +4012,28 @@ if __name__ == '__main__':
                 tmp_songs.append(songs_all_random[i])
         songs_all_random = tmp_songs
 
-    print(f"{len(songs_all_random)} items in playlist")
+    #print(f"{len(songs_all_random)} items in playlist")
+
+    # --- PROCESS ONGOING ---
+    # --- try and get as many "new" songs to be listened to ---
+    print(f"PROCESS ONGOING: {len(songs_all_random)} items in playlist")
+    seen_filenames = []
+    with open("LOG_LUFs.txt", "r", encoding="utf-8") as infile:
+        for line in infile:
+            filename = line.rstrip("\r\n").rsplit("/", 1)[-1]
+            seen_filenames.append(filename)
+    print(f" --- {len(seen_filenames)} items in seen_filenames")
+    seen_filenames = list(dict.fromkeys(seen_filenames))
+    print(f" --- {len(seen_filenames)} items in seen_filenames")
+
+    tmp_songs = []
+    for item in songs_all_random:
+        if item["filename"] not in seen_filenames:
+            tmp_songs.append(item)
+    songs_all_random = tmp_songs[:]
+    print(f"PROCESS ONGOING: {len(songs_all_random)} items in playlist")
+    # --- PROCESS ONGOING ---
+
     #print(songs_all_random)
     #sys.exit()
 
