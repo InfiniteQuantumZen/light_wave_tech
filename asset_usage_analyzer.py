@@ -1,3 +1,5 @@
+# used in shader_manager.py and also to analysis
+
 from collections import Counter
 from collections.abc import Iterable
 from pathlib import Path
