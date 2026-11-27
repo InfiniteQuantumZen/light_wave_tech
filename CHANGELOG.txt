@@ -17,7 +17,12 @@ ________________________________________________________________________________
   with regard to sync and commented/documented some code.
 
 - Added asset_usage_analyzer.py which is used in shader_manager.py and also on analysis.
-  shader_manager was also updated to accompany outro_texture and some enable_effect flags.
+  shader_manager was also updated to accompany outro_texture and some enable/disable flags
+  that are used in shaders; these are as follows:
+     uniform sampler2D outroTexture;
+     uniform bool u_enable_effect_1;
+     uniform bool u_enable_effect_2;
+     uniform bool u_enable_outro;
 
 - Updated helper_functions.intro_countdown to serve a real purpose: "loading audio" 
   which takes some amount of time when applying stereo widening and EQ.
