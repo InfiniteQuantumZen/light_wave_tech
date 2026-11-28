@@ -1324,7 +1324,10 @@ class TimelineEffectGenerator:
 
         # --- Keep only least used shaders for variety ---
         analyzer = asset_usage_analyzer.AssetUsageAnalyzer("LOG_SHADERS.txt", exclude=asset_usage_analyzer.exclude_list)
-        least_used = analyzer.get_least_used(method="midpoint", inclusive=True)
+        #stats = analyzer.get_statistics()
+        #print("Statistics:", stats)
+        least_used = analyzer.get_least_used(method="median", inclusive=True)
+        print("Least used assets:", least_used)
         
         random.shuffle(singular_list)
         shader_singular_list = []
