@@ -75,6 +75,7 @@ from mutagen.mp3 import MP3
 
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ProcessPoolExecutor
 import threading
 import queue
 
@@ -2241,29 +2242,32 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
             #my_song_array, sample_rate, audio_len_seconds = ROG_Theta_71_SUNO_load_and_EQ(playlist_type, audio_path, bass_db=1.7, mid_db=1.7, treble_db=1.7)
 
             # 1. Start the heavy audio processing in the background
-            with ThreadPoolExecutor(max_workers=1) as executor:
-                audio_future = executor.submit(
-                    ROG_Theta_71_SUNO_load_and_EQ,
-                    playlist_type, 
-                    audio_path, 
-                    bass_db=1.7, 
-                    mid_db=1.7, 
-                    treble_db=1.7
-                )
+            executor = ProcessPoolExecutor(max_workers=1)
+            audio_future = executor.submit(
+                ROG_Theta_71_SUNO_load_and_EQ,
+                playlist_type,
+                audio_path,
+                bass_db=1.7, 
+                mid_db=1.7, 
+                treble_db=1.7
+            )
 
-                # 2. Run the OpenGL loading screen on the MAIN thread until audio_future.done() is True
-                should_continue = helper_functions.intro_countdown(
-                    main_ctx, SCREEN_WIDTH, SCREEN_HEIGHT, is_done=audio_future.done
-                )
+            # 2. Run the OpenGL loading screen on the MAIN thread until audio_future.done() is True
+            should_continue = helper_functions.intro_countdown(
+                main_ctx, SCREEN_WIDTH, SCREEN_HEIGHT, is_done=audio_future.done
+            )
 
-                if not should_continue:
-                    # User closed the window during the loading screen
-                    executor.shutdown(wait=False, cancel_futures=True)
-                    raise SystemExit
+            if not should_continue:
+                # Terminate background worker immediately if user closed the window
+                for proc in executor._processes.values():
+                    proc.terminate()
+                executor.shutdown(wait=False)
+                pygame.quit()
+                return
 
-                # 3. Audio is already finished (or just finishing); grab the result.
-                #    If ROG_Theta_71_SUNO_load_and_EQ crashed, .result() will raise that exception here.
-                my_song_array, sample_rate, audio_len_seconds = audio_future.result()
+            # 3. Audio is already finished (or just finishing); grab the result.
+            my_song_array, sample_rate, audio_len_seconds = audio_future.result()
+            executor.shutdown(wait=True)
         else:
             #my_song_array, sample_rate, audio_len_seconds = SUNO_load_and_EQ(playlist_type, audio_path, bass_db=9.5, mid_db=0.0, treble_db=2.5)
 
@@ -2274,29 +2278,32 @@ def play_video_fullscreen(video_filenames_left, video_filenames_right, audio_pat
             #my_song_array, sample_rate, audio_len_seconds = SUNO_load_and_EQ(playlist_type, audio_path, bass_db=7.8, mid_db=1.8, treble_db=3.5)
 
             # 1. Start the heavy audio processing in the background
-            with ThreadPoolExecutor(max_workers=1) as executor:
-                audio_future = executor.submit(
-                    SUNO_load_and_EQ,
-                    playlist_type,
-                    audio_path,
-                    bass_db=7.8,
-                    mid_db=1.8,
-                    treble_db=3.5,
-                )
+            executor = ProcessPoolExecutor(max_workers=1)
+            audio_future = executor.submit(
+                SUNO_load_and_EQ,
+                playlist_type,
+                audio_path,
+                bass_db=7.8,
+                mid_db=1.8,
+                treble_db=3.5,
+            )
 
-                # 2. Run the OpenGL loading screen on the MAIN thread until audio_future.done() is True
-                should_continue = helper_functions.intro_countdown(
-                    main_ctx, SCREEN_WIDTH, SCREEN_HEIGHT, is_done=audio_future.done
-                )
+            # 2. Run the OpenGL loading screen on the MAIN thread until audio_future.done() is True
+            should_continue = helper_functions.intro_countdown(
+                main_ctx, SCREEN_WIDTH, SCREEN_HEIGHT, is_done=audio_future.done
+            )
 
-                if not should_continue:
-                    # User closed the window during the loading screen
-                    executor.shutdown(wait=False, cancel_futures=True)
-                    raise SystemExit
+            if not should_continue:
+                # Terminate background worker immediately if user closed the window
+                for proc in executor._processes.values():
+                    proc.terminate()
+                executor.shutdown(wait=False)
+                pygame.quit()
+                return
 
-                # 3. Audio is already finished (or just finishing); grab the result.
-                #    If SUNO_load_and_EQ crashed, .result() will raise that exception here.
-                my_song_array, sample_rate, audio_len_seconds = audio_future.result()
+            # 3. Audio is already finished (or just finishing); grab the result.
+            my_song_array, sample_rate, audio_len_seconds = audio_future.result()
+            executor.shutdown(wait=True)
 
             ## DIFFERENT APPROACH
             #my_song_array, sample_rate, audio_len_seconds = SUNO_load_and_EQ(playlist_type, audio_path, bass_db=0.0, mid_db=-6.0, treble_db=-4.3)
@@ -3966,7 +3973,7 @@ if __name__ == '__main__':
 #       bw_vortex.txt
 
 
-    NUM_SESSIONS = 4
+    NUM_SESSIONS = 3
     #NUM_SESSIONS = 1
 
     session_precalc_data = []
